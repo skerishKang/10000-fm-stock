@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자료수집 | FM-Stock</title>
+  <link rel="stylesheet" href="assets/css/css-base.css">
+  <link rel="stylesheet" href="assets/css/css-components.css">
+  <link rel="stylesheet" href="assets/css/css-layout.css">
+  <link rel="stylesheet" href="assets/css/css-utilities.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo"><a href="index.html">FM-Stock</a></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">대시보드</a></li>
+          <li><a href="ingest.html" class="active">자료수집</a></li>
+          <li><a href="review.html">검토</a></li>
+          <li><a href="experts.html">전문가</a></li>
+          <li><a href="claims.html">발언</a></li>
+          <li><a href="sources.html">출처</a></li>
+          <li><a href="knowledge.html">지식노트</a></li>
+          <li><a href="ranking.html">랭킹</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="app-main">
+      <section class="ingest-tabs">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="youtube">유튜브</button>
+        <button class="tab" data-tab="report">리포트</button>
+      </div>
+      <div class="tab-content active" id="tab-youtube">
+        <form id="youtube-form" class="ingest-form">
+          <label>YouTube URL <input type="url" name="url" placeholder="https://youtube.com/watch?v=..." required></label>
+          <label>시간 (MM:SS) <input type="text" name="timestamp" placeholder="01:23"></label>
+          <label>발언자 <input type="text" name="speaker" placeholder="홍길동"></label>
+          <label>종목 <input type="text" name="ticker" placeholder="005930"></label>
+          <label>산업 <input type="text" name="industry" placeholder="반도체"></label>
+          <label>메모 <textarea name="memo" rows="3"></textarea></label>
+          <div class="form-actions">
+            <button type="button" class="btn" id="btn-save-youtube">저장</button>
+            <button type="button" class="btn" id="btn-review-youtube">Review로 이동</button>
+            <button type="button" class="btn" id="btn-candidate-youtube">후보 생성</button>
+          </div>
+        </form>
+      </div>
+      <div class="tab-content" id="tab-report">
+        <form id="report-form" class="ingest-form">
+          <label>제목 <input type="text" name="title" placeholder="리포트 제목" required></label>
+          <label>발행사 <input type="text" name="publisher" placeholder="KB증권"></label>
+          <label>애널리스트 <input type="text" name="analyst" placeholder="김애널"></label>
+          <label>발행일 <input type="date" name="pub_date"></label>
+          <label>페이지 <input type="number" name="page" placeholder="3"></label>
+          <label>본문 <textarea name="body" rows="6"></textarea></label>
+          <div class="form-actions">
+            <button type="button" class="btn" id="btn-save-report">저장</button>
+            <button type="button" class="btn" id="btn-review-report">Review로 이동</button>
+            <button type="button" class="btn" id="btn-candidate-report">후보 생성</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="app-footer">
+    <p>&copy; 2026 FM-Stock. All rights reserved.</p>
+  </footer>
+  <script src="assets/js/app/app-main.js"></script>
+  <script src="assets/js/app/app-router.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>발언 | FM-Stock</title>
+  <link rel="stylesheet" href="assets/css/css-base.css">
+  <link rel="stylesheet" href="assets/css/css-components.css">
+  <link rel="stylesheet" href="assets/css/css-layout.css">
+  <link rel="stylesheet" href="assets/css/css-utilities.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo"><a href="index.html">FM-Stock</a></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">대시보드</a></li>
+          <li><a href="ingest.html">자료수집</a></li>
+          <li><a href="review.html">검토</a></li>
+          <li><a href="experts.html">전문가</a></li>
+          <li><a href="claims.html" class="active">발언</a></li>
+          <li><a href="sources.html">출처</a></li>
+          <li><a href="knowledge.html">지식노트</a></li>
+          <li><a href="ranking.html">랭킹</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="app-main">
+      <section class="claims-header">
+      <h2>발언 목록</h2>
+      <div class="claims-filters">
+        <input type="text" id="cf-search" placeholder="검색">
+        <select id="cf-speaker"><option value="">발언자 전체</option></select>
+        <select id="cf-ticker"><option value="">종목 전체</option></select>
+        <select id="cf-industry"><option value="">산업 전체</option></select>
+        <select id="cf-direction"><option value="">방향성 전체</option><option value="bull">상승</option><option value="bear">하락</option></select>
+        <select id="cf-verdict"><option value="">판정 전체</option><option value="correct">적중</option><option value="partial">부분</option><option value="wrong">실패</option><option value="pending">대기</option></select>
+      </div>
+    </section>
+    <section class="claims-layout">
+      <div class="claims-list" id="claims-list">
+        <ul class="item-list"><li class="placeholder">발언 데이터가 없습니다.</li></ul>
+      </div>
+      <div class="claims-detail" id="claims-detail">
+        <div class="detail-empty">발언을 선택하세요.</div>
+      </div>
+    </section>
+  </main>
+  <footer class="app-footer">
+    <p>&copy; 2026 FM-Stock. All rights reserved.</p>
+  </footer>
+  <script src="assets/js/app/app-main.js"></script>
+  <script src="assets/js/app/app-router.js"></script>
+</body>
+</html>
