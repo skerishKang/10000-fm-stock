@@ -27,10 +27,14 @@ window.FMStock.app = window.FMStock.app || {};
   };
 
   async function loadAllData() {
-    if (!window.DataLoader || typeof window.DataLoader.loadAllData !== 'function') {
-      throw new Error('DataLoader.loadAllData is not available. Check script loading order.');
+    // Prefer FMStock.data.loadAll (new), fall back to DataLoader.loadAllData (legacy)
+    if (window.FMStock && window.FMStock.data && typeof window.FMStock.data.loadAll === 'function') {
+      return await window.FMStock.data.loadAll();
     }
-    return await window.DataLoader.loadAllData();
+    if (window.DataLoader && typeof window.DataLoader.loadAllData === 'function') {
+      return await window.DataLoader.loadAllData();
+    }
+    throw new Error('DataLoader is not available. Check script loading order.');
   }
 
   function initCurrentPage() {
@@ -76,13 +80,28 @@ window.FMStock.app = window.FMStock.app || {};
     return Array.isArray(value) ? value.length : 0;
   }
 
+  /**
+   * Render a boot-time error to the DOM.
+   * Creates an #error-container div dynamically if one does not exist.
+   */
   function renderBootError(err) {
-    var main = document.querySelector('.app-main');
-    if (!main) return;
     var message = err && err.message ? err.message : 'Unknown error';
-    main.insertAdjacentHTML('afterbegin',
-      '<div class="alert alert-error" role="alert">앱 초기화 중 오류가 발생했습니다: ' + escapeHtml(message) + '</div>'
-    );
+
+    // Build diagnostics hint
+    var diagnosticsHint = '';
+    if (window.FMStock && window.FMStock.data && typeof window.FMStock.data.getDiagnostics === 'function') {
+      diagnosticsHint = ' 브라우저 콘솔에서 FMStock.data.getDiagnostics() 로 자세한 정보를 확인하세요.';
+    }
+
+    var container = document.getElementById('error-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'error-container';
+      var target = document.querySelector('.app-main') || document.body;
+      target.insertBefore(container, target.firstChild);
+    }
+    container.innerHTML = '<div class="alert alert-error" role="alert" style="padding:1em;margin-bottom:1em;border:2px solid #c00;background:#fee;color:#c00;border-radius:6px;font-weight:bold">' +
+      escapeHtml('앱 초기화 중 오류가 발생했습니다: ' + message + diagnosticsHint) + '</div>';
   }
 
   function escapeHtml(text) {
