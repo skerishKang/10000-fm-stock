@@ -1,26 +1,39 @@
-/**
- * claims-main.js --- MVP: Claims Page Initialiser
- * Namespace: FMStock.ui.claims.main
- */
-
 window.FMStock = window.FMStock || {};
 window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.claims = window.FMStock.ui.claims || {};
 
-function initClaimsPage() {
+function initClaimsPage(data) {
   var CL = window.FMStock.ui.claims.list;
   var CF = window.FMStock.ui.claims.filter;
   var CM = window.FMStock.ui.claims.metrics;
+  var appState = window.FMStock.app && window.FMStock.app.state;
+  var dataset = data || (appState && typeof appState.get === 'function' ? appState.get('data') : {}) || {};
 
-  fetch("/api/claims").then(function(r) { return r.json(); }).then(function(data) {
-    CL.renderClaimFilters(data);
-    CF.initClaimFilters(data, function() { CL.renderClaimsList(data.claims, data.evaluations, data); });
-    CL.renderClaimsList(data.claims, data.evaluations, data);
-    var stats = CM.getClaimsStats(data.claims, data.evaluations);
-    var el = document.getElementById("claims-stats");
-    if (el) el.innerHTML = "<div class=\"stat-card\">Total: " + stats.total + "</div>" +
-      "<div class=\"stat-card\">Avg Accuracy: " + (stats.avgAccuracy * 100).toFixed(1) + "%</div>";
-  }).catch(function(err) { console.error("Failed to load claims page:", err); });
+  dataset.claims = Array.isArray(dataset.claims) ? dataset.claims : [];
+  dataset.evaluations = Array.isArray(dataset.evaluations) ? dataset.evaluations : [];
+  dataset.experts = Array.isArray(dataset.experts) ? dataset.experts : [];
+
+  if (!CL || typeof CL.renderClaimsList !== 'function') return;
+
+  if (typeof CL.renderClaimFilters === 'function') {
+    CL.renderClaimFilters(dataset);
+  }
+
+  if (CF && typeof CF.initClaimFilters === 'function') {
+    CF.initClaimFilters(dataset, function () {
+      CL.renderClaimsList(dataset.claims, dataset.evaluations, dataset);
+    });
+  }
+
+  CL.renderClaimsList(dataset.claims, dataset.evaluations, dataset);
+
+  if (CM && typeof CM.getClaimsStats === 'function') {
+    var stats = CM.getClaimsStats(dataset.claims, dataset.evaluations);
+    var el = document.getElementById('claims-stats');
+    if (el) {
+      el.innerHTML = '<div class="stat-card">Total: ' + stats.total + '</div>';
+    }
+  }
 }
 
 window.FMStock.ui.claims.main = {
