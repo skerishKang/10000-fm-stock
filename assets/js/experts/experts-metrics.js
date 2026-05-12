@@ -1,91 +1,89 @@
 /**
- * experts-metrics.js — Expert data aggregation layer
- * Thin wrapper for card and detail stats computation.
+ * experts-metrics.js --- Expert data aggregation layer
+ * Namespace: FMStock.ui.experts.metrics
  */
 
-/**
- * getExpertCardStats(expertId, claims, evaluations) — Summary stats for a card.
- * @returns {{ claimCount, verifiedCount, hitRate, avgAlpha, topSector }}
- */
-export function getExpertCardStats(expertId, claims, evaluations) {
-    const exClaims = (claims ?? []).filter(c => c.expertId === expertId);
-    const exEvals = (evaluations ?? []).filter(e => e.expertId === expertId);
-    const verified = exEvals.filter(e => e.verdict && e.verdict !== 'Pending');
-    const hits = verified.filter(e => e.verdict === 'Hit' || e.verdict === 'Correct');
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.experts = window.FMStock.ui.experts || {};
+
+function getExpertCardStats(expertId, claims, evaluations) {
+    var exClaims = (claims || []).filter(function(c) { return c.expertId === expertId; });
+    var exEvals = (evaluations || []).filter(function(e) { return e.expertId === expertId; });
+    var verified = exEvals.filter(function(e) { return e.verdict && e.verdict !== "Pending"; });
+    var hits = verified.filter(function(e) { return e.verdict === "Hit" || e.verdict === "Correct"; });
     return {
         claimCount: exClaims.length,
         verifiedCount: verified.length,
         hitRate: verified.length ? hits.length / verified.length : 0,
-        avgAlpha: calcAvg(verified, 'alpha'),
-        topSector: getTopSector(exClaims),
+        avgAlpha: calcAvg(verified, "alpha"),
+        topSector: getTopSector(exClaims)
     };
 }
 
-/**
- * getExpertDetailStats(expertId, claims, evaluations) — Full stats for detail page.
- * @returns {{
- *   claimCount, verifiedCount, pendingCount,
- *   hitRate, avgReturn, avgAlpha,
- *   bestReturn, worstReturn,
- *   sectorBreakdown: { sector, total, hits, misses, hitRate }[],
- *   recentClaims, topClaims, bottomClaims
- * }}
- */
-export function getExpertDetailStats(expertId, claims, evaluations) {
-    const exClaims = (claims ?? []).filter(c => c.expertId === expertId);
-    const exEvals = (evaluations ?? []).filter(e => e.expertId === expertId);
-    const verified = exEvals.filter(e => e.verdict && e.verdict !== 'Pending');
-    const hits = verified.filter(e => e.verdict === 'Hit' || e.verdict === 'Correct');
-    const returns = exClaims.filter(c => c.return != null).map(c => c.return);
-
+function getExpertDetailStats(expertId, claims, evaluations) {
+    var exClaims = (claims || []).filter(function(c) { return c.expertId === expertId; });
+    var exEvals = (evaluations || []).filter(function(e) { return e.expertId === expertId; });
+    var verified = exEvals.filter(function(e) { return e.verdict && e.verdict !== "Pending"; });
+    var hits = verified.filter(function(e) { return e.verdict === "Hit" || e.verdict === "Correct"; });
+    var returns = exClaims.filter(function(c) { return c.return != null; }).map(function(c) { return c.return; });
     return {
         claimCount: exClaims.length,
         verifiedCount: verified.length,
         pendingCount: exEvals.length - verified.length,
         hitRate: verified.length ? hits.length / verified.length : 0,
-        avgReturn: calcAvg(verified, 'return'),
-        avgAlpha: calcAvg(verified, 'alpha'),
-        bestReturn: returns.length ? Math.max(...returns) : null,
-        worstReturn: returns.length ? Math.min(...returns) : null,
+        avgReturn: calcAvg(verified, "return"),
+        avgAlpha: calcAvg(verified, "alpha"),
+        bestReturn: returns.length ? Math.max.apply(null, returns) : null,
+        worstReturn: returns.length ? Math.min.apply(null, returns) : null,
         sectorBreakdown: buildSectorBreakdown(exClaims, verified),
-        recentClaims: [...exClaims].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20),
-        topClaims: [...exClaims].sort((a, b) => (b.return ?? 0) - (a.return ?? 0)).slice(0, 5),
-        bottomClaims: [...exClaims].sort((a, b) => (a.return ?? 0) - (b.return ?? 0)).slice(0, 5),
+        recentClaims: exClaims.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); }).slice(0, 20),
+        topClaims: exClaims.slice().sort(function(a, b) { return (b.return || 0) - (a.return || 0); }).slice(0, 5),
+        bottomClaims: exClaims.slice().sort(function(a, b) { return (a.return || 0) - (b.return || 0); }).slice(0, 5)
     };
 }
 
-/* ── Helpers ── */
 function calcAvg(arr, key) {
     if (!arr.length) return 0;
-    const sum = arr.reduce((acc, item) => acc + (item[key] ?? 0), 0);
+    var sum = arr.reduce(function(acc, item) { return acc + (item[key] || 0); }, 0);
     return sum / arr.length;
 }
 
 function getTopSector(claims) {
-    const counts = {};
-    for (const c of claims) {
-        const s = c.industry || c.sector;
+    var counts = {};
+    for (var ci = 0; ci < claims.length; ci++) {
+        var s = claims[ci].industry || claims[ci].sector;
         if (s) counts[s] = (counts[s] || 0) + 1;
     }
-    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    var entries = Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; });
+    return entries[0] ? entries[0][0] : null;
 }
 
 function buildSectorBreakdown(claims, evaluations) {
-    const map = {};
-    for (const c of claims) {
-        const sector = c.industry || c.sector || 'Other';
-        if (!map[sector]) map[sector] = { sector, total: 0, hits: 0, misses: 0 };
+    var map = {};
+    for (var ci = 0; ci < claims.length; ci++) {
+        var sector = claims[ci].industry || claims[ci].sector || "Other";
+        if (!map[sector]) map[sector] = { sector: sector, total: 0, hits: 0, misses: 0 };
         map[sector].total++;
     }
-    for (const e of evaluations) {
-        const sector = e.industry || e.sector || 'Other';
+    for (var ei = 0; ei < evaluations.length; ei++) {
+        var e = evaluations[ei];
+        var sector = e.industry || e.sector || "Other";
         if (map[sector]) {
-            if (e.verdict === 'Hit' || e.verdict === 'Correct') map[sector].hits++;
-            if (e.verdict === 'Miss' || e.verdict === 'Incorrect') map[sector].misses++;
+            if (e.verdict === "Hit" || e.verdict === "Correct") map[sector].hits++;
+            if (e.verdict === "Miss" || e.verdict === "Incorrect") map[sector].misses++;
         }
     }
-    return Object.values(map).map(s => ({
-        ...s,
-        hitRate: s.total ? s.hits / (s.hits + s.misses) : 0,
-    }));
+    var result = [];
+    var keys = Object.keys(map);
+    for (var ki = 0; ki < keys.length; ki++) {
+        var s = map[keys[ki]];
+        result.push({ sector: s.sector, total: s.total, hits: s.hits, misses: s.misses, hitRate: s.total ? s.hits / (s.hits + s.misses) : 0 });
+    }
+    return result;
 }
+
+window.FMStock.ui.experts.metrics = {
+    getExpertCardStats: getExpertCardStats,
+    getExpertDetailStats: getExpertDetailStats
+};

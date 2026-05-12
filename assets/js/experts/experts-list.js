@@ -25,7 +25,7 @@ export function createExpertCard(expert, stats) {
     return `
         <div class="expert-card" data-expert-id="${escapeHtml(expert.id)}">
             <div class="card-header">
-                <img class="expert-avatar" src="${escapeHtml(expert.avatar || '/assets/img/default-avatar.png')}" alt="${escapeHtml(expert.name)}" loading="lazy" />
+                <img class="expert-avatar" src="${escapeHtml('/assets/img/default-avatar.png')}" alt="${escapeHtml(expert.name)}" loading="lazy" />
                 <h3 class="expert-name">${escapeHtml(expert.name)}</h3>
                 <span class="expert-type badge badge-${(expert.type || '').toLowerCase()}">${escapeHtml(expert.type)}</span>
             </div>
@@ -36,9 +36,9 @@ export function createExpertCard(expert, stats) {
                 <div class="stat"><span class="stat-label">Claims</span><span class="stat-value">${stats.claimCount ?? 0}</span></div>
             </div>
             <div class="card-sectors">
-                ${(expert.sectors || expert.industries || []).slice(0, 3).map(s => `<span class="sector-tag">${escapeHtml(s)}</span>`).join('')}
+                ${(expert.mainIndustries || []).slice(0, 3).map(s => `<span class="sector-tag">${escapeHtml(s)}</span>`).join('')}
             </div>
-            <a href="/experts-detail.html?id=${encodeURIComponent(expert.id)}" class="card-link">View Profile →</a>
+            <a href="${window.pagesUrl('experts-detail.html', '?id=' + encodeURIComponent(expert.id))}" class="card-link">View Profile →</a>
         </div>
     `;
 }
@@ -52,7 +52,7 @@ export function createExpertCard(expert, stats) {
 export function filterExperts(experts, filters) {
     return experts.filter(ex => {
         if (filters.type && ex.type !== filters.type) return false;
-        if (filters.industry && !(ex.industries || ex.sectors || []).includes(filters.industry)) return false;
+        if (filters.industry && !(ex.mainIndustries || []).includes(filters.industry)) return false;
         if (filters.minVerified != null && (ex.verifiedCount ?? 0) < filters.minVerified) return false;
         return true;
     });

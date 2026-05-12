@@ -11,18 +11,18 @@ export function renderKnowledgeList(notes, data) {
 
 export function createKnowledgeCard(note) {
   const industry = note.industry ? '<span class="badge badge-industry">' + note.industry + '</span>' : '';
-  const stock = note.stock ? '<span class="badge badge-stock">' + note.stock + '</span>' : '';
+  const stock = note.companyName ? '<span class="badge badge-stock">' + note.companyName + '</span>' : '';
   const topic = note.topic ? '<span class="badge badge-topic">' + note.topic + '</span>' : '';
-  const difficulty = note.difficulty
-    ? '<span class="badge badge-difficulty difficulty-' + note.difficulty.toLowerCase() + '">' + note.difficulty + '</span>'
+  const difficulty = note.level
+    ? '<span class="badge badge-difficulty difficulty-' + note.level.toLowerCase() + '">' + note.level + '</span>'
     : '';
   const tags = (note.tags || []).map(t => '<span class="tag">' + t + '</span>').join('');
-  const source = note.source ? '<div class="source">\ud83d\udcda ' + note.source + '</div>' : '';
+  const source = note.topic ? '<div class="source">\ud83d\udcda ' + note.topic + '</div>' : '';
 
   return (
     '<div class="knowledge-card" data-id="' + note.id + '">' +
       '<div class="card-badges">' + industry + stock + topic + difficulty + '</div>' +
-      '<h3 class="card-title">' + note.title + '</h3>' +
+      '<h3 class="card-title">' + note.summary?.substring(0, 50) || 'Knowledge Note' + '</h3>' +
       '<p class="card-summary">' + (note.summary || '') + '</p>' +
       '<div class="card-keypoints"><strong>\ud575\uc2ec\ud3ec\uc778\ud2b8:</strong><ul>' +
         (note.keyPoints || []).map(function(kp) { return '<li>' + kp + '</li>'; }).join('') + '</ul></div>' +
@@ -78,10 +78,10 @@ export function sortKnowledge(notes, sortBy) {
       sorted.sort(function(a, b) { return (a.title || '').localeCompare(b.title || ''); });
       break;
     case 'newest':
-      sorted.sort(function(a, b) { return new Date(b.createdAt || 0) - new Date(a.createdAt || 0); });
+      sorted.sort(function(a, b) { return new Date(b.createdAt || '') - new Date(a.createdAt || ''); });
       break;
     case 'oldest':
-      sorted.sort(function(a, b) { return new Date(a.createdAt || 0) - new Date(b.createdAt || 0); });
+      sorted.sort(function(a, b) { return new Date(a.createdAt || '') - new Date(b.createdAt || ''); });
       break;
   }
   return sorted;
