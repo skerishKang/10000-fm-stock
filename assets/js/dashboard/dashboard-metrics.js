@@ -1,98 +1,86 @@
 /**
- * dashboard-metrics.js — Dashboard data transformation and aggregation
- * Pure functions — no DOM side-effects.
+ * dashboard-metrics.js --- Dashboard data transformation and aggregation
+ * Pure functions - no DOM side-effects.
+ * Namespace: FMStock.ui.dashboard.metrics
  */
 
-/**
- * getSummaryStats(data) — Aggregate summary statistics from raw data.
- * @param {Object} data - Full dashboard dataset
- * @returns {{ sources, segments, claims, verified, pending, knowledge, avgReturn, avgAlpha, avgHitRate }}
- */
-export function getSummaryStats(data) {
-    const claims = data.claims ?? [];
-    const evaluations = data.evaluations ?? [];
-    const verified = evaluations.filter(e => e.verdict && e.verdict !== 'Pending');
-    const hitCount = verified.filter(e => e.verdict === 'Hit' || e.verdict === 'Correct').length;
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.dashboard = window.FMStock.ui.dashboard || {};
 
+function getSummaryStats(data) {
+    var claims = data.claims || [];
+    var evaluations = data.evaluations || [];
+    var verified = evaluations.filter(function(e) { return e.verdict && e.verdict !== "Pending"; });
+    var hitCount = verified.filter(function(e) { return e.verdict === "Hit" || e.verdict === "Correct"; }).length;
     return {
-        sources: (data.sources ?? []).length,
-        segments: (data.segments ?? []).length,
+        sources: (data.sources || []).length,
+        segments: (data.segments || []).length,
         claims: claims.length,
         verified: verified.length,
         pending: evaluations.length - verified.length,
-        knowledge: (data.knowledge ?? []).length,
-        avgReturn: calcAvg(verified, 'return'),
-        avgAlpha: calcAvg(verified, 'alpha'),
-        avgHitRate: verified.length ? hitCount / verified.length : 0,
+        knowledge: (data.knowledge || []).length,
+        avgReturn: calcAvg(verified, "return"),
+        avgAlpha: calcAvg(verified, "alpha"),
+        avgHitRate: verified.length ? hitCount / verified.length : 0
     };
 }
 
-/**
- * getRecentEvaluations(data, N = 10) — Latest N verified evaluations sorted by date desc.
- */
-export function getRecentEvaluations(data, N = 10) {
-    const evals = (data.evaluations ?? [])
-        .filter(e => e.verdict && e.verdict !== 'Pending')
-        .sort((a, b) => new Date(b.evaluatedAt || b.date) - new Date(a.evaluatedAt || a.date));
-    return evals.slice(0, N);
-}
-
-/**
- * getTopReturnClaims(data, N = 10) — Top N claims by return.
- */
-export function getTopReturnClaims(data, N = 10) {
-    return (data.claims ?? [])
-        .filter(c => c.return != null)
-        .sort((a, b) => (b.return ?? 0) - (a.return ?? 0))
-        .slice(0, N)
-        .map(c => ({
-            ...c,
-            excessReturn: (c.return ?? 0) - (c.benchmarkReturn ?? 0),
-        }));
-}
-
-/**
- * getTrendingStocks(data, N = 10) — Most frequently mentioned stocks.
- */
-export function getTrendingStocks(data, N = 10) {
-    const counts = {};
-    for (const c of data.claims ?? []) {
-        const stock = c.stock || c.ticker;
-        if (stock) counts[stock] = (counts[stock] || 0) + 1;
-    }
-    return Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, N)
-        .map(([name, count]) => ({ name, count }));
-}
-
-/**
- * getTrendingIndustries(data, N = 10) — Most frequently mentioned industries.
- */
-export function getTrendingIndustries(data, N = 10) {
-    const counts = {};
-    for (const c of data.claims ?? []) {
-        const ind = c.industry || c.sector;
-        if (ind) counts[ind] = (counts[ind] || 0) + 1;
-    }
-    return Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, N)
-        .map(([name, count]) => ({ name, count }));
-}
-
-/**
- * getRecentKnowledge(data, N = 10) — Most recent knowledge notes.
- */
-export function getRecentKnowledge(data, N = 10) {
-    return (data.knowledge ?? [])
-        .sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date))
+function getRecentEvaluations(data, N) {
+    N = N || 10;
+    return (data.evaluations || [])
+        .filter(function(e) { return e.verdict && e.verdict !== "Pending"; })
+        .sort(function(a, b) { return new Date(b.evaluatedAt || b.date) - new Date(a.evaluatedAt || a.date); })
         .slice(0, N);
 }
 
-/* ── Helpers ── */
+function getTopReturnClaims(data, N) {
+    N = N || 10;
+    return (data.claims || [])
+        .filter(function(c) { return c.return != null; })
+        .sort(function(a, b) { return (b.return || 0) - (a.return || 0); })
+        .slice(0, N)
+        .map(function(c) {
+            return { claimId: c.id, speaker: c.speaker, stock: c.stock, "return": c.return, benchmarkReturn: c.benchmarkReturn || 0, excessReturn: (c.return || 0) - (c.benchmarkReturn || 0) };
+        });
+}
+
+function getTrendingStocks(data, N) {
+    N = N || 10;
+    var counts = {};
+    for (var ci = 0; ci < (data.claims || []).length; ci++) {
+        var stock = data.claims[ci].stock || data.claims[ci].ticker;
+        if (stock) counts[stock] = (counts[stock] || 0) + 1;
+    }
+    return Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; }).slice(0, N).map(function(item) { return { name: item[0], count: item[1] }; });
+}
+
+function getTrendingIndustries(data, N) {
+    N = N || 10;
+    var counts = {};
+    for (var ci = 0; ci < (data.claims || []).length; ci++) {
+        var ind = data.claims[ci].industry || data.claims[ci].sector;
+        if (ind) counts[ind] = (counts[ind] || 0) + 1;
+    }
+    return Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; }).slice(0, N).map(function(item) { return { name: item[0], count: item[1] }; });
+}
+
+function getRecentKnowledge(data, N) {
+    N = N || 10;
+    return (data.knowledge || []).sort(function(a, b) { return new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date); }).slice(0, N);
+}
+
 function calcAvg(arr, key) {
     if (!arr.length) return 0;
-    const sum = arr.reduce((acc, item) => acc + (item[key] ?? 0), 0);
+    var sum = arr.reduce(function(acc, item) { return acc + (item[key] || 0); }, 0);
     return sum / arr.length;
 }
+
+window.FMStock.ui.dashboard.metrics = {
+    getSummaryStats: getSummaryStats,
+    getRecentEvaluations: getRecentEvaluations,
+    getTopReturnClaims: getTopReturnClaims,
+    getTrendingStocks: getTrendingStocks,
+    getTrendingIndustries: getTrendingIndustries,
+    getRecentKnowledge: getRecentKnowledge
+};

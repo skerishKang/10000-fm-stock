@@ -41,15 +41,15 @@ export function renderFullNote(note) {
   var tags = (note.tags || []).map(function(t) { return '<span class="tag">' + t + '</span>'; }).join('');
   var keyPoints = (note.keyPoints || []).map(function(kp) { return '<li>' + kp + '</li>'; }).join('');
   var meta = (note.industry ? '<span class="meta-item">\ud83c\udfed ' + note.industry + '</span>' : '') +
-    (note.stock ? '<span class="meta-item">\ud83d\udcc8 ' + note.stock + '</span>' : '') +
+    (note.companyName ? '<span class="meta-item">\ud83d\udcc8 ' + note.companyName + '</span>' : '') +
     (note.topic ? '<span class="meta-item">\ud83d\udccc ' + note.topic + '</span>' : '') +
-    (note.difficulty ? '<span class="meta-item difficulty-' + note.difficulty.toLowerCase() + '">\ud83c\udfaf ' + note.difficulty + '</span>' : '');
+    (note.level ? '<span class="meta-item difficulty-' + note.level.toLowerCase() + '">\ud83c\udfaf ' + note.level + '</span>' : '');
 
   return '<div class="full-note">' +
-    '<h2 class="note-title">' + note.title + '</h2>' +
+    '<h2 class="note-title">' + (note.summary?.substring(0, 60) || 'Knowledge Note') + '</h2>' +
     '<div class="note-meta">' + meta + '</div>' +
     '<div class="note-summary"><h3>\uc694\uc57d</h3><p>' + (note.summary || '') + '</p></div>' +
-    '<div class="note-content"><h3>\uc804\uccb4 \ub0b4\uc6a9</h3><div>' + (note.content || note.summary || '') + '</div></div>' +
+    '<div class="note-content"><h3>\uc804\uccb4 \ub0b4\uc6a9</h3><div>' + (note.summary || '') + '</div></div>' +
     '<div class="note-keypoints"><h3>\ud575\uc2ec \ud3ec\uc778\ud2b8</h3><ul>' + keyPoints + '</ul></div>' +
     '<div class="note-tags">' + tags + '</div>' +
     (note.source ? '<div class="note-source">\ud83d\udcda \ucd9c\ucc98: ' + note.source + '</div>' : '') +
@@ -58,7 +58,7 @@ export function renderFullNote(note) {
 
 export function renderRelatedClaims(claim) {
   return '<div class="related-item claim-item" data-id="' + claim.id + '">' +
-    '<div class="item-header">' + (claim.title || claim.claim || '') + '</div>' +
+    '<div class="item-header">' + (claim.claimText || '') + '</div>' +
     '<div class="item-meta">' + (claim.status ? '<span class="status-badge status-' + claim.status.toLowerCase() + '">' + claim.status + '</span>' : '') + '</div>' +
     '</div>';
 }
@@ -72,7 +72,7 @@ export function renderRelatedSources(source) {
 
 export function renderRelatedExpert(expert) {
   return '<div class="related-item expert-item" data-id="' + expert.id + '">' +
-    '<div class="item-header">' + (expert.name || expert.expert || '') + '</div>' +
-    '<div class="item-meta">' + (expert.affiliation || expert.role || '') + '</div>' +
+    '<div class="item-header">' + (expert.displayName || expert.name || '') + '</div>' +
+    '<div class="item-meta">' + (expert.organization || '') + '</div>' +
     '</div>';
 }

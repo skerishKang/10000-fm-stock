@@ -9,7 +9,7 @@ export function initSourceFilters(data, onFilterChange) {
   callback=onFilterChange;
   const {renderSourceFilters}=require('./sources-list.js')||{};
   if(typeof renderSourceFilters==='function') renderSourceFilters(data);
-  ['filter-source-type','filter-source-status'].forEach(id=>{
+  ['sf-type','sf-status'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.addEventListener('change',updateFilters);
   });
@@ -18,9 +18,9 @@ export function initSourceFilters(data, onFilterChange) {
 
 function updateFilters() {
   activeFilters={};
-  const t=document.getElementById('filter-source-type');
+  const t=document.getElementById('sf-type');
   if(t&&t.value) activeFilters.type=t.value;
-  const s=document.getElementById('filter-source-status');
+  const s=document.getElementById('sf-status');
   if(s&&s.value) activeFilters.status=s.value;
   if(callback) callback(activeFilters);
 }
@@ -29,6 +29,6 @@ export function getActiveFilters() { return {...activeFilters}; }
 
 export function resetSourceFilters() {
   activeFilters={};
-  document.querySelectorAll('#source-filters select').forEach(el=>el.value='');
+  document.querySelectorAll('#sources-filters select').forEach(el=>el.value='');
   if(callback) callback(activeFilters);
 }

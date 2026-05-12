@@ -1,52 +1,65 @@
 /**
- * sources-list.js --- MVP: Sources List
+ * sources-list.js — Source list page rendering
  */
 
 export function renderSourcesList(sources, segments, claims) {
-  const c=document.getElementById('sources-list-container');
-  if(!c) return;
-  const m={};
-  (sources||[]).forEach(s=>{
-    m[s.id]={segmentCount:(segments||[]).filter(x=>x.sourceId===s.id).length,
-              claimCount:(claims||[]).filter(x=>x.sourceId===s.id).length};
-  });
-  var h = '<div class="sources-list"><div class="sources-count">'+(sources?.length||0)+' sources</div>';
-  h += '<table class="sources-table"><thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Segments</th><th>Claims</th><th>Status</th></tr></thead><tbody>';
-  for (var i = 0; i < (sources||[]).length; i++) { h += createSourceRow(sources[i], m[sources[i].id]); }
-  h += '</tbody></table></div>';
-  c.innerHTML = h;
+  const container = document.getElementById('sources-list');
+  if (!container) return;
+  container.innerHTML = '<table class="sources-table"><thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Segments</th><th>Status</th></tr></thead><tbody>' +
+    sources.map(s => createSourceRow(s, getSourceStats(s.id, segments, claims))).join('') +
+    '</tbody></table>';
+}
+
+function getSourceStats(sourceId, segments, claims) {
+  const segCount = (segments||[]).filter(s => s.sourceId === sourceId).length;
+  const claimCount = (claims||[]).filter(c => c.sourceId === sourceId).length;
+  return { segCount, claimCount };
 }
 
 export function createSourceRow(source, stats) {
-  if(!source) return '';
-  var r = '<tr class="source-row" data-source-id="'+source.id+'">';
-  r += '<td><a href="/sources/detail.html?id='+source.id+'">'+(source.title||source.name||'Untitled')+'</a></td>';
+  var r = '<tr>';
+  r += '<td><a href="'+window.pagesUrl('sources.html', '?id=' + source.id)+'">'+(source.title||source.name||'Untitled')+'</a></td>';
   r += '<td>'+(source.type||'-')+'</td>';
-  r += '<td>'+(source.date||'-')+'</td>';
-  r += '<td>'+(stats?.segmentCount||0)+'</td>';
-  r += '<td>'+(stats?.claimCount||0)+'</td>';
-  r += '<td><span class="status-badge status-'+(source.processingStatus||'pending').toLowerCase()+'">'+(source.processingStatus||'pending')+'</span></td></tr>';
+  r += '<td>'+(source.publishedAt?.substring(0,10)||'-')+'</td>';
+  r += '<td>'+(stats.segCount||0)+'</td>';
+  r += '<td><span class="status-badge status-'+(source.visibility||'pending').toLowerCase()+'">'+(source.visibility||'pending')+'</span></td>';
+  r += '</tr>';
   return r;
 }
 
 export function renderSourceFilters(data) {
-  const c=document.getElementById('source-filters');
-  if(!c) return;
-  const types=[...new Set((data.sources||[]).map(s=>s.type).filter(Boolean))];
-  const statuses=[...new Set((data.sources||[]).map(s=>s.processingStatus).filter(Boolean))];
-  var h = '<div class="filter-bar">';
-  h += '<select id="filter-source-type"><option value="">All Types</option>';
-  h += types.map(t=>'<option value="'+t+'">'+t+'</option>').join('')+'</select>';
-  h += '<select id="filter-source-status"><option value="">All Status</option>';
-  h += statuses.map(s=>'<option value="'+s+'">'+s+'</option>').join('')+'</select></div>';
-  c.innerHTML = h;
+  const typeSelect = document.getElementById('sf-type');
+  if (typeSelect) {
+    const types = [...new Set((data.sources||[]).map(s => s.type).filter(Boolean))];
+    types.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      typeSelect.appendChild(opt);
+    });
+  }
+  const statusSelect = document.getElementById('sf-status');
+  if (statusSelect) {
+    const statuses = [...new Set((data.sources||[]).map(s => s.visibility).filter(Boolean))];
+    statuses.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      statusSelect.appendChild(opt);
+    });
+  }
 }
 
 export function filterSources(sources, filters) {
-  if(!sources) return [];
-  return sources.filter(s=>{
-    if(filters.type&&s.type!==filters.type) return false;
-    if(filters.status&&s.processingStatus!==filters.status) return false;
+  return sources.filter(s => {
+    if (filters.type && s.type !== filters.type) return false;
+    if (filters.search) {
+      const q = filters.search.toLowerCase();
+      const title = (s.title || s.name || '').toLowerCase();
+      const publisher = (s.publisher || '').toLowerCase();
+      if (!title.includes(q) && !publisher.includes(q)) return false;
+    }
+    if (filters.status && s.visibility !== filters.status) return false;
     return true;
   });
 }
