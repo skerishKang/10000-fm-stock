@@ -1,96 +1,104 @@
 /**
  * review-main.js
  * Main entry point for the review page (review.html).
- * Orchestrates list/detail panels and tabs (claim/knowledge).
+ * Namespace: FMStock.ui.review.main
  */
 
-const ReviewMain = (() => {
-  let currentTab = 'claim';
-  let candidates = [];
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.review = window.FMStock.ui.review || {};
+
+(function () {
+  var currentTab = "claim";
+  var candidates = [];
 
   function initReviewPage() {
     loadCandidates();
     bindTabs();
     bindGlobalActions();
-    if (currentTab === 'claim') {
-      ReviewClaims.renderClaimCandidates(candidates.filter(c => c.type === 'claim'));
+    if (currentTab === "claim") {
+      window.FMStock.ui.review.claims.renderClaimCandidates(candidates.filter(function(c) { return c.type === "claim"; }));
     } else {
-      ReviewKnowledge.renderKnowledgeCandidates(candidates.filter(c => c.type === 'knowledge'));
+      window.FMStock.ui.review.knowledge.renderKnowledgeCandidates(candidates.filter(function(c) { return c.type === "knowledge"; }));
     }
   }
 
   function loadCandidates() {
-    const stored = localStorage.getItem('ingest_candidates');
+    var stored = localStorage.getItem("ingest_candidates");
     if (stored) {
       try { candidates = JSON.parse(stored); } catch (e) { candidates = []; }
     }
     if (!candidates || candidates.length === 0) {
       candidates = [
-        { type: 'claim', id: 0, title: 'Sample Claim 1', detail: 'Detail for claim 1' },
-        { type: 'knowledge', id: 1, title: 'Sample Knowledge 1', detail: 'Detail for knowledge 1' }
+        { type: "claim", id: 0, title: "Sample Claim 1", detail: "Detail for claim 1" },
+        { type: "knowledge", id: 1, title: "Sample Knowledge 1", detail: "Detail for knowledge 1" }
       ];
     }
   }
 
   function bindTabs() {
-    const claimTab = document.getElementById('tab-claim');
-    const knowledgeTab = document.getElementById('tab-knowledge');
-    if (claimTab) claimTab.addEventListener('click', () => switchTab('claim'));
-    if (knowledgeTab) knowledgeTab.addEventListener('click', () => switchTab('knowledge'));
+    var claimTab = document.getElementById("tab-claim");
+    var knowledgeTab = document.getElementById("tab-knowledge");
+    if (claimTab) claimTab.addEventListener("click", function() { switchTab("claim"); });
+    if (knowledgeTab) knowledgeTab.addEventListener("click", function() { switchTab("knowledge"); });
   }
 
   function switchTab(tab) {
     currentTab = tab;
-    const claimSection = document.getElementById('review-claim-section');
-    const knowledgeSection = document.getElementById('review-knowledge-section');
-    if (claimSection) claimSection.style.display = tab === 'claim' ? 'block' : 'none';
-    if (knowledgeSection) knowledgeSection.style.display = tab === 'knowledge' ? 'block' : 'none';
-    if (tab === 'claim') {
-      ReviewClaims.renderClaimCandidates(candidates.filter(c => c.type === 'claim'));
+    var claimSection = document.getElementById("review-claim-section");
+    var knowledgeSection = document.getElementById("review-knowledge-section");
+    if (claimSection) claimSection.style.display = tab === "claim" ? "block" : "none";
+    if (knowledgeSection) knowledgeSection.style.display = tab === "knowledge" ? "block" : "none";
+    if (tab === "claim") {
+      window.FMStock.ui.review.claims.renderClaimCandidates(candidates.filter(function(c) { return c.type === "claim"; }));
     } else {
-      ReviewKnowledge.renderKnowledgeCandidates(candidates.filter(c => c.type === 'knowledge'));
+      window.FMStock.ui.review.knowledge.renderKnowledgeCandidates(candidates.filter(function(c) { return c.type === "knowledge"; }));
     }
   }
 
   function bindGlobalActions() {
-    const btnApprove = document.getElementById('btn-approve');
-    const btnEdit = document.getElementById('btn-edit');
-    const btnDelete = document.getElementById('btn-delete');
-    const btnConvert = document.getElementById('btn-convert');
-    const btnLater = document.getElementById('btn-later');
-    if (btnApprove) btnApprove.addEventListener('click', handleApprove);
-    if (btnEdit) btnEdit.addEventListener('click', handleEdit);
-    if (btnDelete) btnDelete.addEventListener('click', handleDelete);
-    if (btnConvert) btnConvert.addEventListener('click', handleConvertToEducational);
-    if (btnLater) btnLater.addEventListener('click', handleSaveForLater);
+    var btnApprove = document.getElementById("btn-approve");
+    var btnEdit = document.getElementById("btn-edit");
+    var btnDelete = document.getElementById("btn-delete");
+    var btnConvert = document.getElementById("btn-convert");
+    var btnLater = document.getElementById("btn-later");
+    if (btnApprove) btnApprove.addEventListener("click", handleApprove);
+    if (btnEdit) btnEdit.addEventListener("click", handleEdit);
+    if (btnDelete) btnDelete.addEventListener("click", handleDelete);
+    if (btnConvert) btnConvert.addEventListener("click", handleConvertToEducational);
+    if (btnLater) btnLater.addEventListener("click", handleSaveForLater);
   }
 
   function handleApprove() {
-    if (currentTab === 'claim') ReviewClaims.approveClaim(-1);
-    else ReviewKnowledge.approveKnowledge(-1);
+    if (currentTab === "claim") window.FMStock.ui.review.claims.approveClaim(-1);
+    else window.FMStock.ui.review.knowledge.approveKnowledge(-1);
   }
 
   function handleEdit() {
-    if (currentTab === 'claim') ReviewClaims.editClaim(-1, {});
-    else ReviewKnowledge.editKnowledge(-1, {});
+    if (currentTab === "claim") window.FMStock.ui.review.claims.editClaim(-1, {});
+    else window.FMStock.ui.review.knowledge.editKnowledge(-1, {});
   }
 
   function handleDelete() {
-    if (currentTab === 'claim') ReviewClaims.deleteClaim(-1);
-    else ReviewKnowledge.deleteKnowledge(-1);
+    if (currentTab === "claim") window.FMStock.ui.review.claims.deleteClaim(-1);
+    else window.FMStock.ui.review.knowledge.deleteKnowledge(-1);
   }
 
   function handleConvertToEducational() {
-    if (currentTab === 'claim') ReviewClaims.convertToEducational(-1);
-    else ReviewKnowledge.convertToClaim(-1);
+    if (currentTab === "claim") window.FMStock.ui.review.claims.convertToEducational(-1);
+    else window.FMStock.ui.review.knowledge.convertToClaim(-1);
   }
 
   function handleSaveForLater() {
-    if (currentTab === 'claim') ReviewClaims.saveForLater(-1);
-    else ReviewKnowledge.saveForLater(-1);
+    if (currentTab === "claim") window.FMStock.ui.review.claims.saveForLater(-1);
+    else window.FMStock.ui.review.knowledge.saveForLater(-1);
   }
 
-  return { initReviewPage, loadCandidates, switchTab };
+  window.FMStock.ui.review.main = {
+    initReviewPage: initReviewPage,
+    loadCandidates: loadCandidates,
+    switchTab: switchTab
+  };
 })();
 
-document.addEventListener('DOMContentLoaded', () => ReviewMain.initReviewPage());
+document.addEventListener("DOMContentLoaded", function() { window.FMStock.ui.review.main.initReviewPage(); });

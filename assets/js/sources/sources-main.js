@@ -1,27 +1,37 @@
 /**
  * sources-main.js --- MVP: Sources Page Initialiser
+ * Namespace: FMStock.ui.sources.main
  */
 
-export function initSourcesList() {
-  const {renderSourceFilters}=require('./sources-list.js');
-  const {initSourceFilters}=require('./sources-filter.js');
-  const {renderSourcesList}=require('./sources-list.js');
-  fetch('/api/sources').then(r=>r.json()).then(data=>{
-    renderSourceFilters(data);
-    initSourceFilters(data,()=>renderSourcesList(data.sources,data.segments,data.claims));
-    renderSourcesList(data.sources,data.segments,data.claims);
-  }).catch(err=>console.error('Failed to load sources list:',err));
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.sources = window.FMStock.ui.sources || {};
+
+function initSourcesList() {
+  var SL = window.FMStock.ui.sources.list;
+  var SF = window.FMStock.ui.sources.filter;
+
+  fetch("/api/sources").then(function(r) { return r.json(); }).then(function(data) {
+    SL.renderSourceFilters(data);
+    SF.initSourceFilters(data, function() { SL.renderSourcesList(data.sources, data.segments, data.claims); });
+    SL.renderSourcesList(data.sources, data.segments, data.claims);
+  }).catch(function(err) { console.error("Failed to load sources list:", err); });
 }
 
-export function initSourceDetail() {
-  const p=new URLSearchParams(window.location.search);
-  const id=p.get('id');
-  if(!id){
-    const c=document.getElementById('source-detail-container');
-    if(c) c.innerHTML='<div class="error">No source ID provided</div>';
+function initSourceDetail() {
+  var p = new URLSearchParams(window.location.search);
+  var id = p.get("id");
+  if (!id) {
+    var c = document.getElementById("source-detail-container");
+    if (c) c.innerHTML = "<div class=\"error\">No source ID provided</div>";
     return;
   }
-  const {renderSourceDetail}=require('./sources-detail.js');
-  fetch('/api/sources/'+id).then(r=>r.json()).then(data=>renderSourceDetail(id,data))
-    .catch(err=>console.error('Failed to load source detail:',err));
+  var SD = window.FMStock.ui.sources.detail;
+  fetch("/api/sources/" + id).then(function(r) { return r.json(); }).then(function(data) { SD.renderSourceDetail(id, data); })
+    .catch(function(err) { console.error("Failed to load source detail:", err); });
 }
+
+window.FMStock.ui.sources.main = {
+  initSourcesList: initSourcesList,
+  initSourceDetail: initSourceDetail
+};

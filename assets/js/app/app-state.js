@@ -1,7 +1,15 @@
-/** app-state.js — Centralized state management */
+/**
+ * app-state.js — Centralized state management
+ * Namespace: FMStock.app.state
+ */
+
+window.FMStock = window.FMStock || {};
+window.FMStock.app = window.FMStock.app || {};
+
 (function () {
   'use strict';
 
+  var App = window.FMStock.app;
   App.state = App.state || {};
 
   var _state = {
@@ -14,7 +22,6 @@
 
   var _subscribers = {};
 
-  // ── Initialize ──────────────────────────────────────────
   App.state.init = function () {
     _state = {
       data: null,
@@ -26,7 +33,6 @@
     _subscribers = {};
   };
 
-  // ── Get a value by dot-path ─────────────────────────────
   App.state.get = function (path) {
     if (!path) return _state;
     var keys = path.split('.');
@@ -38,7 +44,6 @@
     return val;
   };
 
-  // ── Set a value by dot-path ─────────────────────────────
   App.state.set = function (path, value) {
     var keys = path.split('.');
     var target = _state;
@@ -52,7 +57,6 @@
     App.state.notify(path);
   };
 
-  // ── Subscribe to changes ────────────────────────────────
   App.state.subscribe = function (key, callback) {
     if (!_subscribers[key]) _subscribers[key] = [];
     _subscribers[key].push(callback);
@@ -62,7 +66,6 @@
     };
   };
 
-  // ── Notify subscribers ──────────────────────────────────
   App.state.notify = function (key) {
     var subs = _subscribers[key];
     if (subs) {
@@ -71,5 +74,4 @@
       }
     }
   };
-
 })();
