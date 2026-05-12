@@ -38,7 +38,7 @@ export function createExpertCard(expert, stats) {
             <div class="card-sectors">
                 ${(expert.sectors || expert.industries || []).slice(0, 3).map(s => `<span class="sector-tag">${escapeHtml(s)}</span>`).join('')}
             </div>
-            <a href="/experts-detail.html?id=${encodeURIComponent(expert.id)}" class="card-link">View Profile →</a>
+            <a href="/pages/experts-detail.html?id=${encodeURIComponent(expert.id)}" class="card-link">View Profile →</a>
         </div>
     `;
 }

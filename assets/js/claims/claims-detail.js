@@ -73,7 +73,7 @@ export function renderConnectedKnowledge(claim, knowledgeNotes) {
   if (!notes.length) return '';
   var h = '<div class="detail-section knowledge"><h3>Connected Knowledge Notes ('+notes.length+')</h3><ul>';
   for (var i = 0; i < notes.length; i++) {
-    h += '<li><a href="/knowledge/detail.html?id='+notes[i].id+'">'+(notes[i].title||'Untitled')+'</a></li>';
+    h += '<li><a href="/pages/knowledge.html?id='+notes[i].id+'">'+(notes[i].title||'Untitled')+'</a></li>';
   }
   h += '</ul></div>';
   return h;
