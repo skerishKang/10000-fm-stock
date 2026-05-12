@@ -1,34 +1,51 @@
 /**
  * sources-filter.js --- MVP: Sources Filter Logic
+ * Namespace: FMStock.ui.sources.filter
  */
 
-let activeFilters={};
-let callback=null;
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.sources = window.FMStock.ui.sources || {};
 
-export function initSourceFilters(data, onFilterChange) {
-  callback=onFilterChange;
-  const {renderSourceFilters}=require('./sources-list.js')||{};
-  if(typeof renderSourceFilters==='function') renderSourceFilters(data);
-  ['sf-type','sf-status'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.addEventListener('change',updateFilters);
+var activeFilters = {};
+var callback = null;
+
+function initSourceFilters(data, onFilterChange) {
+  callback = onFilterChange;
+  if (typeof window.FMStock.ui.sources.list.renderSourceFilters === "function") {
+    window.FMStock.ui.sources.list.renderSourceFilters(data);
+  }
+  ["filter-source-type", "filter-source-status"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("change", updateFilters);
   });
   updateFilters();
 }
 
 function updateFilters() {
-  activeFilters={};
-  const t=document.getElementById('sf-type');
-  if(t&&t.value) activeFilters.type=t.value;
-  const s=document.getElementById('sf-status');
-  if(s&&s.value) activeFilters.status=s.value;
-  if(callback) callback(activeFilters);
+  activeFilters = {};
+  var t = document.getElementById("filter-source-type");
+  if (t && t.value) activeFilters.type = t.value;
+  var s = document.getElementById("filter-source-status");
+  if (s && s.value) activeFilters.status = s.value;
+  if (callback) callback(activeFilters);
 }
 
-export function getActiveFilters() { return {...activeFilters}; }
-
-export function resetSourceFilters() {
-  activeFilters={};
-  document.querySelectorAll('#sources-filters select').forEach(el=>el.value='');
-  if(callback) callback(activeFilters);
+function getActiveFilters() {
+  var copy = {};
+  var keys = Object.keys(activeFilters);
+  for (var i = 0; i < keys.length; i++) { copy[keys[i]] = activeFilters[keys[i]]; }
+  return copy;
 }
+
+function resetSourceFilters() {
+  activeFilters = {};
+  document.querySelectorAll("#source-filters select").forEach(function(el) { el.value = ""; });
+  if (callback) callback(activeFilters);
+}
+
+window.FMStock.ui.sources.filter = {
+  initSourceFilters: initSourceFilters,
+  getActiveFilters: getActiveFilters,
+  resetSourceFilters: resetSourceFilters
+};
