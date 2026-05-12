@@ -31,7 +31,7 @@ function createExpertCard(expert, stats) {
         "<div class=\"stat\"><span class=\"stat-label\">Avg Alpha</span><span class=\"stat-value\">" + (stats.avgAlpha != null ? stats.avgAlpha.toFixed(2) + "%" : "N/A") + "</span></div>" +
         "<div class=\"stat\"><span class=\"stat-label\">Claims</span><span class=\"stat-value\">" + (stats.claimCount || 0) + "</span></div></div>" +
         "<div class=\"card-sectors\">" + sectors + "</div>" +
-        "<a href=\"/pages/experts-detail.html?id=" + encodeURIComponent(expert.id) + "\" class=\"card-link\">View Profile \u2192</a></div>";
+        "<a href=\"experts-detail.html?id=" + encodeURIComponent(expert.id) + "\" class=\"card-link\">View Profile \u2192</a></div>";
 }
 
 function filterExperts(experts, filters) {
