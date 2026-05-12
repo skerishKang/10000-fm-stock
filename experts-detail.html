@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전문가 | FM-Stock</title>
+  <link rel="stylesheet" href="assets/css/css-base.css">
+  <link rel="stylesheet" href="assets/css/css-components.css">
+  <link rel="stylesheet" href="assets/css/css-layout.css">
+  <link rel="stylesheet" href="assets/css/css-utilities.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo"><a href="index.html">FM-Stock</a></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">대시보드</a></li>
+          <li><a href="ingest.html">자료수집</a></li>
+          <li><a href="review.html">검토</a></li>
+          <li><a href="experts.html" class="active">전문가</a></li>
+          <li><a href="claims.html">발언</a></li>
+          <li><a href="sources.html">출처</a></li>
+          <li><a href="knowledge.html">지식노트</a></li>
+          <li><a href="ranking.html">랭킹</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="app-main">
+      <section class="expert-detail-header">
+      <div class="expert-info">
+        <h2 id="ed-name">전문가명</h2>
+        <p id="ed-type">유형</p>
+        <p id="ed-affiliation">소속</p>
+        <p id="ed-industries">주요 산업</p>
+      </div>
+      <div class="expert-kpi-grid" id="expert-kpis">
+        <div class="kpi-card"><span class="kpi-label">검증 수</span><span class="kpi-value" id="kpi-count">0</span></div>
+        <div class="kpi-card"><span class="kpi-label">적중률</span><span class="kpi-value" id="kpi-hitrate">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">평균 알파</span><span class="kpi-value" id="kpi-avgalpha">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">누적 수익률</span><span class="kpi-value" id="kpi-return">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">초과 수익률</span><span class="kpi-value" id="kpi-excess">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">정보 비율</span><span class="kpi-value" id="kpi-ir">0</span></div>
+        <div class="kpi-card"><span class="kpi-label">최대 손실</span><span class="kpi-value" id="kpi-maxdd">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">승률</span><span class="kpi-value" id="kpi-winrate">0%</span></div>
+        <div class="kpi-card"><span class="kpi-label">지식 기여</span><span class="kpi-value" id="kpi-kcontrib">0</span></div>
+      </div>
+    </section>
+    <section class="expert-detail-body">
+      <div class="panel"><h3>산업별 성과</h3><div id="ed-industry-perf" class="placeholder">데이터 없음</div></div>
+      <div class="panel"><h3>발언 히스토리</h3><table id="ed-claims-table"><thead><tr><th>발언</th><th>종목</th><th>판정</th><th>수익률</th></tr></thead><tbody id="ed-claims-body"><tr><td colspan="4" class="placeholder">데이터 없음</td></tr></tbody></table></div>
+      <div class="panel"><h3>잘 맞춘 발언</h3><ul id="ed-good-claims" class="item-list"><li class="placeholder">데이터 없음</li></ul></div>
+      <div class="panel"><h3>부진 발언</h3><ul id="ed-bad-claims" class="item-list"><li class="placeholder">데이터 없음</li></ul></div>
+      <div class="panel"><h3>지식노트</h3><ul id="ed-knowledge" class="item-list"><li class="placeholder">데이터 없음</li></ul></div>
+    </section>
+  </main>
+  <footer class="app-footer">
+    <p>&copy; 2026 FM-Stock. All rights reserved.</p>
+  </footer>
+  <script src="assets/js/app/app-main.js"></script>
+  <script src="assets/js/app/app-router.js"></script>
+</body>
+</html>

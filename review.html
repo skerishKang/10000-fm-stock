@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>검토 | FM-Stock</title>
+  <link rel="stylesheet" href="assets/css/css-base.css">
+  <link rel="stylesheet" href="assets/css/css-components.css">
+  <link rel="stylesheet" href="assets/css/css-layout.css">
+  <link rel="stylesheet" href="assets/css/css-utilities.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo"><a href="index.html">FM-Stock</a></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">대시보드</a></li>
+          <li><a href="ingest.html">자료수집</a></li>
+          <li><a href="review.html" class="active">검토</a></li>
+          <li><a href="experts.html">전문가</a></li>
+          <li><a href="claims.html">발언</a></li>
+          <li><a href="sources.html">출처</a></li>
+          <li><a href="knowledge.html">지식노트</a></li>
+          <li><a href="ranking.html">랭킹</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="app-main">
+      <section class="review-layout">
+      <div class="review-list">
+        <div class="review-filters">
+          <select id="rf-type"><option value="all">전체</option><option value="claim">Claim 후보</option><option value="knowledge">Knowledge 후보</option></select>
+          <input type="text" id="rf-search" placeholder="검색...">
+        </div>
+        <ul id="review-items" class="item-list"><li class="placeholder">후보가 없습니다.</li></ul>
+      </div>
+      <div class="review-detail">
+        <div id="review-detail-empty" class="detail-empty">항목을 선택하세요.</div>
+        <div id="review-detail-content" style="display:none;">
+          <h3 id="rd-title">제목</h3>
+          <div id="rd-body"></div>
+          <div class="form-actions">
+            <button class="btn btn-accept">채택</button>
+            <button class="btn btn-edit">수정</button>
+            <button class="btn btn-delete">삭제</button>
+            <button class="btn btn-educate">교육용 전환</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="app-footer">
+    <p>&copy; 2026 FM-Stock. All rights reserved.</p>
+  </footer>
+  <script src="assets/js/app/app-main.js"></script>
+  <script src="assets/js/app/app-router.js"></script>
+</body>
+</html>
