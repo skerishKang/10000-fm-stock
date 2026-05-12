@@ -34,6 +34,7 @@ function renderClaimsList(claims, evaluations, data) {
       return createClaimRow(claim, findEvaluation(claim.id, evaluationList), dataset);
     }).join('') +
     '</tbody></table>';
+  attachRowClickHandlers(c, dataset);
 }
 
 function createClaimRow(claim, evaluation, data) {
@@ -43,7 +44,7 @@ function createClaimRow(claim, evaluation, data) {
   var stockLabel = claim.companyName || claim.ticker || '-';
 
   var r = '<tr class="claim-row" data-claim-id="' + escapeHtml(claim.id) + '">';
-  r += '<td class="claim-text">' + escapeHtml(claim.claimText || claim.title || '') + '</td>';
+  r += '<td class="claim-text">' + escapeHtml(claim.claimText || '') + '</td>';
   r += '<td>' + escapeHtml(expertName) + '</td>';
   r += '<td>' + escapeHtml(stockLabel) + '</td>';
   r += '<td>' + escapeHtml(claim.industry || '-') + '</td>';
@@ -150,6 +151,20 @@ function escapeHtml(text) {
   return String(text == null ? '' : text).replace(/[&<>"']/g, function (ch) {
     return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
   });
+}
+
+function attachRowClickHandlers(container, data) {
+  var rows = container.querySelectorAll('.claim-row');
+  for (var i = 0; i < rows.length; i++) {
+    (function(row) {
+      row.addEventListener('click', function() {
+        var claimId = row.getAttribute('data-claim-id');
+        if (claimId && typeof FMStock.ui.claims.detail.renderClaimDetail === 'function') {
+          FMStock.ui.claims.detail.renderClaimDetail(claimId, data);
+        }
+      });
+    })(rows[i]);
+  }
 }
 
 window.FMStock.ui.claims.list = {
