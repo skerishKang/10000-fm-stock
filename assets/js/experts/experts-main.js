@@ -8,9 +8,9 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.experts = window.FMStock.ui.experts || {};
 
 function initExpertsList() {
-    var data = window.__DATA__;
+    var data = FMStock.app.state.get('data');
     if (!data) {
-        console.error("[ExpertsList] window.__DATA__ not found");
+        console.error("[ExpertsList] FMStock.app.state.get('data') not found");
         return;
     }
     var EL = window.FMStock.ui.experts.list;
@@ -33,9 +33,9 @@ function initExpertDetail() {
         if (el) el.insertAdjacentHTML("afterbegin", "<div class=\"error-banner\">Error: No expert ID specified in URL.</div>");
         return;
     }
-    var data = window.__DATA__;
+    var data = FMStock.app.state.get('data');
     if (!data) {
-        console.error("[ExpertDetail] window.__DATA__ not found");
+        console.error("[ExpertDetail] FMStock.app.state.get('data') not found");
         return;
     }
     var expert = (data.experts || []).find(function(ex) { return ex.id === expertId; });
