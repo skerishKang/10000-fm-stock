@@ -1,0 +1,213 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.summary-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  margin-bottom: 8px;
+}
+
+.summary-icon.primary { background-color: rgba(37, 99, 235, 0.1); color: var(--primary); }
+.summary-icon.success { background-color: rgba(22, 163, 74, 0.1); color: var(--success); }
+.summary-icon.danger { background-color: rgba(220, 38, 38, 0.1); color: var(--danger); }
+.summary-icon.warning { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+.summary-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.summary-label {
+  font-size: 0.813rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.summary-change {
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.summary-change.positive { color: var(--success); }
+.summary-change.negative { color: var(--danger); }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.rank-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.rank-item:last-child {
+  border-bottom: none;
+}
+
+.rank-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rank-number.top-1 { background-color: #fef3c7; color: #d97706; }
+.rank-number.top-2 { background-color: #f1f5f9; color: #475569; }
+.rank-number.top-3 { background-color: #fef2f2; color: #dc2626; }
+.rank-number.top-n { background-color: var(--bg-alt); color: var(--text-muted); }
+
+.rank-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-detail {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.rank-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--success);
+  white-space: nowrap;
+}
+
+.rank-value.negative {
+  color: var(--danger);
+}
+
+.knowledge-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feed-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.feed-item:last-child {
+  border-bottom: none;
+}
+
+.feed-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--bg-alt);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.813rem;
+  color: var(--text-muted);
+}
+
+.feed-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-headline {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+
+.feed-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.ranking-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ranking-widget .rank-item {
+  padding: 10px 0;
+}
+
+.ranking-widget .rank-value {
+  font-size: 0.813rem;
+}
+
+@media (max-width: 1024px) {
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .summary-value { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .summary-grid { grid-template-columns: 1fr; }
+}
