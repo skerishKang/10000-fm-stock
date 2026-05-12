@@ -1,11 +1,14 @@
 /**
  * ranking-main.js - Ranking Page Entry Point
  * Initializes the ranking page with default 'return' tab.
+ * Namespace: FMStock.ui.ranking.main
  */
 
-import { renderRankingTab, initRankingTabs } from './ranking-render.js';
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.ranking = window.FMStock.ui.ranking || {};
 
-export async function initRankingPage() {
+async function initRankingPage() {
   var container = document.getElementById('ranking-app');
   if (!container) return;
 
@@ -13,17 +16,20 @@ export async function initRankingPage() {
     var res = await fetch('/api/ranking');
     var data = await res.json();
 
-    initRankingTabs();
-
-    renderRankingTab('return', data);
+    window.FMStock.ui.ranking.render.initRankingTabs();
+    window.FMStock.ui.ranking.render.renderRankingTab('return', data);
 
     document.addEventListener('ranking-tab-change', function(e) {
-      renderRankingTab(e.detail.tab, data);
+      window.FMStock.ui.ranking.render.renderRankingTab(e.detail.tab, data);
     });
 
     console.log('[ranking-main] Initialized ranking page');
   } catch (err) {
     console.error('[ranking-main] Failed to initialize:', err);
-    container.innerHTML = '<div class="error-state">\ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\ub294 \uc911 \uc624\ub958\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.</div>';
+    container.innerHTML = '<div class="error-state">데이터를 불러오는 중 오류가 발생했습니다.</div>';
   }
 }
+
+window.FMStock.ui.ranking.main = {
+  initRankingPage: initRankingPage
+};

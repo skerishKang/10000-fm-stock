@@ -68,7 +68,22 @@
   <footer class="app-footer">
     <p>&copy; 2026 FM-Stock. All rights reserved.</p>
   </footer>
-  <script src="../assets/js/app/app-main.js"></script>
+  <!-- Core scripts (order matters) -->
+  <script src="../assets/js/data/data-loader.js"></script>
+  <script src="../assets/js/utils/utils-date.js"></script>
+  <script src="../assets/js/utils/utils-dom.js"></script>
+  <script src="../assets/js/utils/utils-format.js"></script>
+  <script src="../assets/js/utils/utils-id.js"></script>
+  <script src="../assets/js/utils/utils-url.js"></script>
+  <script src="../assets/js/metrics/metrics-experts.js"></script>
+  <script src="../assets/js/metrics/metrics-rankings.js"></script>
+  <script src="../assets/js/metrics/metrics-returns.js"></script>
+  <script src="../assets/js/app/app-state.js"></script>
   <script src="../assets/js/app/app-router.js"></script>
-</body>
+  <script src="../assets/js/ingest/ingest-main.js"></script>
+  <script src="../assets/js/ingest/ingest-parser.js"></script>
+  <script src="../assets/js/ingest/ingest-report.js"></script>
+  <script src="../assets/js/ingest/ingest-youtube.js"></script>
+  <script src="../assets/js/app/app-main.js"></script>
+
 </html>

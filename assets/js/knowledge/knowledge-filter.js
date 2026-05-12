@@ -1,43 +1,51 @@
 /**
- * knowledge-filter.js - Knowledge Filters
+ * knowledge-filter.js --- Knowledge Filters
  * Manages filter state and unique value extraction.
+ * Namespace: FMStock.ui.knowledge.filter
  */
+
+window.FMStock = window.FMStock || {};
+window.FMStock.ui = window.FMStock.ui || {};
+window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 
 var activeFilters = {};
 var onFilterChangeCallback = null;
 
-export function initKnowledgeFilters(data, onFilterChange) {
+function initKnowledgeFilters(data, onFilterChange) {
   onFilterChangeCallback = onFilterChange;
-  activeFilters = {};
-
-  document.querySelectorAll('.filter-select').forEach(function(select) {
-    select.addEventListener('change', function(e) {
-      var filterKey = e.target.dataset.filter;
-      activeFilters[filterKey] = e.target.value;
-      if (onFilterChangeCallback) onFilterChangeCallback(getActiveFilters());
-    });
-  });
-
-  document.querySelectorAll('.filter-chip').forEach(function(chip) {
-    chip.addEventListener('click', function(e) {
-      var filterKey = e.target.dataset.filter;
-      var value = e.target.dataset.value;
-      if (activeFilters[filterKey] === value) {
-        activeFilters[filterKey] = '';
-      } else {
-        activeFilters[filterKey] = value;
-      }
-      if (onFilterChangeCallback) onFilterChangeCallback(getActiveFilters());
+  document.querySelectorAll("#knowledge-filters .filter-select").forEach(function(el) {
+    el.addEventListener("change", function() {
+      activeFilters[el.dataset.filter] = el.value;
+      if (onFilterChangeCallback) onFilterChangeCallback(activeFilters);
     });
   });
 }
 
-export function getActiveFilters() {
+function getActiveFilters() {
   var copy = {};
-  for (var k in activeFilters) { copy[k] = activeFilters[k]; }
+  var keys = Object.keys(activeFilters);
+  for (var i = 0; i < keys.length; i++) { copy[keys[i]] = activeFilters[keys[i]]; }
   return copy;
 }
 
-export function getUniqueValues(notes, field) {
-  return [...new Set((notes || []).map(function(n) { return n[field]; }).filter(Boolean))].sort();
+function resetKnowledgeFilters() {
+  activeFilters = {};
+  document.querySelectorAll("#knowledge-filters .filter-select").forEach(function(el) { el.value = ""; });
+  if (onFilterChangeCallback) onFilterChangeCallback(activeFilters);
 }
+
+function getUniqueValues(notes, field) {
+  var set = {};
+  (notes || []).forEach(function(n) {
+    var v = n[field];
+    if (v) set[v] = true;
+  });
+  return Object.keys(set).sort();
+}
+
+window.FMStock.ui.knowledge.filter = {
+  initKnowledgeFilters: initKnowledgeFilters,
+  getActiveFilters: getActiveFilters,
+  resetKnowledgeFilters: resetKnowledgeFilters,
+  getUniqueValues: getUniqueValues
+};

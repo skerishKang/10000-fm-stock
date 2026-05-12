@@ -1,34 +1,36 @@
-/** app-router.js — Simple SPA-style page router */
+/**
+ * app-router.js — Simple SPA-style page router
+ * Namespace: FMStock.app.router
+ */
+
+window.FMStock = window.FMStock || {};
+window.FMStock.app = window.FMStock.app || {};
+
 (function () {
   'use strict';
 
+  var App = window.FMStock.app;
   App.router = App.router || {};
 
   var _routes = {};
 
-  // ── Register a route ────────────────────────────────────
   App.router.register = function (path, handler) {
     _routes[path] = handler;
   };
 
-  // ── Navigate to a path (programmatic) ───────────────────
   App.router.navigate = function (path) {
     window.location.href = path;
   };
 
-  // ── Detect current page and run its handler ─────────────
   App.router.handlePage = function () {
     var path = window.location.pathname;
     var page = path.split('/').pop() || 'index.html';
 
-    // Store current page in state
     App.state.set('currentPage', page);
 
-    // Normalise
     if (page === '' || page === '/') page = 'index.html';
     if (page.indexOf('.html') === -1) page += '.html';
 
-    // URL params
     var params = new URLSearchParams(window.location.search);
     if (params.has('id')) {
       App.state.set('activeExpert', params.get('id'));
@@ -37,17 +39,14 @@
       App.state.set('activeClaim', params.get('claim'));
     }
 
-    // Route handler lookup
     var handler = _routes[page] || _routes['*'];
     if (handler) {
       handler(page, params);
     }
 
-    // Update nav active state
     _updateNav(page);
   };
 
-  // ── Update navigation active class ──────────────────────
   function _updateNav(page) {
     var links = document.querySelectorAll('.nav-link');
     for (var i = 0; i < links.length; i++) {
@@ -64,7 +63,6 @@
     }
   }
 
-  // ── Register known page handlers ────────────────────────
   var PAGES = [
     'index.html',
     'ingest.html',
@@ -81,14 +79,11 @@
     (function (pg) {
       App.router.register(pg, function () {
         console.log('[Router] Loaded page:', pg);
-        // Page-specific initialisation can go here
       });
     })(PAGES[i]);
   }
 
-  // Catch-all
   App.router.register('*', function () {
     console.log('[Router] Unknown page, showing home');
   });
-
 })();
