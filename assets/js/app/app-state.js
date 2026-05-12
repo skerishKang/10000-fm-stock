@@ -66,6 +66,19 @@ window.FMStock.app = window.FMStock.app || {};
     };
   };
 
+  /**
+   * pagesUrl — Resolve a page URL relative to the pages/ directory.
+   * These JS files run inside pages/, so bare page names resolve correctly.
+   * Example: pagesUrl("knowledge.html") → "knowledge.html"
+   */
+  App.state.pagesUrl = function (page) {
+    return page;
+  };
+  
+  /* Also expose globally for convenience */
+  window.pagesUrl = App.state.pagesUrl;
+  
+
   App.state.notify = function (key) {
     var subs = _subscribers[key];
     if (subs) {
