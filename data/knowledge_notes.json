@@ -1,0 +1,795 @@
+[
+  {
+    "id": "know_001",
+    "sourceId": "source_001",
+    "segmentId": "segment_001",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "삼성전자",
+    "topic": "DRAM 사이클",
+    "level": "basic",
+    "summary": "DRAM 가격은 공급 조절, 재고 수준, 서버 수요에 민감하다.",
+    "keyPoints": [
+      "DRAM 가격 상승은 메모리 업체 실적 개선",
+      "재고 수준은 업황 반등 판단의 핵심 변수"
+    ],
+    "tags": [
+      "DRAM",
+      "메모리",
+      "사이클"
+    ]
+  },
+  {
+    "id": "know_002",
+    "sourceId": "source_008",
+    "segmentId": "segment_015",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "삼성전자",
+    "topic": "DRAM 업황 판단 지표",
+    "level": "intermediate",
+    "summary": "DRAM 업황 판단을 위해선 고정거래가격, 재고일수, CapEx 계획을 함께 봐야 한다.",
+    "keyPoints": [
+      "DDR5 16Gb 고정거래가격 추이",
+      "고객사 재고일수 6주 미만이면 반등 신호",
+      "삼성전자·SK하이닉스 CapEx 방향성"
+    ],
+    "tags": [
+      "DRAM",
+      "업황",
+      "DDR5",
+      "삼성전자"
+    ]
+  },
+  {
+    "id": "know_003",
+    "sourceId": "source_002",
+    "segmentId": "segment_005",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "SK하이닉스",
+    "topic": "범용 DRAM 전망",
+    "level": "intermediate",
+    "summary": "범용 DRAM(DDR5/LPDDR5)은 PC·모바일 수요에 연동되며 AI 서버향 수요가 신규 성장 동력이다.",
+    "keyPoints": [
+      "PC 교체 수요 2025년 하반기 기대",
+      "모바일 DRAM 탑재량 증가",
+      "서버 DDR5 수요 HBM과 동반 성장"
+    ],
+    "tags": [
+      "DRAM",
+      "DDR5",
+      "PC",
+      "서버"
+    ]
+  },
+  {
+    "id": "know_004",
+    "sourceId": "source_001",
+    "segmentId": "segment_002",
+    "expertId": "expert_004",
+    "industry": "반도체",
+    "companyName": "SK하이닉스",
+    "topic": "메모리 반도체 투자 포인트",
+    "level": "basic",
+    "summary": "메모리 반도체 투자는 업황 사이클 이해가 핵심이다. 바닥에서 매수, 정점에서 매도가 정석.",
+    "keyPoints": [
+      "P/B 밸류에이션 저점 매수 전략",
+      "DDR5 가격 반등 시점이 매수 타이밍"
+    ],
+    "tags": [
+      "메모리",
+      "투자",
+      "사이클",
+      "밸류에이션"
+    ]
+  },
+  {
+    "id": "know_005",
+    "sourceId": "source_001",
+    "segmentId": "segment_024",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "",
+    "topic": "반도체 장비 사이클",
+    "level": "intermediate",
+    "summary": "반도체 장비 수주는 메모리 업황에 2~3분기 선행한다.",
+    "keyPoints": [
+      "장비주는 메모리 업황의 선행 지표",
+      "HBM향 장비 수요는 신규 성장 축"
+    ],
+    "tags": [
+      "장비",
+      "사이클",
+      "HBM",
+      "수주"
+    ]
+  },
+  {
+    "id": "know_006",
+    "sourceId": "source_001",
+    "segmentId": "segment_003",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "한미반도체",
+    "topic": "HBM과 TC Bonder 장비",
+    "level": "advanced",
+    "summary": "HBM 수요 증가로 TC(열압축) Bonder 장비 수요가 폭발적으로 증가했다.",
+    "keyPoints": [
+      "TC Bonder는 HBM 적층 공정 핵심 장비",
+      "한미반도체 글로벌 TC Bonder 점유율 90% 이상",
+      "HBM4세대부터 공정 난이도 추가 상승"
+    ],
+    "tags": [
+      "HBM",
+      "TC Bonder",
+      "한미반도체",
+      "장비"
+    ]
+  },
+  {
+    "id": "know_007",
+    "sourceId": "source_002",
+    "segmentId": "segment_004",
+    "expertId": "expert_004",
+    "industry": "반도체",
+    "companyName": "SK하이닉스",
+    "topic": "HBM3E 12단 기술",
+    "level": "advanced",
+    "summary": "HBM3E 12단 제품은 기존 8단 대비 용량 50% 증가, 대역폭 25% 향상됐다.",
+    "keyPoints": [
+      "MR-MUF 공정 적용",
+      "NVIDIA H100/B200향 공급",
+      "하이브리드 본딩 기술 개발 중"
+    ],
+    "tags": [
+      "HBM3E",
+      "12단",
+      "SK하이닉스",
+      "공정"
+    ]
+  },
+  {
+    "id": "know_008",
+    "sourceId": "source_007",
+    "segmentId": "segment_014",
+    "expertId": "expert_008",
+    "industry": "반도체",
+    "companyName": "",
+    "topic": "AI 반도체 시장 구조",
+    "level": "basic",
+    "summary": "AI 반도체는 GPU, HBM, 네트워킹 칩 등 다양한 반도체가 유기적으로 동작한다.",
+    "keyPoints": [
+      "AI 가속기 시장 NVIDIA 독점 구조",
+      "HBM이 AI 성능의 병목 해결",
+      "국내 팹리스도 일부 수혜 가능"
+    ],
+    "tags": [
+      "AI",
+      "반도체",
+      "GPU",
+      "HBM",
+      "팹리스"
+    ]
+  },
+  {
+    "id": "know_009",
+    "sourceId": "source_002",
+    "segmentId": "segment_004",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "SK하이닉스",
+    "topic": "HBM 시장 점유율",
+    "level": "intermediate",
+    "summary": "SK하이닉스는 HBM 시장에서 55% 점유율로 선두, 삼성전자가 추격 중이다.",
+    "keyPoints": [
+      "SK하이닉스 HBM3E 독점 공급",
+      "삼성전자 HBM3E 퀄 통과 여부가 변수",
+      "HBM4부터 경쟁 구도 변화 가능"
+    ],
+    "tags": [
+      "HBM",
+      "점유율",
+      "SK하이닉스",
+      "삼성전자",
+      "경쟁"
+    ]
+  },
+  {
+    "id": "know_010",
+    "sourceId": "source_008",
+    "segmentId": "segment_016",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "삼성전자",
+    "topic": "삼성전자 HBM3E 전략",
+    "level": "intermediate",
+    "summary": "삼성전자는 HBM3E 시장 진입을 위해 12단 제품과 차별화된 공정 기술을 준비 중이다.",
+    "keyPoints": [
+      "TC-NCF 공정으로 MR-MUF 대비",
+      "12단 HBM3E 양산 준비",
+      "NVIDIA 퀄 통과가 단기 최대 변수"
+    ],
+    "tags": [
+      "삼성전자",
+      "HBM3E",
+      "TC-NCF",
+      "NVIDIA"
+    ]
+  },
+  {
+    "id": "know_011",
+    "sourceId": "source_009",
+    "segmentId": "segment_017",
+    "expertId": "expert_002",
+    "industry": "2차전지",
+    "companyName": "에코프로비엠",
+    "topic": "양극재 가격과 수급",
+    "level": "basic",
+    "summary": "양극재 가격은 리튬, 니켈, 코발트 등 원재료 가격과 수요에 결정된다.",
+    "keyPoints": [
+      "리튬 가격이 양극재 원가의 40% 차지",
+      "하이니켈 NCMA가 주력 제품",
+      "중국산 저가 물량이 가격 하방 압력"
+    ],
+    "tags": [
+      "양극재",
+      "리튬",
+      "NCMA",
+      "2차전지"
+    ]
+  },
+  {
+    "id": "know_012",
+    "sourceId": "source_009",
+    "segmentId": "segment_017",
+    "expertId": "expert_002",
+    "industry": "2차전지",
+    "companyName": "",
+    "topic": "글로벌 양극재 시장 전망",
+    "level": "intermediate",
+    "summary": "2025년 글로벌 양극재 수요는 120만톤으로 전년 대비 25% 성장 전망.",
+    "keyPoints": [
+      "중국 비중 70%로 압도적",
+      "국내 업체 CAPEX 확대 지속",
+      "LFP 양극재 수요 증가"
+    ],
+    "tags": [
+      "양극재",
+      "시장",
+      "전망",
+      "수요",
+      "CAPEX"
+    ]
+  },
+  {
+    "id": "know_013",
+    "sourceId": "source_003",
+    "segmentId": "segment_007",
+    "expertId": "expert_002",
+    "industry": "2차전지",
+    "companyName": "에코프로비엠",
+    "topic": "에코프로비엠 원재료 조달 전략",
+    "level": "advanced",
+    "summary": "에코프로비엠은 리튬·니켈 등 원재료를 장기계약으로 안정적 조달 중이다.",
+    "keyPoints": [
+      "호주·남미 리튬 광산 장기 계약",
+      "인도네시아 니켈 제련소 투자",
+      "한국 내 양극재 생산 CAPA 20만톤"
+    ],
+    "tags": [
+      "에코프로비엠",
+      "원재료",
+      "리튬",
+      "니켈",
+      "CAPA"
+    ]
+  },
+  {
+    "id": "know_014",
+    "sourceId": "source_014",
+    "segmentId": "segment_023",
+    "expertId": "expert_002",
+    "industry": "2차전지",
+    "companyName": "LG에너지솔루션",
+    "topic": "LG에너지솔루션 북미 전략",
+    "level": "intermediate",
+    "summary": "LG에너지솔루션은 IRA 수혜를 기반으로 북미 시장에서 공격적 투자 중이다.",
+    "keyPoints": [
+      "GM·스텔란티스·혼다와 JV",
+      "북미 CAPA 200GWh 목표",
+      "AMPC 세액공제로 수익성 개선"
+    ],
+    "tags": [
+      "LG에너지솔루션",
+      "북미",
+      "IRA",
+      "JV",
+      "CAPA"
+    ]
+  },
+  {
+    "id": "know_015",
+    "sourceId": "source_003",
+    "segmentId": "segment_006",
+    "expertId": "expert_004",
+    "industry": "2차전지",
+    "companyName": "LG에너지솔루션",
+    "topic": "전기차 캐즘과 배터리 업체",
+    "level": "basic",
+    "summary": "전기차 캐즘(일시적 수요 둔화)에도 주요 배터리 업체는 중장기 성장 계획 유지 중이다.",
+    "keyPoints": [
+      "캐즘은 기술 발전 속도가 기대치를 따라가지 못하는 현상",
+      "GM·포드 등 완성차 전기화 계획 지연",
+      "ESS(에너지저장장치)가 신규 수요처로 부상"
+    ],
+    "tags": [
+      "전기차",
+      "캐즘",
+      "배터리",
+      "ESS",
+      "IRA"
+    ]
+  },
+  {
+    "id": "know_016",
+    "sourceId": "source_010",
+    "segmentId": "segment_018",
+    "expertId": "expert_006",
+    "industry": "조선",
+    "companyName": "HD현대중공업",
+    "topic": "LNG선 시장 전망",
+    "level": "intermediate",
+    "summary": "글로벌 LNG선 발주는 2025년 카타르 2차 프로젝트로 추가 확대 전망.",
+    "keyPoints": [
+      "카타르 2차 LNG선 50척 발주 예정",
+      "1척당 선가 2.6억 달러 수준",
+      "LNG선 건조 가능 조선소 5곳 뿐"
+    ],
+    "tags": [
+      "LNG선",
+      "카타르",
+      "HD현대중공업",
+      "발주",
+      "선가"
+    ]
+  },
+  {
+    "id": "know_017",
+    "sourceId": "source_010",
+    "segmentId": "segment_019",
+    "expertId": "expert_006",
+    "industry": "조선",
+    "companyName": "HD현대중공업",
+    "topic": "조선사 실적 턴어라운드",
+    "level": "intermediate",
+    "summary": "고선가 선박 인도가 본격화되면서 조선사들의 실적 턴어라운드가 진행 중이다.",
+    "keyPoints": [
+      "2022년 저선가 수주 물량 소진 완료",
+      "2024년부터 고선가 선박 인도",
+      "2025년 흑자 전환 확실시"
+    ],
+    "tags": [
+      "조선",
+      "실적",
+      "턴어라운드",
+      "선가",
+      "인도"
+    ]
+  },
+  {
+    "id": "know_018",
+    "sourceId": "source_005",
+    "segmentId": "segment_011",
+    "expertId": "expert_006",
+    "industry": "조선",
+    "companyName": "한화오션",
+    "topic": "한화오션 사업 전망",
+    "level": "basic",
+    "summary": "한화오션은 한화그룹 편입 후 방산·상선 사업 재편 중이다.",
+    "keyPoints": [
+      "해군 함정 수주가 주요 먹거리",
+      "LNG선 시장 진출 시도 중",
+      "방산 비중 확대로 수익성 개선 기대"
+    ],
+    "tags": [
+      "한화오션",
+      "방산",
+      "LNG선",
+      "재편"
+    ]
+  },
+  {
+    "id": "know_019",
+    "sourceId": "source_005",
+    "segmentId": "segment_010",
+    "expertId": "expert_004",
+    "industry": "조선",
+    "companyName": "",
+    "topic": "글로벌 조선 수주 동향",
+    "level": "basic",
+    "summary": "2025년 글로벌 신조선 발주량은 전년 대비 15% 증가 전망이다.",
+    "keyPoints": [
+      "친환경 선박 전환 수요 지속",
+      "LNG·암모니아 추진선 발주 증가",
+      "중국 조선소 점유율 50% 육박"
+    ],
+    "tags": [
+      "조선",
+      "발주",
+      "친환경",
+      "LNG",
+      "중국"
+    ]
+  },
+  {
+    "id": "know_020",
+    "sourceId": "source_011",
+    "segmentId": "segment_020",
+    "expertId": "expert_007",
+    "industry": "바이오",
+    "companyName": "삼성바이오로직스",
+    "topic": "글로벌 CMO 시장 동향",
+    "level": "basic",
+    "summary": "글로벌 바이오 CMO 시장은 연 10% 이상 성장 중이며 삼성바이오로직스가 선두 그룹이다.",
+    "keyPoints": [
+      "CDMO 시장 2030년 500억 달러 전망",
+      "삼성바이오로직스 글로벌 점유율 20%",
+      "4공장 가동으로 CAPA 60만 리터"
+    ],
+    "tags": [
+      "삼성바이오로직스",
+      "CMO",
+      "CDMO",
+      "시장",
+      "성장"
+    ]
+  },
+  {
+    "id": "know_021",
+    "sourceId": "source_011",
+    "segmentId": "segment_020",
+    "expertId": "expert_007",
+    "industry": "바이오",
+    "companyName": "",
+    "topic": "항체의약품 CDMO 수요",
+    "level": "advanced",
+    "summary": "항체의약품(ADC, 이중항체 등)의 파이프라인 증가로 고난도 CDMO 수요가 증가 중이다.",
+    "keyPoints": [
+      "ADC 시장 연 20% 성장",
+      "고역가 공정 기술 필요",
+      "일회용 배양기 사용 확대"
+    ],
+    "tags": [
+      "CDMO",
+      "항체",
+      "ADC",
+      "바이오의약품",
+      "공정"
+    ]
+  },
+  {
+    "id": "know_022",
+    "sourceId": "source_011",
+    "segmentId": "segment_020",
+    "expertId": "expert_007",
+    "industry": "바이오",
+    "companyName": "셀트리온",
+    "topic": "바이오시밀러 시장 전망",
+    "level": "intermediate",
+    "summary": "셀트리온은 유럽과 미국에서 바이오시밀러 포트폴리오를 확대 중이다.",
+    "keyPoints": [
+      "램시마(인플릭시맙) 유럽 1위",
+      "신규 바이오시밀러 5종 이상 개발 중",
+      "미국 시장 점유율 확대가 관건"
+    ],
+    "tags": [
+      "셀트리온",
+      "바이오시밀러",
+      "램시마",
+      "유럽",
+      "미국"
+    ]
+  },
+  {
+    "id": "know_023",
+    "sourceId": "source_011",
+    "segmentId": "segment_020",
+    "expertId": "expert_007",
+    "industry": "바이오",
+    "companyName": "삼성바이오로직스",
+    "topic": "4공장의 위상",
+    "level": "intermediate",
+    "summary": "삼성바이오로직스 4공장은 세계 최대 규모의 단일 바이오의약품 생산시설이다.",
+    "keyPoints": [
+      "CAPA 24만 리터(4개 공장 합산 60만 리터)",
+      "2025년 하반기 본격 가동",
+      "글로벌 빅파마와 장기 위탁 계약"
+    ],
+    "tags": [
+      "삼성바이오로직스",
+      "4공장",
+      "CAPA",
+      "위탁생산"
+    ]
+  },
+  {
+    "id": "know_024",
+    "sourceId": "source_004",
+    "segmentId": "segment_008",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "금리와 성장주 평가 관계",
+    "level": "basic",
+    "summary": "성장주는 금리 변동에 민감하다. 금리 하락은 성장주의 할인율을 낮춰 밸류에이션을 높인다.",
+    "keyPoints": [
+      "금리 하락 → 성장주 상승",
+      "고금리 지속 시 성장주 디레이팅",
+      "미국 10년물 금리 4% 아래면 성장주 랠리 기대"
+    ],
+    "tags": [
+      "금리",
+      "성장주",
+      "밸류에이션",
+      "할인율",
+      "매크로"
+    ]
+  },
+  {
+    "id": "know_025",
+    "sourceId": "source_004",
+    "segmentId": "segment_008",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "연준 금리 정책 2025년 전망",
+    "level": "intermediate",
+    "summary": "연준은 2025년 하반기 2회 금리 인하를 시사했다.",
+    "keyPoints": [
+      "7월·12월 인하 가능성",
+      "CPI 3% 미만 안정화 전제",
+      "대선 전 정치적 독립성 유지"
+    ],
+    "tags": [
+      "연준",
+      "금리",
+      "인하",
+      "CPI",
+      "FOMC"
+    ]
+  },
+  {
+    "id": "know_026",
+    "sourceId": "source_004",
+    "segmentId": "segment_008",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "금리 인하 수혜 업종",
+    "level": "basic",
+    "summary": "금리 인하 시 성장주(반도체, 2차전지, 바이오)와 부동산 리츠가 반기는 업종이다.",
+    "keyPoints": [
+      "반도체·2차전지: 자본 조달 비용 감소",
+      "리츠: 배당 매력 부각",
+      "은행주: 순이자마진 축소 우려"
+    ],
+    "tags": [
+      "금리",
+      "수혜",
+      "성장주",
+      "리츠",
+      "업종"
+    ]
+  },
+  {
+    "id": "know_027",
+    "sourceId": "source_004",
+    "segmentId": "segment_008",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "한국은행 금리와 코스피 관계",
+    "level": "intermediate",
+    "summary": "한국은행 금리 결정은 코스피에 직접적 영향을 미친다.",
+    "keyPoints": [
+      "기준금리 인하 시 외국인 자금 유입",
+      "금리 인하 사이클에서 코스피 평균 10% 상승",
+      "단, 환율 변동에 따른 제약 존재"
+    ],
+    "tags": [
+      "한은",
+      "금리",
+      "코스피",
+      "외국인",
+      "환율"
+    ]
+  },
+  {
+    "id": "know_028",
+    "sourceId": "source_004",
+    "segmentId": "segment_009",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "원달러 환율과 수출주 관계",
+    "level": "basic",
+    "summary": "원달러 환율 상승(원화 약세)은 수출 기업의 가격 경쟁력을 높인다.",
+    "keyPoints": [
+      "환율 10% 상승시 수출기업 영업이익 3~5% 개선",
+      "반도체·자동차·조선이 대표 수출주",
+      "과도한 원화 약세는 원자재 수입 기업에 부담"
+    ],
+    "tags": [
+      "환율",
+      "원달러",
+      "수출주",
+      "경쟁력",
+      "영업이익"
+    ]
+  },
+  {
+    "id": "know_029",
+    "sourceId": "source_004",
+    "segmentId": "segment_009",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "환율 변동성 확대 원인",
+    "level": "intermediate",
+    "summary": "2025년 주요국 통화정책 차별화와 지정학적 리스크가 환율 변동성을 키우고 있다.",
+    "keyPoints": [
+      "미국·일본·한국 금리차 확대",
+      "중동 지정학 리스크",
+      "엔캐리 트레이드 청산 가능성"
+    ],
+    "tags": [
+      "환율",
+      "변동성",
+      "금리차",
+      "지정학",
+      "리스크"
+    ]
+  },
+  {
+    "id": "know_030",
+    "sourceId": "source_004",
+    "segmentId": "segment_009",
+    "expertId": "expert_003",
+    "industry": "",
+    "companyName": "",
+    "topic": "환율 헷지 전략",
+    "level": "advanced",
+    "summary": "기관 투자자들은 환율 변동 리스크를 통화 스와프와 선물환으로 관리한다.",
+    "keyPoints": [
+      "통화 스와프: 장기 환율 리스크 관리",
+      "선물환: 단기 확정 거래에 활용",
+      "옵션 전략: 변동성 헷지"
+    ],
+    "tags": [
+      "환율",
+      "헷지",
+      "스와프",
+      "선물환",
+      "옵션"
+    ]
+  },
+  {
+    "id": "know_031",
+    "sourceId": "source_012",
+    "segmentId": "segment_021",
+    "expertId": "expert_008",
+    "industry": "AI",
+    "companyName": "NAVER",
+    "topic": "NAVER AI 전략",
+    "level": "intermediate",
+    "summary": "NAVER는 클로바X를 중심으로 검색·광고·커머스를 AI로 재편 중이다.",
+    "keyPoints": [
+      "클로바X: 한국어 특화 LLM",
+      "AI 검색 도입으로 광고 클릭률 개선",
+      "커머스 AI 추천으로 거래액 증가 기대"
+    ],
+    "tags": [
+      "NAVER",
+      "AI",
+      "클로바X",
+      "검색",
+      "광고",
+      "커머스"
+    ]
+  },
+  {
+    "id": "know_032",
+    "sourceId": "source_012",
+    "segmentId": "segment_021",
+    "expertId": "expert_008",
+    "industry": "AI",
+    "companyName": "",
+    "topic": "국내 AI 산업 현황",
+    "level": "basic",
+    "summary": "국내 AI 산업은 글로벌 대비 기술 격차가 있지만, 응용 서비스에서 경쟁력을 보인다.",
+    "keyPoints": [
+      "AI 반도체: 국내 팹리스 약진",
+      "AI 서비스: 네이버·카카오·KT 주도",
+      "AI 인프라: 데이터센터 투자 확대"
+    ],
+    "tags": [
+      "AI",
+      "국내",
+      "산업",
+      "반도체",
+      "서비스",
+      "투자"
+    ]
+  },
+  {
+    "id": "know_033",
+    "sourceId": "source_006",
+    "segmentId": "segment_012",
+    "expertId": "expert_005",
+    "industry": "",
+    "companyName": "삼성전자",
+    "topic": "삼성전자 주주환원 정책",
+    "level": "basic",
+    "summary": "삼성전자는 2024년부터 배당 확대와 자사주 소각을 통한 주주환원을 강화했다.",
+    "keyPoints": [
+      "연간 배당금 9.8조원(주당 1444원)",
+      "2025년 자사주 10조원 소각 예정",
+      "3년 연속 배당 성장률 10% 유지"
+    ],
+    "tags": [
+      "삼성전자",
+      "배당",
+      "자사주",
+      "주주환원",
+      "밸류업"
+    ]
+  },
+  {
+    "id": "know_034",
+    "sourceId": "source_006",
+    "segmentId": "segment_013",
+    "expertId": "expert_005",
+    "industry": "",
+    "companyName": "SK텔레콤",
+    "topic": "기업 밸류업 프로그램",
+    "level": "basic",
+    "summary": "정부의 기업 밸류업 프로그램은 배당 확대와 자사주 매입을 유도한다.",
+    "keyPoints": [
+      "배당 성향 50% 이상 목표",
+      "자사주 매입·소각 장려",
+      "코스피 디스카운트 해소 기대"
+    ],
+    "tags": [
+      "밸류업",
+      "배당",
+      "자사주",
+      "SK텔레콤",
+      "정부"
+    ]
+  },
+  {
+    "id": "know_035",
+    "sourceId": "source_013",
+    "segmentId": "segment_022",
+    "expertId": "expert_001",
+    "industry": "반도체",
+    "companyName": "삼성전자",
+    "topic": "삼성전자 1Q25 실적 분석",
+    "level": "intermediate",
+    "summary": "삼성전자 2025년 1분기 DS(반도체) 부문이 전체 실적을 견인했다.",
+    "keyPoints": [
+      "DS 부문 영업이익 6.5조(전체 77%)",
+      "HBM 매출 전분기 대비 2배 증가",
+      "메모리 가격 반등 사이클 진입 확인"
+    ],
+    "tags": [
+      "삼성전자",
+      "실적",
+      "DS",
+      "HBM",
+      "메모리",
+      "1분기"
+    ]
+  }
+]
