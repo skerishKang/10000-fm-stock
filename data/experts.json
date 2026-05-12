@@ -1,0 +1,167 @@
+[
+  {
+    "id": "expert_001",
+    "name": "김석민",
+    "displayName": "김석민 애널리스트",
+    "type": "analyst",
+    "organization": "한국증권",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "반도체 산업 12년차 애널리스트. 메모리와 파운드리 커버.",
+    "mainIndustries": [
+      "반도체"
+    ],
+    "mainCompanies": [
+      "삼성전자",
+      "SK하이닉스"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_002",
+    "name": "이에코",
+    "displayName": "이에코 연구원",
+    "type": "analyst",
+    "organization": "미래에셋증권",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "2차전지·친환경 에너지 담당 8년차 연구원.",
+    "mainIndustries": [
+      "2차전지",
+      "신재생에너지"
+    ],
+    "mainCompanies": [
+      "LG에너지솔루션",
+      "에코프로비엠",
+      "포스코퓨처엠"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_003",
+    "name": "박마켓",
+    "displayName": "박마켓",
+    "type": "broadcast_guest",
+    "organization": "",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "경제방송 15년차 출연자. 시황 및 매크로 분석 전문.",
+    "mainIndustries": [
+      "시황",
+      "매크로"
+    ],
+    "mainCompanies": [],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_004",
+    "name": "주식하는사람",
+    "displayName": "주식하는사람TV",
+    "type": "youtuber",
+    "organization": "",
+    "channelName": "주식하는사람TV",
+    "profileUrl": "",
+    "bio": "구독자 15만 명. 개인투자자 시점의 실전 분석 채널.",
+    "mainIndustries": [
+      "반도체",
+      "2차전지",
+      "AI"
+    ],
+    "mainCompanies": [
+      "삼성전자",
+      "SK하이닉스",
+      "NAVER"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_005",
+    "name": "최배당",
+    "displayName": "최배당",
+    "type": "investor",
+    "organization": "",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "배당주·가치투자 20년차 개인투자자. 장기 보유 전략.",
+    "mainIndustries": [
+      "배당주",
+      "유틸리티"
+    ],
+    "mainCompanies": [
+      "삼성전자",
+      "SK텔레콤",
+      "KT&G"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_006",
+    "name": "정애널",
+    "displayName": "정애널",
+    "type": "report_author",
+    "organization": "IBK투자증권",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "조선·기계·방산 담당 6년차. 신규 커버리지 발굴.",
+    "mainIndustries": [
+      "조선",
+      "방산",
+      "기계"
+    ],
+    "mainCompanies": [
+      "HD현대중공업",
+      "한화오션",
+      "삼성중공업"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_007",
+    "name": "바이오연구소",
+    "displayName": "바이오연구소",
+    "type": "organization",
+    "organization": "바이오연구소",
+    "channelName": "",
+    "profileUrl": "",
+    "bio": "헬스케어·바이오 전문 리서치 조직.",
+    "mainIndustries": [
+      "바이오",
+      "헬스케어"
+    ],
+    "mainCompanies": [
+      "삼성바이오로직스",
+      "셀트리온",
+      "알테오젠"
+    ],
+    "country": "KR",
+    "memo": ""
+  },
+  {
+    "id": "expert_008",
+    "name": "한류분석",
+    "displayName": "한류분석",
+    "type": "youtuber",
+    "organization": "",
+    "channelName": "한류분석 주식채널",
+    "profileUrl": "",
+    "bio": "AI·소프트웨어·엔터테인먼트 분석 유튜버.",
+    "mainIndustries": [
+      "AI",
+      "소프트웨어",
+      "엔터테인먼트"
+    ],
+    "mainCompanies": [
+      "NAVER",
+      "카카오",
+      "하이브"
+    ],
+    "country": "KR",
+    "memo": ""
+  }
+]

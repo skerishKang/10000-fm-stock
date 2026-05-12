@@ -1,0 +1,227 @@
+[
+  {
+    "id": "segment_001",
+    "sourceId": "source_001",
+    "startTime": 312,
+    "endTime": 428,
+    "page": null,
+    "title": "삼성전자 하반기 전망",
+    "summary": "메모리 가격 반등과 AI 서버 수요를 근거로 삼성전자 상승 가능성을 언급"
+  },
+  {
+    "id": "segment_002",
+    "sourceId": "source_001",
+    "startTime": 540,
+    "endTime": 695,
+    "page": null,
+    "title": "SK하이닉스 HBM 리더십",
+    "summary": "SK하이닉스의 HBM 기술 우위와 추가 수주 가능성 분석"
+  },
+  {
+    "id": "segment_003",
+    "sourceId": "source_001",
+    "startTime": 710,
+    "endTime": 830,
+    "page": null,
+    "title": "한미반도체 수혜 전망",
+    "summary": "HBM 수요 증가로 한미반도체의 TC 본더 장비 수혜 전망"
+  },
+  {
+    "id": "segment_004",
+    "sourceId": "source_002",
+    "startTime": 120,
+    "endTime": 280,
+    "page": null,
+    "title": "HBM3E 수요 분석",
+    "summary": "HBM3E 12단 제품 양산 일정과 고객사 수요 전망"
+  },
+  {
+    "id": "segment_005",
+    "sourceId": "source_002",
+    "startTime": 310,
+    "endTime": 450,
+    "page": null,
+    "title": "범용 DRAM 전망",
+    "summary": "DDR5 범용 DRAM 가격 반등 시점과 재고 조정 현황"
+  },
+  {
+    "id": "segment_006",
+    "sourceId": "source_003",
+    "startTime": 200,
+    "endTime": 380,
+    "page": null,
+    "title": "LG에너지솔루션 실적 진단",
+    "summary": "북미 공장 가동률 상승과 GM 합작법인 효과로 매출 성장 전망"
+  },
+  {
+    "id": "segment_007",
+    "sourceId": "source_003",
+    "startTime": 410,
+    "endTime": 560,
+    "page": null,
+    "title": "에코프로비엠 양극재 동향",
+    "summary": "양극재 가격 하락세 진정과 하반기 수요 회복 신호"
+  },
+  {
+    "id": "segment_008",
+    "sourceId": "source_004",
+    "startTime": 80,
+    "endTime": 230,
+    "page": null,
+    "title": "FOMC 금리 전망",
+    "summary": "6월 FOMC 동결 전망과 하반기 금리 인하 시점 분석"
+  },
+  {
+    "id": "segment_009",
+    "sourceId": "source_004",
+    "startTime": 260,
+    "endTime": 410,
+    "page": null,
+    "title": "환율과 수출주 영향",
+    "summary": "원달러 환율 상승이 수출주에 미치는 영향과 대응 전략"
+  },
+  {
+    "id": "segment_010",
+    "sourceId": "source_005",
+    "startTime": 90,
+    "endTime": 230,
+    "page": null,
+    "title": "HD현대중공업 수주 모멘텀",
+    "summary": "LNG선 발주 증가와 HD현대중공업의 수주잔고 확대 전망"
+  },
+  {
+    "id": "segment_011",
+    "sourceId": "source_005",
+    "startTime": 250,
+    "endTime": 380,
+    "page": null,
+    "title": "한화오션 경쟁력 분석",
+    "summary": "한화오션의 해군 함정 사업과 상선 수주 전망"
+  },
+  {
+    "id": "segment_012",
+    "sourceId": "source_006",
+    "startTime": 150,
+    "endTime": 290,
+    "page": null,
+    "title": "삼성전자 배당 매력",
+    "summary": "삼성전자 배당수익률과 자사주 소각 효과 분석"
+  },
+  {
+    "id": "segment_013",
+    "sourceId": "source_006",
+    "startTime": 320,
+    "endTime": 470,
+    "page": null,
+    "title": "SK텔레콤 밸류업 수혜",
+    "summary": "기업 밸류업 프로그램의 SK텔레콤 배당 확대 효과"
+  },
+  {
+    "id": "segment_014",
+    "sourceId": "source_007",
+    "startTime": 100,
+    "endTime": 300,
+    "page": null,
+    "title": "AI 국내 수혜주",
+    "summary": "AI 반도체 수요 확대 속 국내 수혜주로 솔루엔 등 팹리스 기업 분석"
+  },
+  {
+    "id": "segment_015",
+    "sourceId": "source_008",
+    "startTime": null,
+    "endTime": null,
+    "page": 1,
+    "title": "메모리 업황 전망",
+    "summary": "2025년 하반기 DRAM/NAND 가격 반등 전망과 실적 추정"
+  },
+  {
+    "id": "segment_016",
+    "sourceId": "source_008",
+    "startTime": null,
+    "endTime": null,
+    "page": 3,
+    "title": "HBM 경쟁력 분석",
+    "summary": "삼성전자 HBM3E 공급 시장 진입과 점유율 전망"
+  },
+  {
+    "id": "segment_017",
+    "sourceId": "source_009",
+    "startTime": null,
+    "endTime": null,
+    "page": 2,
+    "title": "양극재 수급 분석",
+    "summary": "2025년 글로벌 양극재 수요 120만톤 전망과 가격 추이"
+  },
+  {
+    "id": "segment_018",
+    "sourceId": "source_010",
+    "startTime": null,
+    "endTime": null,
+    "page": 1,
+    "title": "LNG선 수주 전망",
+    "summary": "카타르 프로젝트 등 LNG선 발주 확대와 HD현대중공업 수주 전망"
+  },
+  {
+    "id": "segment_019",
+    "sourceId": "source_010",
+    "startTime": null,
+    "endTime": null,
+    "page": 4,
+    "title": "실적 턴어라운드",
+    "summary": "2025년 흑자 전환과 2026년 본격 실적 개선 전망"
+  },
+  {
+    "id": "segment_020",
+    "sourceId": "source_011",
+    "startTime": null,
+    "endTime": null,
+    "page": 2,
+    "title": "CMO 수주 트렌드",
+    "summary": "글로벌 바이오 CMO 시장 성장과 삼성바이오로직스의 수주 확대 전략"
+  },
+  {
+    "id": "segment_021",
+    "sourceId": "source_012",
+    "startTime": null,
+    "endTime": null,
+    "page": 3,
+    "title": "AI 클로바X 전략",
+    "summary": "NAVER의 생성형 AI 클로바X 출시와 광고·커머스 연계 전략"
+  },
+  {
+    "id": "segment_022",
+    "sourceId": "source_013",
+    "startTime": null,
+    "endTime": null,
+    "page": null,
+    "title": "1분기 실적 요약",
+    "summary": "삼성전자 2025년 1분기 매출 75조, 영업이익 8.5조 기록"
+  },
+  {
+    "id": "segment_023",
+    "sourceId": "source_014",
+    "startTime": null,
+    "endTime": null,
+    "page": null,
+    "title": "중장기 전략 발표",
+    "summary": "LG에너지솔루션 2028년 매출 50조 목표와 신규 CAPEX 계획"
+  },
+  {
+    "id": "segment_024",
+    "sourceId": "source_001",
+    "startTime": 850,
+    "endTime": 960,
+    "page": null,
+    "title": "반도체 장비주 전망",
+    "summary": "국내 반도체 장비 기업들의 수주 확대 사이클 진입 전망"
+  },
+  {
+    "id": "segment_025",
+    "sourceId": "source_007",
+    "startTime": 320,
+    "endTime": 480,
+    "page": null,
+    "title": "솔루엔 성장 전망",
+    "summary": "AI 반도체 수요 확대로 국내 팹리스 기업 솔루엔의 수혜 전망"
+  }
+]
