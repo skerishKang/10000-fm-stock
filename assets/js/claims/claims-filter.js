@@ -12,45 +12,50 @@ var callback = null;
 
 function initClaimFilters(data, onFilterChange) {
   callback = onFilterChange;
-  if (typeof window.FMStock.ui.claims.list.renderClaimFilters === "function") {
-    window.FMStock.ui.claims.list.renderClaimFilters(data);
-  }
-  ["filter-speaker","filter-ticker","filter-direction","filter-verdict","filter-date-from","filter-date-to"].forEach(function(id) {
+  ['cf-search', 'cf-speaker', 'cf-ticker', 'cf-industry', 'cf-direction', 'cf-verdict'].forEach(function (id) {
     var el = document.getElementById(id);
-    if (el) el.addEventListener("change", updateFilters);
+    if (!el) return;
+    var eventName = el.tagName === 'INPUT' ? 'input' : 'change';
+    el.addEventListener(eventName, updateFilters);
   });
   updateFilters();
 }
 
 function updateFilters() {
   activeFilters = {};
-  var g = function(id) { return document.getElementById(id); };
-  var s = g("filter-speaker"); if (s && s.value) activeFilters.speaker = s.value;
-  var t = g("filter-ticker"); if (t && t.value) activeFilters.ticker = t.value;
-  var d = g("filter-direction"); if (d && d.value) activeFilters.direction = d.value;
-  var v = g("filter-verdict"); if (v && v.value) activeFilters.verdict = v.value;
-  var f = g("filter-date-from"); if (f && f.value) activeFilters.dateFrom = f.value;
-  var to = g("filter-date-to"); if (to && to.value) activeFilters.dateTo = to.value;
+  var g = function (id) { return document.getElementById(id); };
+  var search = g('cf-search'); if (search && search.value) activeFilters.search = search.value.trim();
+  var speaker = g('cf-speaker'); if (speaker && speaker.value) activeFilters.speaker = speaker.value;
+  var ticker = g('cf-ticker'); if (ticker && ticker.value) activeFilters.ticker = ticker.value;
+  var industry = g('cf-industry'); if (industry && industry.value) activeFilters.industry = industry.value;
+  var direction = g('cf-direction'); if (direction && direction.value) activeFilters.direction = direction.value;
+  var verdict = g('cf-verdict'); if (verdict && verdict.value) activeFilters.verdict = verdict.value;
   if (callback) callback(activeFilters);
 }
 
 function getActiveFilters() {
   var copy = {};
-  var keys = Object.keys(activeFilters);
-  for (var i = 0; i < keys.length; i++) { copy[keys[i]] = activeFilters[keys[i]]; }
+  Object.keys(activeFilters).forEach(function (key) {
+    copy[key] = activeFilters[key];
+  });
   return copy;
 }
 
 function resetFilters() {
   activeFilters = {};
-  document.querySelectorAll("#claims-filter select,#claims-filter input").forEach(function(el) { el.value = ""; });
+  ['cf-search', 'cf-speaker', 'cf-ticker', 'cf-industry', 'cf-direction', 'cf-verdict'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   if (callback) callback(activeFilters);
 }
 
 function renderFilterSummary(filters) {
-  var keys = Object.keys(filters).filter(function(k) { return filters[k]; });
-  if (!keys.length) return "<span class=\"filter-summary\">No filters active</span>";
-  return "<span class=\"filter-summary\">Active filters: " + keys.map(function(k) { return k + ": " + filters[k]; }).join(", ") + "</span>";
+  var keys = Object.keys(filters || {}).filter(function (key) { return filters[key]; });
+  if (!keys.length) return '<span class="filter-summary">활성 필터 없음</span>';
+  return '<span class="filter-summary">활성 필터: ' + keys.map(function (key) {
+    return key + ': ' + filters[key];
+  }).join(', ') + '</span>';
 }
 
 window.FMStock.ui.claims.filter = {

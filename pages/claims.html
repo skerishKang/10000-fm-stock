@@ -28,15 +28,15 @@
     </div>
   </header>
   <main class="app-main">
-      <section class="claims-header">
+    <section class="claims-header">
       <h2>발언 목록</h2>
       <div class="claims-filters">
         <input type="text" id="cf-search" placeholder="검색">
         <select id="cf-speaker"><option value="">발언자 전체</option></select>
         <select id="cf-ticker"><option value="">종목 전체</option></select>
         <select id="cf-industry"><option value="">산업 전체</option></select>
-        <select id="cf-direction"><option value="">방향성 전체</option><option value="bull">상승</option><option value="bear">하락</option></select>
-        <select id="cf-verdict"><option value="">판정 전체</option><option value="correct">적중</option><option value="partial">부분</option><option value="wrong">실패</option><option value="pending">대기</option></select>
+        <select id="cf-direction"><option value="">방향성 전체</option><option value="bullish">상승</option><option value="bearish">하락</option></select>
+        <select id="cf-verdict"><option value="">판정 전체</option><option value="hit">적중</option><option value="partial_hit">부분</option><option value="miss">실패</option><option value="pending">대기</option></select>
       </div>
     </section>
     <section class="claims-layout">
@@ -69,5 +69,5 @@
   <script src="../assets/js/claims/claims-main.js"></script>
   <script src="../assets/js/claims/claims-metrics.js"></script>
   <script src="../assets/js/app/app-main.js"></script>
-
+</body>
 </html>
