@@ -63,6 +63,11 @@
           <form id="source-candidate-form">
             <div class="form-group"><label class="form-label">source type</label><select class="form-select" name="type"><option value="youtube_video">youtube_video</option><option value="youtube_channel">youtube_channel</option><option value="broker_research">broker_research</option><option value="broker_report">broker_report</option><option value="report_aggregator">report_aggregator</option><option value="article">article</option><option value="broadcast">broadcast</option><option value="other">other</option></select></div>
             <div class="form-group"><label class="form-label">URL</label><input class="form-input" name="url" type="url" placeholder="https://..."></div>
+            <div class="form-group"><label class="form-label">local privatePath</label><input class="form-input" name="privatePath" type="text" placeholder="10000-fm-stock-local-sources/reports/2026/05/...pdf"></div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">page/section</label><input class="form-input" name="pageOrSection" type="text" placeholder="p.12 또는 반도체 업황 섹션"></div>
+              <div class="form-group"><label class="form-label">reference memo</label><input class="form-input" name="referenceMemo" type="text" placeholder="원문 저장 금지, 짧은 위치 메모만"></div>
+            </div>
             <div class="form-group"><label class="form-label">title/name</label><input class="form-input" name="title" type="text"></div>
             <div class="form-group"><label class="form-label">publisher/channel/brokerage</label><input class="form-input" name="publisher" type="text"></div>
             <div class="form-group"><label class="form-label">speaker/author/analyst</label><input class="form-input" name="speakerOrAuthor" type="text"></div>
@@ -116,7 +121,7 @@
   <script src="../assets/js/app/app-state.js?v=20260513-0068-1"></script>
   <script src="../assets/js/app/app-router.js?v=20260513-0068-1"></script>
   <script src="../assets/js/source-hub/source-hub-list.js?v=20260513-0063-1"></script>
-  <script src="../assets/js/source-hub/source-hub-form.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/source-hub/source-hub-form.js?v=20260513-0073-1"></script>
   <script src="../assets/js/source-hub/source-hub-prompts.js?v=20260513-0063-1"></script>
   <script src="../assets/js/source-hub/source-hub-main.js?v=20260513-0063-1"></script>
   <script src="../assets/js/app/app-main.js?v=20260513-0063-1"></script>
