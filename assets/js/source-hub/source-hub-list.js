@@ -68,7 +68,7 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
       '    <p class="text-small text-muted">' + escapeHtml(typeLabel(item)) + '</p>',
       '    <p>' + escapeHtml(item.notes || '후보 출처입니다. 수동 검토 후 구조화 데이터로 승격하세요.') + '</p>',
       renderTags(item.tags),
-      '    <a class="btn btn-secondary btn-sm" href="' + escapeAttr(item.url || '#') + '" target="_blank" rel="noopener noreferrer">외부 링크 열기</a>',
+      '    <a class="btn btn-secondary btn-sm" href="' + escapeAttr(safeExternalUrl(item.url)) + '" target="_blank" rel="noopener noreferrer">외부 링크 열기</a>',
       '  </div>',
       '</article>'
     ].join('');
@@ -90,6 +90,18 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
     if (priority === 'high') return 'badge-hit';
     if (priority === 'medium') return 'badge-pending';
     return 'badge-neutral';
+  }
+
+  function safeExternalUrl(value) {
+    try {
+      var url = new URL(String(value || ''), window.location.href);
+      if (url.protocol === 'http:' || url.protocol === 'https:') {
+        return url.href;
+      }
+    } catch (err) {
+      // Fall through to safe fallback.
+    }
+    return '#';
   }
 
   function escapeHtml(value) {
