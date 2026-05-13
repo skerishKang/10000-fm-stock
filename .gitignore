@@ -1,0 +1,32 @@
+# Local originals and downloaded source files must not be committed.
+# The app stores source references and extracted structured data, not redistributed originals.
+
+# Report originals
+*.pdf
+*.doc
+*.docx
+*.hwp
+*.hwpx
+*.ppt
+*.pptx
+
+# Local source archives / raw copied text
+local-sources/
+research-local-sources/
+*-local-sources/
+research-workspace/**/raw/
+research-workspace/**/originals/
+research-workspace/**/downloads/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Keep workspace templates and notes trackable
+!research-workspace/**/README.md
+!research-workspace/**/*.template.csv
+!research-workspace/**/*.template.md
+!research-workspace/**/*.sample.json
+!research-workspace/**/.gitkeep

@@ -1,0 +1,2 @@
+analystId,name,firmId,firmName,sectors,coverageCompanies,priority,memo
+analyst-001,Sample Analyst,firm-001,Sample Securities,semiconductor,삼성전자;SK하이닉스,high,Replace with real analyst candidate.

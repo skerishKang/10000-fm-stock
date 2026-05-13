@@ -1,0 +1,2 @@
+videoId,expertId,channelId,videoUrl,title,publishedAt,startTime,endTime,relatedCompanies,relatedIndustries,status,memo
+video-001,expert-001,channel-001,https://www.youtube.com/watch?v=example,Sample video title,,00:00:00,00:00:00,삼성전자,반도체,candidate,Replace with selected video candidate.

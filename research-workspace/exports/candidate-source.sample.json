@@ -1,0 +1,17 @@
+{
+  "id": "candidate-source-sample-001",
+  "type": "broker_report",
+  "url": "https://example.com/report",
+  "title": "Sample report title",
+  "publisher": "Sample Securities",
+  "speakerOrAuthor": "Sample Analyst",
+  "publishedAt": null,
+  "relatedTickers": [],
+  "relatedCompanies": [],
+  "relatedIndustries": [],
+  "status": "candidate",
+  "official": false,
+  "claimCandidateMemo": "Not reviewed yet.",
+  "knowledgeCandidateMemo": "Not reviewed yet.",
+  "reviewWarnings": []
+}

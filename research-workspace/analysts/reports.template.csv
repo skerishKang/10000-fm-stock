@@ -1,0 +1,2 @@
+reportId,analystId,firmId,reportUrl,provider,title,publishedAt,reportType,companies,industries,pageOrSection,status,memo
+report-001,analyst-001,firm-001,https://example.com/report,Sample Aggregator,Sample report title,,company,삼성전자,반도체,p.3~5,candidate,Replace with selected report candidate.

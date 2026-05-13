@@ -1,0 +1,2 @@
+firmId,firmName,researchUrl,accessType,loginRequired,reportTypes,priority,memo
+firm-001,Sample Securities,https://example.com/research,public,unknown,company;industry;strategy,high,Replace with verified research-center URL.
