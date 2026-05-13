@@ -1,0 +1,34 @@
+[
+  {
+    "id": "candidate-source-YYYYMMDD-slug",
+    "type": "youtube_video",
+    "url": "https://example.com/source",
+    "privatePath": "",
+    "pageOrSection": "",
+    "referenceMemo": "Use URL plus start/end time for video, or URL/privatePath plus page/section for reports.",
+    "title": "Candidate source title",
+    "publisher": "Publisher, channel, brokerage, or organization",
+    "speakerOrAuthor": "Speaker, analyst, author, or unknown",
+    "publishedAt": null,
+    "startTime": null,
+    "endTime": null,
+    "relatedTickers": [],
+    "relatedCompanies": [],
+    "relatedIndustries": [],
+    "status": "candidate",
+    "claimCandidateMemo": "Short paraphrased memo only. Do not paste full transcript or report text.",
+    "knowledgeCandidateMemo": "Short educational memo only. Do not paste source-original payload.",
+    "reviewWarnings": [],
+    "promotionReview": {
+      "reviewedSource": false,
+      "segmentReady": false,
+      "claimCandidateReady": false,
+      "knowledgeNoteReady": false,
+      "reviewer": "",
+      "reviewedAt": null,
+      "decision": "keep_candidate"
+    },
+    "createdBy": "local_operator",
+    "official": false
+  }
+]
