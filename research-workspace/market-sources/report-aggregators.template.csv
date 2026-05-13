@@ -1,0 +1,2 @@
+sourceId,name,url,sourceType,accessType,loginRequired,priority,memo
+aggregator-001,Sample Report Aggregator,https://example.com,report_aggregator,public,unknown,high,Replace with verified report aggregator URL.
