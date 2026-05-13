@@ -62,9 +62,35 @@ Then open:
 http://localhost:8000/
 ```
 
+## Operator workflow
+
+Use this flow for manual curation:
+
+```text
+SourceHub candidate input
+-> research workspace export template
+-> promotion checklist review
+-> official data edit
+-> local validator
+-> PR review
+```
+
+Relevant files:
+
+- SourceHub page: `pages/source-hub.html`
+- SourceHub candidate sample: `data/candidate-sources.sample.json`
+- Candidate source export template: `research-workspace/exports/candidate-sources.template.json`
+- Claim candidate export template: `research-workspace/exports/claim-candidates.template.json`
+- Knowledge note candidate export template: `research-workspace/exports/knowledge-note-candidates.template.json`
+- Promotion checklist: `docs/promotion-checklist.md`
+- Data sourcing strategy: `docs/mvp-data-sourcing-strategy.md`
+- Local validator: `scripts/validate-data.js`
+
+Candidate records in the research workspace must remain `status: "candidate"` and `official: false` until human review promotes them into official `data/*.json` files.
+
 ## Data validation
 
-Run the local JSON contract validator before and after changing any data files under `data/`:
+Run the local JSON contract validator before and after changing any data files under `data/` or JSON templates under `research-workspace/exports/`:
 
 ```bash
 node scripts/validate-data.js
@@ -79,6 +105,7 @@ The validator checks static MVP data contracts including:
 - knowledge note references
 - key enum values
 - candidate source `status: "candidate"` and `official: false`
+- research workspace JSON template baseline rules
 
 Expected successful output ends with:
 
