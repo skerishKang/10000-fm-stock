@@ -32,17 +32,18 @@ function getExpertName(expertId, data) {
 
 function renderClaimSummary(claim, data) {
   var expertName = getExpertName(claim.expertId, data);
+  var directionClass = safeClassToken(claim.direction);
   var h = "<div class=\"detail-section claim-summary\">";
-  h += "<h2>" + (claim.companyName || claim.ticker || "Claim Detail") + "</h2>";
+  h += "<h2>" + escapeHtml(claim.companyName || claim.ticker || "Claim Detail") + "</h2>";
   h += "<div class=\"meta\">";
-  h += "<span class=\"speaker\">" + expertName + "</span>";
-  h += "<span class=\"ticker\">" + (claim.ticker || "-") + "</span>";
-  h += "<span class=\"industry\">" + (claim.industry || "-") + "</span>";
-  h += "<span class=\"direction " + (claim.direction || "").toLowerCase() + "\">" + (claim.direction || "-") + "</span>";
-  h += "<span class=\"date\">" + (claim.baseDate || "") + "</span></div>";
-  h += "<blockquote class=\"claim-text\">" + (claim.claimText || "") + "</blockquote>";
+  h += "<span class=\"speaker\">" + escapeHtml(expertName) + "</span>";
+  h += "<span class=\"ticker\">" + escapeHtml(claim.ticker || "-") + "</span>";
+  h += "<span class=\"industry\">" + escapeHtml(claim.industry || "-") + "</span>";
+  h += "<span class=\"direction " + directionClass + "\">" + escapeHtml(claim.direction || "-") + "</span>";
+  h += "<span class=\"date\">" + escapeHtml(claim.baseDate || "") + "</span></div>";
+  h += "<blockquote class=\"claim-text\">" + escapeHtml(claim.claimText || "") + "</blockquote>";
   if (claim.targetPrice) {
-    h += "<p class=\"target-info\">Target: " + claim.targetPrice + " by " + (claim.targetDate || "N/A") + " (Base: " + (claim.basePrice || "N/A") + ")</p>";
+    h += "<p class=\"target-info\">Target: " + escapeHtml(claim.targetPrice) + " by " + escapeHtml(claim.targetDate || "N/A") + " (Base: " + escapeHtml(claim.basePrice || "N/A") + ")</p>";
   }
   h += "</div>";
   return h;
@@ -53,8 +54,8 @@ function renderSourceInfo(claim, sources, segments) {
   if (!src) return "<div class=\"detail-section source-info\"><h3>Source</h3><p>No source linked</p></div>";
   var segs = segments.filter(function(s) { return s.claimId === claim.id; });
   var h = "<div class=\"detail-section source-info\">";
-  h += "<h3>Source: " + (src.title || src.name || "Untitled") + "</h3>";
-  h += "<p class=\"source-type\">" + (src.type || "-") + " -- " + (src.date || "") + "</p>";
+  h += "<h3>Source: " + escapeHtml(src.title || src.name || "Untitled") + "</h3>";
+  h += "<p class=\"source-type\">" + escapeHtml(src.type || "-") + " -- " + escapeHtml(src.date || "") + "</p>";
   if (segs.length) {
     h += "<ul>";
     for (var i = 0; i < segs.length; i++) { h += "<li>" + renderYoutubeLink(src, segs[i]) + "</li>"; }
@@ -70,7 +71,7 @@ function renderEvidence(claim) {
     return "<div class=\"detail-section evidence\"><h3>Evidence</h3><p>No evidence recorded.</p></div>";
   }
   var content = Array.isArray(evidence) ? evidence.join("; ") : evidence;
-  return "<div class=\"detail-section evidence\"><h3>Evidence " + String.fromCharCode(38) + " Logic</h3><p>" + content + "</p></div>";
+  return "<div class=\"detail-section evidence\"><h3>Evidence " + String.fromCharCode(38) + " Logic</h3><p>" + escapeHtml(content) + "</p></div>";
 }
 
 function renderEvaluationResult(claim, evaluations) {
@@ -80,14 +81,14 @@ function renderEvaluationResult(claim, evaluations) {
   var rows = "";
   for (var i = 0; i < evals.length; i++) {
     var e = evals[i];
-    var resultClass = (e.result || "").toLowerCase();
+    var resultClass = safeClassToken(e.result);
     rows += "<tr>";
-    rows += "<td>" + (e.evaluatedAt || "-") + "</td>";
-    rows += "<td class=\"verdict-" + resultClass + "\">" + (e.result || "-") + "</td>";
-    rows += "<td>" + (e.evaluatedPrice != null ? e.evaluatedPrice.toLocaleString() : "-") + "</td>";
-    rows += "<td>" + (e.returnRate != null ? e.returnRate.toFixed(2) + "%" : "-") + "</td>";
-    rows += "<td>" + (e.alpha != null ? e.alpha.toFixed(2) + "%" : "-") + "</td>";
-    rows += "<td>" + (e.benchmark || "-") + " " + (e.benchmarkReturn != null ? "(" + e.benchmarkReturn.toFixed(2) + "%)" : "") + "</td>";
+    rows += "<td>" + escapeHtml(e.evaluatedAt || "-") + "</td>";
+    rows += "<td class=\"verdict-" + resultClass + "\">" + escapeHtml(e.result || "-") + "</td>";
+    rows += "<td>" + escapeHtml(e.evaluatedPrice != null ? e.evaluatedPrice.toLocaleString() : "-") + "</td>";
+    rows += "<td>" + escapeHtml(e.returnRate != null ? e.returnRate.toFixed(2) + "%" : "-") + "</td>";
+    rows += "<td>" + escapeHtml(e.alpha != null ? e.alpha.toFixed(2) + "%" : "-") + "</td>";
+    rows += "<td>" + escapeHtml(e.benchmark || "-") + " " + escapeHtml(e.benchmarkReturn != null ? "(" + e.benchmarkReturn.toFixed(2) + "%)" : "") + "</td>";
     rows += "</tr>";
   }
 
@@ -97,7 +98,7 @@ function renderEvaluationResult(claim, evaluations) {
   h += "</tr></thead>";
   h += "<tbody>" + rows + "</tbody></table>";
   if (evals[0].memo) {
-    h += "<p class=\"eval-memo\">" + evals[0].memo + "</p>";
+    h += "<p class=\"eval-memo\">" + escapeHtml(evals[0].memo) + "</p>";
   }
   h += "</div>";
   return h;
@@ -106,19 +107,33 @@ function renderEvaluationResult(claim, evaluations) {
 function renderConnectedKnowledge(claim, knowledgeNotes) {
   var notes = (knowledgeNotes || []).filter(function(n) { return n.claimId === claim.id; });
   if (!notes.length) return "";
-  var h = "<div class=\"detail-section knowledge\"><h3>Connected Knowledge Notes (" + notes.length + ")</h3><ul>";
+  var h = "<div class=\"detail-section knowledge\"><h3>Connected Knowledge Notes (" + escapeHtml(notes.length) + ")</h3><ul>";
   for (var i = 0; i < notes.length; i++) {
-    h += '<li><a href="knowledge.html?id='+notes[i].id+'">'+(notes[i].title||'Untitled')+'</a></li>';
+    h += '<li><a href="knowledge.html?id=' + escapeAttr(notes[i].id || '') + '">' + escapeHtml(notes[i].title || 'Untitled') + '</a></li>';
   }
   h += "</ul></div>";
   return h;
 }
 
 function renderYoutubeLink(source, segment) {
-  if (!source || source.type !== "youtube") return "<span>" + (segment.start || "") + " - " + (segment.end || "") + "</span>";
+  if (!source || source.type !== "youtube") return "<span>" + escapeHtml(segment.start || "") + " - " + escapeHtml(segment.end || "") + "</span>";
   var start = segment.startTime || segment.start || 0;
-  var url = "https://www.youtube.com/watch?v=" + (source.sourceId || source.url) + String.fromCharCode(38) + "t=" + start + "s";
-  return "<a href=\"" + url + "\" target=\"_blank\">Watch segment " + start + "s - " + (segment.endTime || segment.end || "") + "s</a>";
+  var url = "https://www.youtube.com/watch?v=" + encodeURIComponent(source.sourceId || source.url || '') + String.fromCharCode(38) + "t=" + encodeURIComponent(start) + "s";
+  return "<a href=\"" + escapeAttr(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Watch segment " + escapeHtml(start) + "s - " + escapeHtml(segment.endTime || segment.end || "") + "s</a>";
+}
+
+function safeClassToken(value) {
+  return String(value == null ? '' : value).toLowerCase().replace(/[^a-z0-9_-]/g, '');
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, '&#096;');
+}
+
+function escapeHtml(text) {
+  return String(text == null ? '' : text).replace(/[&<>\"']/g, function (ch) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
+  });
 }
 
 window.FMStock.ui.claims.detail = {
