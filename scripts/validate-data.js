@@ -15,7 +15,6 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
-const EXPORTS_DIR = path.join(ROOT, 'research-workspace', 'exports');
 
 const DATASETS = {
   experts: 'experts.json',
@@ -87,6 +86,7 @@ function main() {
   validateSegments(data.segments, sourceIds);
   validateClaims(data.claims, expertIds, sourceIds, segmentIds);
   validateEvaluations(data.evaluations, claimIds);
+  validateClaimEvaluationConsistency(data.claims, data.evaluations);
   validateKnowledgeNotes(data.knowledgeNotes, expertIds, sourceIds, segmentIds);
   validateSourceLinks(data.sourceLinks);
   validateCandidateSources(data.candidateSources);
@@ -245,6 +245,42 @@ function validateEvaluations(evaluations, claimIds) {
     numberField('evaluations', evaluation, 'alpha');
     optionalNumberField('evaluations', evaluation, 'maxPriceDuringPeriod');
     optionalNumberField('evaluations', evaluation, 'minPriceDuringPeriod');
+  });
+}
+
+function validateClaimEvaluationConsistency(claims, evaluations) {
+  const claimStatusById = new Map();
+  claims.forEach((claim) => {
+    if (nonEmptyString(claim.id)) {
+      claimStatusById.set(claim.id, claim.status);
+    }
+  });
+
+  const evaluationCountByClaimId = new Map();
+  evaluations.forEach((evaluation) => {
+    if (!nonEmptyString(evaluation.claimId)) return;
+    evaluationCountByClaimId.set(
+      evaluation.claimId,
+      (evaluationCountByClaimId.get(evaluation.claimId) || 0) + 1
+    );
+  });
+
+  claims.forEach((claim) => {
+    if (!nonEmptyString(claim.id)) return;
+    const evaluationCount = evaluationCountByClaimId.get(claim.id) || 0;
+
+    if (claim.status === 'evaluated' && evaluationCount === 0) {
+      fail('claims', claim.id, 'status is evaluated but no evaluation record references this claim');
+    }
+  });
+
+  evaluations.forEach((evaluation) => {
+    if (!nonEmptyString(evaluation.claimId)) return;
+    const claimStatus = claimStatusById.get(evaluation.claimId);
+
+    if (claimStatus && claimStatus !== 'evaluated') {
+      warn('evaluations', evaluation.id || '(unknown)', `references claim ${evaluation.claimId} with non-evaluated status: ${claimStatus}`);
+    }
   });
 }
 
