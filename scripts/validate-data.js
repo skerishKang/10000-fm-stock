@@ -251,9 +251,13 @@ function validateEvaluations(evaluations, claimIds) {
 
 function validateClaimEvaluationConsistency(claims, evaluations) {
   const claimStatusById = new Map();
+  const claimBaseDateById = new Map();
   claims.forEach((claim) => {
     if (nonEmptyString(claim.id)) {
       claimStatusById.set(claim.id, claim.status);
+    }
+    if (nonEmptyString(claim.id) && isDateOnlyString(claim.baseDate)) {
+      claimBaseDateById.set(claim.id, claim.baseDate);
     }
   });
 
@@ -292,6 +296,14 @@ function validateClaimEvaluationConsistency(claims, evaluations) {
 
     if (claimStatus && claimStatus !== 'evaluated' && claimStatus !== 'invalid') {
       warn('evaluations', evaluation.id || '(unknown)', `references claim ${evaluation.claimId} with non-evaluated status: ${claimStatus}`);
+    }
+
+    // Ensure evaluatedAt is not before referenced claim's baseDate
+    const claimBaseDate = claimBaseDateById.get(evaluation.claimId);
+    if (claimBaseDate && isDateOnlyString(evaluation.evaluatedAt)) {
+      if (String(evaluation.evaluatedAt) < String(claimBaseDate)) {
+        fail('evaluations', evaluation.id || '(unknown)', `evaluatedAt must be greater than or equal to referenced claim baseDate (${claimBaseDate})`);
+      }
     }
   });
 }
