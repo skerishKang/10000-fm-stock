@@ -64,15 +64,30 @@ The repository must not store or redistribute:
 - API keys
 - browser-side live API credentials
 
-Originals and raw working material must stay outside the repository, for example:
+Originals and raw working material must stay outside the repository.
+
+Recommended Windows/WSL local layout:
 
 ```text
-../10000-fm-stock-local-sources/
-  reports/
-  expert-sources/
-    transcripts/
-  analysis/
+/mnt/g/Ddrive/BatangD/task/workdiary/
+├── 10000-fm-stock/
+└── 10000-fm-stock-local-sources/
+    ├── reports/
+    │   └── 2026/
+    │       └── 05/
+    ├── expert-sources/
+    │   └── transcripts/
+    └── analysis/
 ```
+
+Equivalent Windows paths:
+
+```text
+G:\Ddrive\BatangD\task\workdiary\10000-fm-stock\
+G:\Ddrive\BatangD\task\workdiary\10000-fm-stock-local-sources\
+```
+
+The local originals folder must be a sibling of the Git repository, not a child folder inside it.
 
 The repository-side `research-workspace/` is only for templates, references, short notes, candidate records, and structured outputs.
 
