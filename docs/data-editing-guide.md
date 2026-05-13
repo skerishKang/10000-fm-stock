@@ -132,7 +132,7 @@ Check:
 - Each claim has at most one authoritative evaluation record.
 - Claim status and evaluation status are consistent.
 - `evaluatedAt` uses `YYYY-MM-DD`.
-- `evaluatedAt` should not be earlier than the referenced claim's `baseDate`.
+- `evaluatedAt` must be greater than or equal to the referenced claim's `baseDate`. The local validator (`node scripts/validate-data.js`) enforces this rule: evaluation records must not predate the original statement or base date. If `evaluatedAt` is earlier than `baseDate`, fix the evaluation date or the claim `baseDate` before review.
 - `evaluatedPrice`, `returnRate`, `benchmarkReturn`, and `alpha` are finite numbers.
 - `result` is one of the validator-supported verdicts.
 - Evaluation memo does not rewrite the original claim.
