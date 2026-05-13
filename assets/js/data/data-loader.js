@@ -54,7 +54,20 @@
         }
       }
       var data = await resp.json();
-      return Array.isArray(data) ? data : (data.data || data);
+      var resolved = Array.isArray(data) ? data : (Array.isArray(data && data.data) ? data.data : null);
+      if (resolved === null) {
+        var rootType = Array.isArray(data) ? 'array' : typeof data;
+        var errMsg = '[data-loader] ' + df.name + ' root is ' + rootType + ', expected array';
+        if (df.required) {
+          loadErrors.push({ dataset: df.name, url: df.url, error: 'root is ' + rootType + ', expected array' });
+          console.error(errMsg);
+          return [];
+        } else {
+          console.warn(errMsg);
+          return [];
+        }
+      }
+      return resolved;
     } catch (err) {
       if (df.required) {
         loadErrors.push({ dataset: df.name, url: df.url, error: err.message });
