@@ -228,6 +228,7 @@ function validateClaims(claims, expertIds, sourceIds, segmentIds) {
     arrayField('claims', claim, 'evidence');
     dateOnly('claims', claim, 'baseDate');
     dateOnly('claims', claim, 'targetDate');
+    dateOrder('claims', claim, 'baseDate', 'targetDate');
     numberField('claims', claim, 'basePrice');
     numberField('claims', claim, 'targetPrice');
   });
@@ -386,8 +387,15 @@ function nullableNumber(dataset, item, field) {
 }
 
 function dateOnly(dataset, item, field) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(item[field] || ''))) {
+  if (!isDateOnlyString(item[field])) {
     fail(dataset, item.id || '(unknown)', `${field} must use YYYY-MM-DD`);
+  }
+}
+
+function dateOrder(dataset, item, startField, endField) {
+  if (!isDateOnlyString(item[startField]) || !isDateOnlyString(item[endField])) return;
+  if (String(item[endField]) < String(item[startField])) {
+    fail(dataset, item.id || '(unknown)', `${endField} must be greater than or equal to ${startField}`);
   }
 }
 
@@ -396,6 +404,10 @@ function dateLike(dataset, item, field) {
   if (!/^\d{4}-\d{2}-\d{2}(T.*Z)?$/.test(value)) {
     fail(dataset, item.id || '(unknown)', `${field} must use YYYY-MM-DD or ISO UTC format`);
   }
+}
+
+function isDateOnlyString(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''));
 }
 
 function toIdSet(items) {
