@@ -53,6 +53,12 @@ window.FMStock.app = window.FMStock.app || {};
     if (page === 'claims.html' && window.FMStock.ui && window.FMStock.ui.claims && window.FMStock.ui.claims.main &&
         typeof window.FMStock.ui.claims.main.initClaimsPage === 'function') {
       window.FMStock.ui.claims.main.initClaimsPage(data);
+      return;
+    }
+
+    if (page === 'source-hub.html' && window.FMStock.ui && window.FMStock.ui.sourceHub && window.FMStock.ui.sourceHub.main &&
+        typeof window.FMStock.ui.sourceHub.main.initSourceHubPage === 'function') {
+      window.FMStock.ui.sourceHub.main.initSourceHubPage(data);
     }
   }
 
