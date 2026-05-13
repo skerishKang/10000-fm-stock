@@ -256,18 +256,24 @@ function validateClaimEvaluationConsistency(claims, evaluations) {
     }
   });
 
-  const evaluationCountByClaimId = new Map();
+  const evaluationIdsByClaimId = new Map();
   evaluations.forEach((evaluation) => {
     if (!nonEmptyString(evaluation.claimId)) return;
-    evaluationCountByClaimId.set(
-      evaluation.claimId,
-      (evaluationCountByClaimId.get(evaluation.claimId) || 0) + 1
-    );
+    if (!evaluationIdsByClaimId.has(evaluation.claimId)) {
+      evaluationIdsByClaimId.set(evaluation.claimId, []);
+    }
+    evaluationIdsByClaimId.get(evaluation.claimId).push(evaluation.id || '(unknown)');
+  });
+
+  evaluationIdsByClaimId.forEach((evaluationIds, claimId) => {
+    if (evaluationIds.length > 1) {
+      fail('evaluations', claimId, `multiple evaluations reference this claim: ${evaluationIds.join(', ')}`);
+    }
   });
 
   claims.forEach((claim) => {
     if (!nonEmptyString(claim.id)) return;
-    const evaluationCount = evaluationCountByClaimId.get(claim.id) || 0;
+    const evaluationCount = (evaluationIdsByClaimId.get(claim.id) || []).length;
 
     if (claim.status === 'evaluated' && evaluationCount === 0) {
       fail('claims', claim.id, 'status is evaluated but no evaluation record references this claim');
