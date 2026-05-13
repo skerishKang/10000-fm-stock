@@ -291,14 +291,10 @@ function validateClaimEvaluationConsistency(claims, evaluations) {
 
     if (claimStatus === 'invalid' && evaluation.result !== 'invalid') {
       warn('evaluations', evaluation.id || '(unknown)', `references invalid claim ${evaluation.claimId} but result is ${String(evaluation.result)}`);
-      return;
-    }
-
-    if (claimStatus && claimStatus !== 'evaluated' && claimStatus !== 'invalid') {
+    } else if (claimStatus && claimStatus !== 'evaluated' && claimStatus !== 'invalid') {
       warn('evaluations', evaluation.id || '(unknown)', `references claim ${evaluation.claimId} with non-evaluated status: ${claimStatus}`);
     }
 
-    // Ensure evaluatedAt is not before referenced claim's baseDate
     const claimBaseDate = claimBaseDateById.get(evaluation.claimId);
     if (claimBaseDate && isDateOnlyString(evaluation.evaluatedAt)) {
       if (String(evaluation.evaluatedAt) < String(claimBaseDate)) {
