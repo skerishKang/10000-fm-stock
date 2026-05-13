@@ -94,6 +94,7 @@ Check:
 - `claimText` is paraphrased and does not overstate the source.
 - `baseDate` is the statement/publication date unless documented otherwise.
 - `targetDate` follows the source horizon or project horizon rule.
+- `targetDate` must be greater than or equal to `baseDate`.
 - `basePrice` and `targetPrice` are numeric when the current schema requires them.
 - `evidence` is a short array of paraphrased reasons, not copied source text.
 - `status` reflects the lifecycle state.
@@ -131,6 +132,7 @@ Check:
 - Each claim has at most one authoritative evaluation record.
 - Claim status and evaluation status are consistent.
 - `evaluatedAt` uses `YYYY-MM-DD`.
+- `evaluatedAt` should not be earlier than the referenced claim's `baseDate`.
 - `evaluatedPrice`, `returnRate`, `benchmarkReturn`, and `alpha` are finite numbers.
 - `result` is one of the validator-supported verdicts.
 - Evaluation memo does not rewrite the original claim.
@@ -154,6 +156,7 @@ Practical checks:
 - Candidate material belongs in `research-workspace/exports/`, not official `data/*.json`.
 - Official records belong in `data/*.json` only after review.
 - A claim with `status: evaluated` must have at least one matching evaluation record.
+- A claim's `targetDate` must not be earlier than its `baseDate`.
 - An invalid claim may have an evaluation record only when `evaluation.result` is also `invalid`; this records that the statement was not evaluable as a forecast.
 - An invalid claim with a non-invalid evaluation result is inconsistent and should be fixed before review.
 - A candidate or pending claim should not have an evaluation record.
