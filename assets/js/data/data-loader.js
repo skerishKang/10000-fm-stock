@@ -11,12 +11,14 @@
   var REQUIRED_DATASETS = ['experts', 'claims', 'evaluations'];
 
   var DATA_FILES = [
-    { name: 'experts',         url: DATA_BASE + 'experts.json',         required: true },
-    { name: 'sources',         url: DATA_BASE + 'sources.json',         required: false },
-    { name: 'segments',        url: DATA_BASE + 'segments.json',        required: false },
-    { name: 'claims',          url: DATA_BASE + 'claims.json',          required: true },
-    { name: 'evaluations',     url: DATA_BASE + 'evaluations.json',     required: true },
-    { name: 'knowledgeNotes',  url: DATA_BASE + 'knowledge_notes.json', required: false }
+    { name: 'experts',          url: DATA_BASE + 'experts.json',                   required: true },
+    { name: 'sources',          url: DATA_BASE + 'sources.json',                   required: false },
+    { name: 'segments',         url: DATA_BASE + 'segments.json',                  required: false },
+    { name: 'claims',           url: DATA_BASE + 'claims.json',                    required: true },
+    { name: 'evaluations',      url: DATA_BASE + 'evaluations.json',               required: true },
+    { name: 'knowledgeNotes',   url: DATA_BASE + 'knowledge_notes.json',           required: false },
+    { name: 'sourceLinks',      url: DATA_BASE + 'source-links.json',              required: false },
+    { name: 'candidateSources', url: DATA_BASE + 'candidate-sources.sample.json',  required: false }
   ];
 
   var cache = null;
