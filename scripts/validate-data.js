@@ -278,7 +278,12 @@ function validateClaimEvaluationConsistency(claims, evaluations) {
     if (!nonEmptyString(evaluation.claimId)) return;
     const claimStatus = claimStatusById.get(evaluation.claimId);
 
-    if (claimStatus && claimStatus !== 'evaluated') {
+    if (claimStatus === 'invalid' && evaluation.result !== 'invalid') {
+      warn('evaluations', evaluation.id || '(unknown)', `references invalid claim ${evaluation.claimId} but result is ${String(evaluation.result)}`);
+      return;
+    }
+
+    if (claimStatus && claimStatus !== 'evaluated' && claimStatus !== 'invalid') {
       warn('evaluations', evaluation.id || '(unknown)', `references claim ${evaluation.claimId} with non-evaluated status: ${claimStatus}`);
     }
   });
