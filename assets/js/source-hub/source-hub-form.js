@@ -28,12 +28,15 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
 
   function buildCandidate(form) {
     var values = readForm(form);
-    var title = values.title || values.url || 'untitled-source';
+    var title = values.title || values.url || values.privatePath || 'untitled-source';
 
     return {
-      id: buildLocalId(values.type, values.publishedAt, title, values.url),
+      id: buildLocalId(values.type, values.publishedAt, title, values.url || values.privatePath),
       type: values.type,
       url: values.url,
+      privatePath: values.privatePath,
+      pageOrSection: values.pageOrSection,
+      referenceMemo: values.referenceMemo,
       title: values.title,
       publisher: values.publisher,
       speakerOrAuthor: values.speakerOrAuthor,
@@ -57,6 +60,9 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
     return {
       type: clean(data.get('type')) || 'other',
       url: clean(data.get('url')),
+      privatePath: clean(data.get('privatePath')),
+      pageOrSection: clean(data.get('pageOrSection')),
+      referenceMemo: clean(data.get('referenceMemo')),
       title: clean(data.get('title')),
       publisher: clean(data.get('publisher')),
       speakerOrAuthor: clean(data.get('speakerOrAuthor')),
