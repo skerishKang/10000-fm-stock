@@ -13,22 +13,21 @@
   <header class="app-header">
     <div class="header-inner">
       <h1 class="logo"><a href="../index.html">FM-Stock</a></h1>
-      <nav class="main-nav">
-        <ul>
-          <li><a href="../index.html">대시보드</a></li>
-          <li><a href="ingest.html">자료수집</a></li>
-          <li><a href="review.html">검토</a></li>
-          <li><a href="experts.html">전문가</a></li>
-          <li><a href="claims.html">발언</a></li>
-          <li><a href="sources.html" class="active">출처</a></li>
-          <li><a href="knowledge.html">지식노트</a></li>
-          <li><a href="ranking.html">랭킹</a></li>
-        </ul>
-      </nav>
+      <nav class="main-nav"><ul>
+        <li><a href="../index.html">대시보드</a></li>
+        <li><a href="ingest.html">자료수집</a></li>
+        <li><a href="source-hub.html">자료허브</a></li>
+        <li><a href="review.html">검토</a></li>
+        <li><a href="experts.html">전문가</a></li>
+        <li><a href="claims.html">발언</a></li>
+        <li><a href="sources.html" class="active">출처</a></li>
+        <li><a href="knowledge.html">지식노트</a></li>
+        <li><a href="ranking.html">랭킹</a></li>
+      </ul></nav>
     </div>
   </header>
   <main class="app-main">
-      <section class="sources-header">
+    <section class="sources-header">
       <h2>출처 목록</h2>
       <div class="sources-filters">
         <select id="sf-type"><option value="">유형 전체</option><option value="youtube">YouTube</option><option value="report">리포트</option></select>
@@ -37,19 +36,12 @@
       </div>
     </section>
     <section class="sources-layout">
-      <div class="sources-list" id="sources-list">
-        <ul class="item-list"><li class="placeholder">출처 데이터가 없습니다.</li></ul>
-      </div>
-      <div class="sources-detail" id="sources-detail">
-        <div class="detail-empty">출처를 선택하세요.</div>
-      </div>
+      <div class="sources-list" id="sources-list"><ul class="item-list"><li class="placeholder">출처 데이터가 없습니다.</li></ul></div>
+      <div class="sources-detail" id="sources-detail"><div class="detail-empty">출처를 선택하세요.</div></div>
     </section>
   </main>
-  <footer class="app-footer">
-    <p>&copy; 2026 FM-Stock. All rights reserved.</p>
-  </footer>
-  <!-- Core scripts (order matters) -->
-  <script src="../assets/js/data/data-loader.js?v=20260513-0068-1"></script>
+  <footer class="app-footer"><p>&copy; 2026 FM-Stock. All rights reserved.</p></footer>
+  <script src="../assets/js/data/data-loader.js?v=20260513-0063-1"></script>
   <script src="../assets/js/utils/utils-date.js?v=20260513-0068-1"></script>
   <script src="../assets/js/utils/utils-dom.js?v=20260513-0068-1"></script>
   <script src="../assets/js/utils/utils-format.js?v=20260513-0068-1"></script>
@@ -64,6 +56,6 @@
   <script src="../assets/js/sources/sources-filter.js?v=20260513-0068-1"></script>
   <script src="../assets/js/sources/sources-list.js?v=20260513-0068-1"></script>
   <script src="../assets/js/sources/sources-main.js?v=20260513-0068-1"></script>
-  <script src="../assets/js/app/app-main.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/app/app-main.js?v=20260513-0063-1"></script>
 </body>
 </html>
