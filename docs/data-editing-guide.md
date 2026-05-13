@@ -128,11 +128,14 @@ Add an evaluation only after the target horizon has passed or after the evaluati
 Check:
 
 - `claimId` exists.
+- Each claim has at most one authoritative evaluation record.
 - Claim status and evaluation status are consistent.
 - `evaluatedAt` uses `YYYY-MM-DD`.
 - `evaluatedPrice`, `returnRate`, `benchmarkReturn`, and `alpha` are finite numbers.
 - `result` is one of the validator-supported verdicts.
 - Evaluation memo does not rewrite the original claim.
+
+Do not add a second evaluation record for the same claim. If a re-evaluation or correction is needed, update the existing evaluation record and explain the reason in `memo` or the PR body.
 
 Do not change the claim wording, base date, or target date to fit the evaluation result unless correcting a documented data error.
 
@@ -154,6 +157,7 @@ Practical checks:
 - An invalid claim may have an evaluation record only when `evaluation.result` is also `invalid`; this records that the statement was not evaluable as a forecast.
 - An invalid claim with a non-invalid evaluation result is inconsistent and should be fixed before review.
 - A candidate or pending claim should not have an evaluation record.
+- A claim must not have more than one evaluation record in the MVP data model.
 - An invalid claim should not be used for ranking as a successful forecast.
 - Knowledge notes should not be forced into evaluations.
 
@@ -167,8 +171,11 @@ Before adding new records, search for duplicates by:
 - ticker or company name
 - claim text meaning
 - base date and target date
+- evaluation `claimId`
 
 A repeated statement can be a separate claim only when it differs materially by source, speaker, date, horizon, target, or thesis.
+
+A repeated evaluation for the same claim is not allowed. Correct the existing evaluation record instead.
 
 ## Data PR checklist
 
