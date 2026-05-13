@@ -134,6 +134,32 @@ User-entered or operator-entered source links from a static page must include:
 }
 ```
 
+## Data validation workflow
+
+Run the local validator before and after any change to static JSON data under `data/`:
+
+```bash
+node scripts/validate-data.js
+```
+
+This validator is the minimum merge gate for data-changing PRs. It checks:
+
+- JSON parse and array root shape
+- id presence and duplicate ids
+- claim references to experts, sources, and segments
+- evaluation references to claims
+- knowledge note references to experts, sources, and segments
+- key enum values
+- candidate source `status: "candidate"` and `official: false`
+
+A PR that changes `candidate-sources.sample.json`, `source-links.json`, `sources.json`, `segments.json`, `claims.json`, `evaluations.json`, or `knowledge_notes.json` should not be marked ready until the validator exits with status 0 and prints:
+
+```text
+Validation passed.
+```
+
+If validation fails, fix the structured data contract rather than bypassing the script. Do not paste raw source payloads, copied report text, full transcripts, or private local file contents into issue or PR comments.
+
 ## Search-assisted curation
 
 Search-assisted workflows are allowed later, but their output must enter a review queue.
