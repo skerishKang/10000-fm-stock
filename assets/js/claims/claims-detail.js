@@ -132,7 +132,7 @@ function escapeAttr(value) {
 
 function escapeHtml(text) {
   return String(text == null ? '' : text).replace(/[&<>\"']/g, function (ch) {
-    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#039;' })[ch];
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
   });
 }
 
