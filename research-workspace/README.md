@@ -14,17 +14,30 @@ approved structured data -> data/*.json
 
 ## Recommended local originals folder
 
-Keep downloaded reports and raw transcripts outside this repository, for example:
+Keep downloaded reports and raw transcripts outside this repository, but under the same working root for local convenience.
+
+Recommended Windows/WSL layout:
 
 ```text
-../10000-fm-stock-local-sources/
-  reports/
-    2026/
-      05/
-  expert-sources/
-    transcripts/
-  analysis/
+/mnt/g/Ddrive/BatangD/task/workdiary/
+├── 10000-fm-stock/
+└── 10000-fm-stock-local-sources/
+    ├── reports/
+    │   └── 2026/
+    │       └── 05/
+    ├── expert-sources/
+    │   └── transcripts/
+    └── analysis/
 ```
+
+Equivalent Windows paths:
+
+```text
+G:\Ddrive\BatangD\task\workdiary\10000-fm-stock\
+G:\Ddrive\BatangD\task\workdiary\10000-fm-stock-local-sources\
+```
+
+Do not place `10000-fm-stock-local-sources/` inside the Git repository. It should be a sibling folder of `10000-fm-stock/`.
 
 ## Folder roles
 
