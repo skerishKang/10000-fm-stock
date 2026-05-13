@@ -83,6 +83,7 @@ Relevant files:
 - Claim candidate export template: `research-workspace/exports/claim-candidates.template.json`
 - Knowledge note candidate export template: `research-workspace/exports/knowledge-note-candidates.template.json`
 - Promotion checklist: `docs/promotion-checklist.md`
+- Official data editing guide: `docs/data-editing-guide.md`
 - Data sourcing strategy: `docs/mvp-data-sourcing-strategy.md`
 - Local validator: `scripts/validate-data.js`
 
