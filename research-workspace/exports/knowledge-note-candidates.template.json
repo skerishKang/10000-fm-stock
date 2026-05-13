@@ -1,0 +1,35 @@
+[
+  {
+    "id": "knowledge-note-candidate-YYYYMMDD-slug",
+    "sourceCandidateId": "candidate-source-YYYYMMDD-slug",
+    "sourceId": "",
+    "segmentId": "",
+    "expertId": "",
+    "industry": "",
+    "companyName": "",
+    "topic": "Educational topic",
+    "level": "basic",
+    "summary": "Paraphrased educational summary. Do not paste full source text.",
+    "keyPoints": [],
+    "tags": [],
+    "sourceReference": {
+      "url": "",
+      "privatePath": "",
+      "startTime": null,
+      "endTime": null,
+      "pageOrSection": "",
+      "referenceMemo": ""
+    },
+    "promotionReview": {
+      "educationalValue": false,
+      "paraphrasedSummary": false,
+      "noFullSourceText": false,
+      "splitClaimIfForecastExists": false,
+      "reviewer": "",
+      "reviewedAt": null,
+      "decision": "keep_candidate"
+    },
+    "status": "candidate",
+    "official": false
+  }
+]
