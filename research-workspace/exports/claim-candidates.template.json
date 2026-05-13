@@ -1,0 +1,41 @@
+[
+  {
+    "id": "claim-candidate-YYYYMMDD-slug",
+    "sourceCandidateId": "candidate-source-YYYYMMDD-slug",
+    "sourceId": "",
+    "segmentId": "",
+    "expertId": "",
+    "ticker": "",
+    "companyName": "",
+    "industry": "",
+    "claimType": "stock_forecast",
+    "direction": "bullish",
+    "claimText": "Paraphrased verifiable claim. Do not paste full source text.",
+    "evidence": [],
+    "baseDate": null,
+    "basePrice": null,
+    "targetDate": null,
+    "targetPrice": null,
+    "timeHorizon": "6M",
+    "sourceReference": {
+      "url": "",
+      "privatePath": "",
+      "startTime": null,
+      "endTime": null,
+      "pageOrSection": "",
+      "referenceMemo": ""
+    },
+    "promotionReview": {
+      "directionClear": false,
+      "horizonClear": false,
+      "baseDateClear": false,
+      "targetOrEvaluationRuleClear": false,
+      "duplicateChecked": false,
+      "reviewer": "",
+      "reviewedAt": null,
+      "decision": "keep_candidate"
+    },
+    "status": "candidate",
+    "official": false
+  }
+]
