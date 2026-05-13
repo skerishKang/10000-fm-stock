@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자료허브 | FM-Stock</title>
+  <link rel="stylesheet" href="../assets/css/css-base.css?v=20260513-0068-1">
+  <link rel="stylesheet" href="../assets/css/css-components.css?v=20260513-0068-1">
+  <link rel="stylesheet" href="../assets/css/css-layout.css?v=20260513-0068-1">
+  <link rel="stylesheet" href="../assets/css/css-utilities.css?v=20260513-0068-1">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo"><a href="../index.html">FM-Stock</a></h1>
+      <nav class="main-nav"><ul>
+        <li><a href="../index.html">대시보드</a></li>
+        <li><a href="ingest.html">자료수집</a></li>
+        <li><a href="source-hub.html" class="active">자료허브</a></li>
+        <li><a href="review.html">검토</a></li>
+        <li><a href="experts.html">전문가</a></li>
+        <li><a href="claims.html">발언</a></li>
+        <li><a href="sources.html">출처</a></li>
+        <li><a href="knowledge.html">지식노트</a></li>
+        <li><a href="ranking.html">랭킹</a></li>
+      </ul></nav>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">자료허브</h2>
+          <p class="text-muted">공개 출처 후보를 모으고 claim/knowledge 후보 추출 전 단계의 JSON을 준비하는 정적 작업대입니다.</p>
+        </div>
+      </div>
+      <div class="grid-4">
+        <article class="card"><div class="card-header"><h3 class="card-title">후보 링크</h3></div><div class="card-body"><p class="stat" id="source-link-count">0</p><p>큐레이션 시작점</p></div></article>
+        <article class="card"><div class="card-header"><h3 class="card-title">후보 소스</h3></div><div class="card-body"><p class="stat" id="candidate-source-count">0</p><p>sample queue</p></div></article>
+        <article class="card"><div class="card-header"><h3 class="card-title">공식 출처</h3></div><div class="card-body"><p class="stat" id="official-source-count">0</p><p>검토 완료 데이터</p></div></article>
+        <article class="card"><div class="card-header"><h3 class="card-title">발언 데이터</h3></div><div class="card-body"><p class="stat" id="claim-count">0</p><p>승격 후 검증 대상</p></div></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header"><h2 class="section-title">큐레이션 링크</h2></div>
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-source-category="all" type="button">전체</button>
+        <button class="tab" data-source-category="youtube" type="button">유튜브</button>
+        <button class="tab" data-source-category="broker" type="button">증권사</button>
+        <button class="tab" data-source-category="report_aggregator" type="button">리포트 모음</button>
+        <button class="tab" data-source-category="article_broadcast" type="button">기사·방송</button>
+        <button class="tab" data-source-category="market_data" type="button">시장 데이터</button>
+      </div>
+      <div id="source-link-list" class="grid-3"><div class="card"><div class="card-body">출처 링크를 불러오는 중입니다.</div></div></div>
+    </section>
+
+    <section class="section grid-2">
+      <article class="card">
+        <div class="card-header"><h2 class="card-title">후보 소스 입력</h2></div>
+        <div class="card-body">
+          <form id="source-candidate-form">
+            <div class="form-group"><label class="form-label">source type</label><select class="form-select" name="type"><option value="youtube_video">youtube_video</option><option value="youtube_channel">youtube_channel</option><option value="broker_research">broker_research</option><option value="broker_report">broker_report</option><option value="report_aggregator">report_aggregator</option><option value="article">article</option><option value="broadcast">broadcast</option><option value="other">other</option></select></div>
+            <div class="form-group"><label class="form-label">URL</label><input class="form-input" name="url" type="url" placeholder="https://..."></div>
+            <div class="form-group"><label class="form-label">title/name</label><input class="form-input" name="title" type="text"></div>
+            <div class="form-group"><label class="form-label">publisher/channel/brokerage</label><input class="form-input" name="publisher" type="text"></div>
+            <div class="form-group"><label class="form-label">speaker/author/analyst</label><input class="form-input" name="speakerOrAuthor" type="text"></div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">published date</label><input class="form-input" name="publishedAt" type="date"></div>
+              <div class="form-group"><label class="form-label">related ticker</label><input class="form-input" name="relatedTickers" type="text" placeholder="005930;000660"></div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">start time</label><input class="form-input" name="startTime" type="text" placeholder="00:00:00"></div>
+              <div class="form-group"><label class="form-label">end time</label><input class="form-input" name="endTime" type="text" placeholder="00:05:00"></div>
+            </div>
+            <div class="form-group"><label class="form-label">related company</label><input class="form-input" name="relatedCompanies" type="text" placeholder="삼성전자;SK하이닉스"></div>
+            <div class="form-group"><label class="form-label">related industry</label><input class="form-input" name="relatedIndustries" type="text" placeholder="반도체;2차전지"></div>
+            <div class="form-group"><label class="form-label">claim candidate memo</label><textarea class="form-textarea" name="claimCandidateMemo"></textarea></div>
+            <div class="form-group"><label class="form-label">knowledge note memo</label><textarea class="form-textarea" name="knowledgeCandidateMemo"></textarea></div>
+            <div class="form-group"><label class="form-label">review warnings</label><textarea class="form-textarea" name="reviewWarnings" placeholder="한 줄에 하나씩 입력"></textarea></div>
+            <button class="btn btn-primary" type="submit">JSON preview 생성</button>
+          </form>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header"><h2 class="card-title">Candidate JSON preview</h2><button class="btn btn-secondary btn-sm" id="copy-candidate-json" type="button">복사</button></div>
+        <div class="card-body">
+          <p class="form-hint">이 JSON은 공식 데이터가 아닙니다. 항상 <code>status: candidate</code>, <code>official: false</code>로 생성됩니다.</p>
+          <pre><code id="candidate-json-preview">{}</code></pre>
+          <p id="copy-status" class="text-small text-muted"></p>
+        </div>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-header"><h2 class="section-title">추출 프롬프트</h2></div>
+      <div class="grid-2">
+        <article class="card"><div class="card-header"><h3 class="card-title">YouTube claim extraction</h3><button class="btn btn-secondary btn-sm" type="button" data-copy-prompt="youtube">복사</button></div><div class="card-body"><pre><code id="prompt-youtube"></code></pre><p id="prompt-status-youtube" class="text-small text-muted"></p></div></article>
+        <article class="card"><div class="card-header"><h3 class="card-title">Broker report extraction</h3><button class="btn btn-secondary btn-sm" type="button" data-copy-prompt="report">복사</button></div><div class="card-body"><pre><code id="prompt-report"></code></pre><p id="prompt-status-report" class="text-small text-muted"></p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer"><p>&copy; 2026 FM-Stock. All rights reserved.</p></footer>
+  <script src="../assets/js/data/data-loader.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/utils/utils-date.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/utils/utils-dom.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/utils/utils-format.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/utils/utils-id.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/utils/utils-url.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/metrics/metrics-experts.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/metrics/metrics-rankings.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/metrics/metrics-returns.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/app/app-state.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/app/app-router.js?v=20260513-0068-1"></script>
+  <script src="../assets/js/source-hub/source-hub-list.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/source-hub/source-hub-form.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/source-hub/source-hub-prompts.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/source-hub/source-hub-main.js?v=20260513-0063-1"></script>
+  <script src="../assets/js/app/app-main.js?v=20260513-0063-1"></script>
+</body>
+</html>
