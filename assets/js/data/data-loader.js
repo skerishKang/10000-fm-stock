@@ -61,7 +61,7 @@
         if (df.required) {
           loadErrors.push({ dataset: df.name, url: df.url, error: 'root is ' + rootType + ', expected array' });
           console.error(errMsg);
-          return [];
+          throw new Error(errMsg);
         } else {
           console.warn(errMsg);
           return [];
@@ -70,7 +70,9 @@
       return resolved;
     } catch (err) {
       if (df.required) {
-        loadErrors.push({ dataset: df.name, url: df.url, error: err.message });
+        if (!hasLoadError(df.name, df.url, err.message)) {
+          loadErrors.push({ dataset: df.name, url: df.url, error: err.message });
+        }
         throw err;
       } else {
         console.warn('[data-loader] Failed to load ' + df.name + ': ' + err.message);
@@ -161,6 +163,12 @@
       };
     });
     return diag;
+  }
+
+  function hasLoadError(dataset, url, message) {
+    return loadErrors.some(function (item) {
+      return item.dataset === dataset && item.url === url && item.error === message;
+    });
   }
 
   /* ── HTML escaping ─────────────────────────────────────── */
