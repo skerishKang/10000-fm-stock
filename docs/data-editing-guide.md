@@ -150,7 +150,10 @@ Practical checks:
 
 - Candidate material belongs in `research-workspace/exports/`, not official `data/*.json`.
 - Official records belong in `data/*.json` only after review.
-- A claim with `status: evaluated` should normally have a matching evaluation record.
+- A claim with `status: evaluated` must have at least one matching evaluation record.
+- An invalid claim may have an evaluation record only when `evaluation.result` is also `invalid`; this records that the statement was not evaluable as a forecast.
+- An invalid claim with a non-invalid evaluation result is inconsistent and should be fixed before review.
+- A candidate or pending claim should not have an evaluation record.
 - An invalid claim should not be used for ranking as a successful forecast.
 - Knowledge notes should not be forced into evaluations.
 
