@@ -52,13 +52,14 @@ function renderClaimSummary(claim, data) {
 function renderSourceInfo(claim, sources, segments) {
   var src = sources.find(function(s) { return s.id === claim.sourceId; });
   if (!src) return "<div class=\"detail-section source-info\"><h3>Source</h3><p>No source linked</p></div>";
-  var segs = segments.filter(function(s) { return s.claimId === claim.id; });
+  var segs = segments.filter(function(s) { return s.id === claim.segmentId; });
+  var sourceDate = src.publishedAt || src.date || '';
   var h = "<div class=\"detail-section source-info\">";
   h += "<h3>Source: " + escapeHtml(src.title || src.name || "Untitled") + "</h3>";
-  h += "<p class=\"source-type\">" + escapeHtml(src.type || "-") + " -- " + escapeHtml(src.date || "") + "</p>";
+  h += "<p class=\"source-type\">" + escapeHtml(src.type || "-") + " -- " + escapeHtml(sourceDate) + "</p>";
   if (segs.length) {
     h += "<ul>";
-    for (var i = 0; i < segs.length; i++) { h += "<li>" + renderYoutubeLink(src, segs[i]) + "</li>"; }
+    for (var i = 0; i < segs.length; i++) { h += "<li>" + renderSourceSegmentLink(src, segs[i]) + "</li>"; }
     h += "</ul>";
   }
   h += "</div>";
@@ -115,11 +116,29 @@ function renderConnectedKnowledge(claim, knowledgeNotes) {
   return h;
 }
 
-function renderYoutubeLink(source, segment) {
-  if (!source || source.type !== "youtube") return "<span>" + escapeHtml(segment.start || "") + " - " + escapeHtml(segment.end || "") + "</span>";
+function renderSourceSegmentLink(source, segment) {
+  if (!source || source.type !== "youtube") {
+    return "<span>" + escapeHtml(segment.start || segment.startTime || "") + " - " + escapeHtml(segment.end || segment.endTime || "") + "</span>";
+  }
+
   var start = segment.startTime || segment.start || 0;
-  var url = "https://www.youtube.com/watch?v=" + encodeURIComponent(source.sourceId || source.url || '') + String.fromCharCode(38) + "t=" + encodeURIComponent(start) + "s";
-  return "<a href=\"" + escapeAttr(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Watch segment " + escapeHtml(start) + "s - " + escapeHtml(segment.endTime || segment.end || "") + "s</a>";
+  var end = segment.endTime || segment.end || "";
+  var url = buildYoutubeUrl(source, start);
+  return "<a href=\"" + escapeAttr(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Watch segment " + escapeHtml(start) + "s - " + escapeHtml(end) + "s</a>";
+}
+
+function buildYoutubeUrl(source, start) {
+  var rawUrl = source.url || '';
+  if (rawUrl.indexOf('http://') === 0 || rawUrl.indexOf('https://') === 0) {
+    return appendTimeParam(rawUrl, start);
+  }
+
+  return "https://www.youtube.com/watch?v=" + encodeURIComponent(source.sourceId || rawUrl || '') + String.fromCharCode(38) + "t=" + encodeURIComponent(start) + "s";
+}
+
+function appendTimeParam(url, start) {
+  var separator = url.indexOf('?') === -1 ? '?' : '&';
+  return url + separator + 't=' + encodeURIComponent(start) + 's';
 }
 
 function safeClassToken(value) {
@@ -143,5 +162,6 @@ window.FMStock.ui.claims.detail = {
   renderEvidence: renderEvidence,
   renderEvaluationResult: renderEvaluationResult,
   renderConnectedKnowledge: renderConnectedKnowledge,
-  renderYoutubeLink: renderYoutubeLink
+  renderSourceSegmentLink: renderSourceSegmentLink,
+  renderYoutubeLink: renderSourceSegmentLink
 };
