@@ -4,6 +4,7 @@
  *
  * Scope:
  * - Static MVP data only.
+ * - Research workspace JSON templates.
  * - No network access.
  * - No external dependencies.
  * - Does not print raw source payloads.
@@ -14,6 +15,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
+const EXPORTS_DIR = path.join(ROOT, 'research-workspace', 'exports');
 
 const DATASETS = {
   experts: 'experts.json',
@@ -24,6 +26,12 @@ const DATASETS = {
   knowledgeNotes: 'knowledge_notes.json',
   sourceLinks: 'source-links.json',
   candidateSources: 'candidate-sources.sample.json'
+};
+
+const WORKSPACE_TEMPLATES = {
+  candidateSourceTemplate: path.join('research-workspace', 'exports', 'candidate-sources.template.json'),
+  claimCandidateTemplate: path.join('research-workspace', 'exports', 'claim-candidates.template.json'),
+  knowledgeNoteCandidateTemplate: path.join('research-workspace', 'exports', 'knowledge-note-candidates.template.json')
 };
 
 const ENUMS = {
@@ -53,6 +61,7 @@ const state = {
 
 function main() {
   const data = loadDatasets();
+  const workspaceTemplates = loadWorkspaceTemplates();
 
   validateIdSet('experts', data.experts);
   validateIdSet('sources', data.sources);
@@ -62,6 +71,11 @@ function main() {
   validateIdSet('knowledgeNotes', data.knowledgeNotes);
   validateIdSet('sourceLinks', data.sourceLinks);
   validateIdSet('candidateSources', data.candidateSources);
+
+  Object.entries(workspaceTemplates).forEach(([name, records]) => {
+    validateIdSet(name, records);
+    validateCandidateTemplateRecords(name, records);
+  });
 
   const expertIds = toIdSet(data.experts);
   const sourceIds = toIdSet(data.sources);
@@ -77,7 +91,7 @@ function main() {
   validateSourceLinks(data.sourceLinks);
   validateCandidateSources(data.candidateSources);
 
-  printResult(data);
+  printResult(data, workspaceTemplates);
 
   if (state.errors.length > 0) {
     process.exitCode = 1;
@@ -86,24 +100,33 @@ function main() {
 
 function loadDatasets() {
   return Object.fromEntries(Object.entries(DATASETS).map(([name, filename]) => {
-    const filePath = path.join(DATA_DIR, filename);
-    if (!fs.existsSync(filePath)) {
-      fail(name, '(file)', `missing file: data/${filename}`);
-      return [name, []];
-    }
-
-    try {
-      const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-      if (!Array.isArray(parsed)) {
-        fail(name, '(root)', 'dataset must be a JSON array');
-        return [name, []];
-      }
-      return [name, parsed];
-    } catch (err) {
-      fail(name, '(parse)', `invalid JSON: ${err.message}`);
-      return [name, []];
-    }
+    return [name, loadJsonArray(name, path.join(DATA_DIR, filename), `data/${filename}`)];
   }));
+}
+
+function loadWorkspaceTemplates() {
+  return Object.fromEntries(Object.entries(WORKSPACE_TEMPLATES).map(([name, relativePath]) => {
+    return [name, loadJsonArray(name, path.join(ROOT, relativePath), relativePath)];
+  }));
+}
+
+function loadJsonArray(datasetName, filePath, displayPath) {
+  if (!fs.existsSync(filePath)) {
+    fail(datasetName, '(file)', `missing file: ${displayPath}`);
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (!Array.isArray(parsed)) {
+      fail(datasetName, '(root)', 'dataset must be a JSON array');
+      return [];
+    }
+    return parsed;
+  } catch (err) {
+    fail(datasetName, '(parse)', `invalid JSON: ${err.message}`);
+    return [];
+  }
 }
 
 function validateIdSet(datasetName, items) {
@@ -125,6 +148,28 @@ function validateIdSet(datasetName, items) {
     }
 
     seen.add(item.id);
+  });
+}
+
+function validateCandidateTemplateRecords(datasetName, records) {
+  records.forEach((record) => {
+    requireFields(datasetName, record, ['id', 'status', 'official']);
+
+    if (record.status !== 'candidate') {
+      fail(datasetName, record.id || '(unknown)', 'status must be candidate');
+    }
+
+    if (record.official !== false) {
+      fail(datasetName, record.id || '(unknown)', 'official must be false');
+    }
+
+    if ('promotionReview' in record && !isObject(record.promotionReview)) {
+      fail(datasetName, record.id || '(unknown)', 'promotionReview must be an object when present');
+    }
+
+    if ('sourceReference' in record && !isObject(record.sourceReference)) {
+      fail(datasetName, record.id || '(unknown)', 'sourceReference must be an object when present');
+    }
   });
 }
 
@@ -326,11 +371,17 @@ function warn(dataset, id, message) {
   state.warnings.push({ dataset, id, message });
 }
 
-function printResult(data) {
+function printResult(data, workspaceTemplates) {
   console.log('FM-Stock data validation');
   console.log('========================');
   Object.entries(DATASETS).forEach(([name, filename]) => {
-    console.log(`- ${filename}: ${data[name].length} records`);
+    console.log(`- data/${filename}: ${data[name].length} records`);
+  });
+
+  console.log('\nWorkspace templates');
+  console.log('-------------------');
+  Object.entries(WORKSPACE_TEMPLATES).forEach(([name, relativePath]) => {
+    console.log(`- ${relativePath}: ${workspaceTemplates[name].length} records`);
   });
 
   if (state.warnings.length > 0) {
