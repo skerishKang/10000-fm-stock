@@ -84,6 +84,12 @@
    */
   function formatDate(dateStr) {
     if (!dateStr) return '';
+    // YYYY-MM-DD: use string split to avoid Date timezone shifting
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      var parts = dateStr.split('-');
+      return parts[0] + '.' + parts[1] + '.' + parts[2];
+    }
+    // Fallback for non-standard formats
     var d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
     var y = d.getFullYear();
