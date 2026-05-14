@@ -115,7 +115,9 @@ function getEvaluatedPrice(claim, evaluations) {
         if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
         return null;
     }
-    var closest = findClosestEvaluation(evaluations, new Date());
+    // Use claim.targetDate as reference so timing matches return rate periods
+    var targetDate = (claim && claim.targetDate) ? new Date(claim.targetDate) : new Date();
+    var closest = findClosestEvaluation(evaluations, targetDate);
     if (closest && closest.price != null) return closest.price;
     if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
     return null;
