@@ -81,7 +81,7 @@ function determineResult(claim, evaluations) {
     if (basePrice == null || targetPrice == null || !direction || returnRate == null) {
         return { result: 'miss', returnRate: null, reason: 'insufficient_data' };
     }
-    if (isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice)) {
+    if (isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, claim)) {
         return { result: 'hit', returnRate: returnRate, reason: 'target_reached' };
     }
     var alpha = calculateAlpha(returnRate, claim.benchmarkReturn || 0);
@@ -91,7 +91,7 @@ function determineResult(claim, evaluations) {
     return { result: 'miss', returnRate: returnRate, reason: 'below_threshold' };
 }
 
-function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice) {
+function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, claim) {
     if (direction === 'long') {
         if (evaluatedPrice != null && targetPrice != null) return evaluatedPrice >= targetPrice;
         if (returnRate != null && claim != null && claim.targetReturn != null) return returnRate >= claim.targetReturn;
