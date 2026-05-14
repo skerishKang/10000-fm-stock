@@ -72,9 +72,8 @@
    */
   function formatPercent(n) {
     if (n === null || n === undefined || isNaN(n)) return '0.00%';
-    var pct = (n * 100).toFixed(2);
-    var sign = pct >= 0 ? '+' : '';
-    return sign + pct + '%';
+    var sign = n >= 0 ? '+' : '';
+    return sign + Number(n).toFixed(2) + '%';
   }
 
   /**
