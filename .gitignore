@@ -18,6 +18,11 @@ research-workspace/**/raw/
 research-workspace/**/originals/
 research-workspace/**/downloads/
 
+# Local source folders (moved from separate -local-sources folder)
+reports/
+analysis/
+expert-sources/
+
 # OS/editor noise
 .DS_Store
 Thumbs.db

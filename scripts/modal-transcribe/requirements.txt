@@ -1,0 +1,18 @@
+# fm-stock YouTube Transcriber & Claim Analyzer — Modal dependencies
+# Install: pip install -r requirements.txt
+
+# Core dependencies (Modal installs these in the cloud image too)
+modal>=0.60
+yt-dlp>=2024.12.0
+
+# Whisper transcription
+openai-whisper>=20240930
+
+# PyTorch (CUDA 12.x — Modal environments provide this)
+torch>=2.4.0
+
+# HuggingFace Transformers for LLM inference
+transformers>=4.45.0
+accelerate>=0.34.0
+bitsandbytes>=0.44.0
+safetensors>=0.4.0
