@@ -51,7 +51,7 @@ Extract and record:
 | Analyst name | `sourceCandidate.speakerOrAuthor` | 애널리스트명 |
 | Publication date | `sourceCandidate.publishedAt` | ISO format: `YYYY-MM-DD` |
 | Document URL | `sourceCandidate.url` | Direct URL or null |
-| Local file path | `sourceCandidate.privatePath` | Path relative to `10000-fm-stock-local-sources/` or null |
+| Local file path | `sourceCandidate.privatePath` | Path relative to repo root (e.g., `reports/2026/05/...`) or null |
 
 ### Step 2: Extract Segments
 
@@ -108,7 +108,7 @@ Use the decision table:
     "speakerOrAuthor": "애널리스트명",
     "publishedAt": "2025-06-01",
     "url": "https://example.com/report"或 null,
-    "privatePath": "10000-fm-stock-local-sources/reports/2026/05/..." 或 null
+    "privatePath": "reports/2026/05/..." 或 null
   },
   "segments": [
     {
@@ -164,9 +164,9 @@ Use the decision table:
 
 ## Local Source Paths
 
-- Reports: `/mnt/g/Ddrive/BatangD/task/workdiary/10000-fm-stock-local-sources/reports/YYYY/MM/`
+- Reports: `reports/YYYY/MM/` (inside repo root — folder structure tracked via `.gitkeep`, actual PDFs excluded by `.gitignore`)
 - Filename pattern: `YYYYMMDD_hankyung_증권사_주제_회사명.pdf`
-- Keep all raw material in this local folder, never in Git repo
+- Raw PDFs are gitignored by `*.pdf` rule; only folder structure and metadata committed
 
 ## Common Pitfalls
 
