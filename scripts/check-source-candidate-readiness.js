@@ -40,7 +40,13 @@ function checkCandidate(candidate, review) {
 
   // Use overrides from review if available
   const finalId = candidate.id;
-  const finalType = (review && review.officialType) || candidate.type || '';
+  // If review is approved, we require review.officialType and skip fallback to candidate.type
+  let finalType;
+  if (review && review.reviewStatus === 'approved') {
+    finalType = review.officialType || '';
+  } else {
+    finalType = (review && review.officialType) || candidate.type || '';
+  }
   const finalTitle = (review && review.titleOverride) || candidate.title || '';
   const finalPublisher = (review && review.publisher) || candidate.publisher || '';
   const finalPublishedAt = (review && review.publishedAt) || candidate.publishedAt || '';
