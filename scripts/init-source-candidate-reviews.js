@@ -48,9 +48,15 @@ function main() {
   if (fs.existsSync(REVIEWS_FILE)) {
     try {
       existingReviews = JSON.parse(fs.readFileSync(REVIEWS_FILE, 'utf8'));
-      if (!Array.isArray(existingReviews)) existingReviews = [];
     } catch (err) {
-      existingReviews = [];
+      console.error('Error: Failed to parse reviews file:', REVIEWS_FILE);
+      console.error(err.message);
+      process.exit(1);
+    }
+
+    if (!Array.isArray(existingReviews)) {
+      console.error('Error: Reviews file root is not an array:', REVIEWS_FILE);
+      process.exit(1);
     }
   }
 
@@ -88,8 +94,13 @@ function main() {
   console.log('Final reviews:', existingReviews.length);
 
   // Write reviews file
-  fs.mkdirSync(REVIEWS_DIR, { recursive: true });
-  fs.writeFileSync(REVIEWS_FILE, JSON.stringify(existingReviews, null, 2) + '\n', 'utf8');
+  if (added.length > 0) {
+    fs.mkdirSync(REVIEWS_DIR, { recursive: true });
+    fs.writeFileSync(REVIEWS_FILE, JSON.stringify(existingReviews, null, 2) + '\n', 'utf8');
+    console.log('Updated reviews file:', REVIEWS_FILE);
+  } else {
+    console.log('No new reviews to add. Reviews file unchanged.');
+  }
 
   console.log('');
   console.log('Reviews file:', REVIEWS_FILE);
