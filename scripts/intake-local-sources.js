@@ -119,15 +119,61 @@ function readFiles() {
     });
 }
 
-function buildCandidates() {
+function loadExistingCandidates() {
+  if (!fs.existsSync(OUTPUT_FILE)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf8'));
+  } catch (err) {
+    return [];
+  }
+}
+
+function extractDedupSets(candidates) {
+  const fileSha1s = new Set();
+  const urlHashes = new Set();
+  const normalizedUrls = new Set();
+
+  candidates.forEach((candidate) => {
+    if (candidate.intake) {
+      if (candidate.intake.fileSha1) fileSha1s.add(candidate.intake.fileSha1);
+      if (candidate.intake.urlHash) urlHashes.add(candidate.intake.urlHash);
+      if (candidate.intake.normalizedUrl) normalizedUrls.add(candidate.intake.normalizedUrl);
+    }
+  });
+
+  return { fileSha1s, urlHashes, normalizedUrls };
+}
+
+function extractMaxSeq(candidates) {
+  let maxSeq = 0;
+  candidates.forEach((candidate) => {
+    const match = String(candidate.id || '').match(/^source_\d{8}_(\d+)$/);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      if (n > maxSeq) maxSeq = n;
+    }
+  });
+  return maxSeq;
+}
+
+function buildNewCandidates(existingCandidates) {
   const ymd = todayYmd();
   const addedAt = new Date().toISOString();
-  const candidates = [];
-  let seq = 1;
+  const newCandidates = [];
+  const skipped = [];
+
+  const dedup = extractDedupSets(existingCandidates);
+  let seq = extractMaxSeq(existingCandidates) + 1;
 
   readFiles().forEach((file) => {
+    if (dedup.fileSha1s.has(file.sha1)) {
+      skipped.push({ kind: 'file', key: file.sha1, reason: 'duplicate fileSha1' });
+      return;
+    }
+    dedup.fileSha1s.add(file.sha1);
+
     const type = classifyFile(file.name);
-    candidates.push({
+    newCandidates.push({
       id: makeId(ymd, seq++),
       type,
       title: slugify(file.name).replace(/_/g, ' '),
@@ -151,9 +197,16 @@ function buildCandidates() {
   });
 
   readLinks().forEach((link) => {
-    const type = classifyUrl(link.url);
     const hash = stableHash(link.url);
-    candidates.push({
+    if (dedup.normalizedUrls.has(link.url) || dedup.urlHashes.has(hash)) {
+      skipped.push({ kind: 'link', key: link.url, reason: 'duplicate normalizedUrl or urlHash' });
+      return;
+    }
+    dedup.normalizedUrls.add(link.url);
+    dedup.urlHashes.add(hash);
+
+    const type = classifyUrl(link.url);
+    newCandidates.push({
       id: makeId(ymd, seq++),
       type,
       title: `${type === 'youtube' ? 'YouTube' : 'Web'} source ${ymd} ${hash}`,
@@ -175,7 +228,7 @@ function buildCandidates() {
     });
   });
 
-  return candidates;
+  return { newCandidates, skipped };
 }
 
 function appendLog(entry) {
@@ -184,17 +237,33 @@ function appendLog(entry) {
 
 function main() {
   ensureLayout();
-  const candidates = buildCandidates();
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(candidates, null, 2) + '\n', 'utf8');
+  const existingCandidates = loadExistingCandidates();
+  const { newCandidates, skipped } = buildNewCandidates(existingCandidates);
+  const allCandidates = existingCandidates.concat(newCandidates);
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(allCandidates, null, 2) + '\n', 'utf8');
+
+  skipped.forEach((item) => {
+    appendLog({
+      event: 'duplicate_skipped',
+      kind: item.kind,
+      key: item.key,
+      reason: item.reason
+    });
+  });
+
   appendLog({
     event: 'intake_completed',
     localRoot: LOCAL_ROOT,
     outputFile: OUTPUT_FILE,
-    candidateCount: candidates.length
+    totalCount: allCandidates.length,
+    newCount: newCandidates.length,
+    skippedCount: skipped.length
   });
 
   console.log('[intake] Local root:', LOCAL_ROOT);
-  console.log('[intake] Candidate count:', candidates.length);
+  console.log('[intake] Total candidates:', allCandidates.length);
+  console.log('[intake] New candidates:', newCandidates.length);
+  console.log('[intake] Skipped duplicates:', skipped.length);
   console.log('[intake] Output:', OUTPUT_FILE);
   console.log('[intake] Log:', LOG_FILE);
 }
