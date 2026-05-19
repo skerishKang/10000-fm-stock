@@ -17,6 +17,7 @@ const INBOX_FILES = path.join(LOCAL_ROOT, 'inbox', 'files');
 const LINKS_FILE = path.join(LOCAL_ROOT, 'inbox', 'links', 'links.txt');
 const CANDIDATES_DIR = path.join(LOCAL_ROOT, 'candidates');
 const LOGS_DIR = path.join(LOCAL_ROOT, 'logs');
+const PROCESSED_DIR = path.join(LOCAL_ROOT, 'processed');
 const OUTPUT_FILE = path.join(CANDIDATES_DIR, 'sources.candidate.json');
 const LOG_FILE = path.join(LOGS_DIR, 'intake-log.jsonl');
 
@@ -25,8 +26,36 @@ function ensureDir(dir) {
 }
 
 function ensureLayout() {
-  [INBOX_FILES, path.dirname(LINKS_FILE), CANDIDATES_DIR, LOGS_DIR].forEach(ensureDir);
+  [INBOX_FILES, path.dirname(LINKS_FILE), CANDIDATES_DIR, LOGS_DIR, PROCESSED_DIR].forEach(ensureDir);
   if (!fs.existsSync(LINKS_FILE)) fs.writeFileSync(LINKS_FILE, '', 'utf8');
+}
+
+function moveToProcessed(sourcePath, type, candidateId, originalName) {
+  const ext = path.extname(originalName);
+  const baseName = slugify(originalName).replace(/_/g, '_');
+  const targetDir = path.join(PROCESSED_DIR, type);
+  ensureDir(targetDir);
+
+  let targetName = `${candidateId}_${baseName}${ext}`;
+  let targetPath = path.join(targetDir, targetName);
+  let suffix = 1;
+  while (fs.existsSync(targetPath)) {
+    targetName = `${candidateId}_${baseName}_${++suffix}${ext}`;
+    targetPath = path.join(targetDir, targetName);
+  }
+
+  try {
+    fs.renameSync(sourcePath, targetPath);
+  } catch (err) {
+    if (err.code === 'EXDEV') {
+      fs.copyFileSync(sourcePath, targetPath);
+      fs.unlinkSync(sourcePath);
+    } else {
+      throw err;
+    }
+  }
+
+  return path.relative(LOCAL_ROOT, targetPath).split(path.sep).join('/');
 }
 
 function todayYmd() {
@@ -173,12 +202,15 @@ function buildNewCandidates(existingCandidates) {
     dedup.fileSha1s.add(file.sha1);
 
     const type = classifyFile(file.name);
+    const id = makeId(ymd, seq++);
+    const processedPath = moveToProcessed(file.path, type, id, file.name);
+
     newCandidates.push({
-      id: makeId(ymd, seq++),
+      id,
       type,
       title: slugify(file.name).replace(/_/g, ' '),
       url: '',
-      privatePath: path.relative(LOCAL_ROOT, file.path).split(path.sep).join('/'),
+      privatePath: processedPath,
       publisher: '',
       publishedAt: '',
       addedAt,
@@ -191,7 +223,8 @@ function buildNewCandidates(existingCandidates) {
         originalFileName: file.name,
         fileSha1: file.sha1,
         fileSize: file.size,
-        fileModifiedAt: file.mtime
+        fileModifiedAt: file.mtime,
+        processedPath
       }
     });
   });
