@@ -67,12 +67,12 @@
 
   /**
    * Formats a value as a percentage string with sign.
-   * @param {number} n - Decimal value (e.g. 0.1667)
+   * @param {number} n - Raw percent value (e.g. 16.67 for 16.67%)
    * @returns {string} e.g. "+16.67%"
    */
   function formatPercent(n) {
     if (n === null || n === undefined || isNaN(n)) return '0.00%';
-    var pct = (n * 100).toFixed(2);
+    var pct = Number(n).toFixed(2);
     var sign = pct >= 0 ? '+' : '';
     return sign + pct + '%';
   }

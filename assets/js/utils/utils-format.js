@@ -10,7 +10,7 @@
   /**
    * Formats a return value with colour-coding.
    * Positive returns appear in red (gain), negative in blue (loss).
-   * @param {number} value - Return value (decimal, e.g. 0.05 for +5%)
+   * @param {number} value - Return value (raw percent, e.g. 16.67 for +16.67%)
    * @returns {string} HTML span with colour class
    */
   function formatReturn(value) {
@@ -18,7 +18,7 @@
       return '<span class="return-neutral">0.00%</span>';
     }
 
-    var pct = (value * 100).toFixed(2);
+    var pct = Number(value).toFixed(2);
     var cls, sign;
 
     if (value > 0) {

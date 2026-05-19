@@ -14,6 +14,13 @@ function calculateReturn(basePrice, evaluatedPrice) {
     return ((evaluatedPrice - basePrice) / basePrice) * 100;
 }
 
+function getEvaluationPrice(evaluation) {
+    if (!evaluation) return null;
+    if (evaluation.evaluatedPrice != null) return evaluation.evaluatedPrice;
+    if (evaluation.price != null) return evaluation.price;
+    return null;
+}
+
 function calculateAlpha(returnRate, benchmarkReturn) {
     if (returnRate == null || benchmarkReturn == null) return null;
     return returnRate - benchmarkReturn;
@@ -24,7 +31,7 @@ function calculateReturnsForPeriods(claim, evaluations) {
     if (!claim || !evaluations || evaluations.length === 0) return result;
     var basePrice = claim.basePrice || claim.price || null;
     if (basePrice == null) return result;
-    var claimDate = new Date(claim.date || claim.createdAt);
+    var claimDate = new Date(claim.baseDate || claim.date || claim.createdAt);
     if (isNaN(claimDate.getTime())) return result;
     var periods = [
         { key: '1M', days: 30 },
@@ -36,8 +43,9 @@ function calculateReturnsForPeriods(claim, evaluations) {
         var period = periods[pi];
         var targetDate = new Date(claimDate.getTime() + period.days * 86400000);
         var evalAtTarget = findClosestEvaluation(evaluations, targetDate);
-        if (evalAtTarget && evalAtTarget.price != null) {
-            result[period.key] = calculateReturn(basePrice, evalAtTarget.price);
+        var evalPrice = getEvaluationPrice(evalAtTarget);
+        if (evalPrice != null) {
+            result[period.key] = calculateReturn(basePrice, evalPrice);
         }
     }
     return result;
@@ -92,11 +100,11 @@ function determineResult(claim, evaluations) {
 }
 
 function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, claim) {
-    if (direction === 'long') {
+    if (direction === 'long' || direction === 'bullish') {
         if (evaluatedPrice != null && targetPrice != null) return evaluatedPrice >= targetPrice;
         if (returnRate != null && claim != null && claim.targetReturn != null) return returnRate >= claim.targetReturn;
         return returnRate != null && returnRate > 0;
-    } else if (direction === 'short') {
+    } else if (direction === 'short' || direction === 'bearish') {
         if (evaluatedPrice != null && targetPrice != null) return evaluatedPrice <= targetPrice;
         if (returnRate != null && claim != null && claim.targetReturn != null) return returnRate <= claim.targetReturn;
         return returnRate != null && returnRate < 0;
@@ -105,8 +113,8 @@ function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, cl
 }
 
 function isPartialHit(direction, returnRate, alpha) {
-    if (direction === 'long') return returnRate > 0 && alpha > 0;
-    if (direction === 'short') return returnRate < 0 && alpha > 0;
+    if (direction === 'long' || direction === 'bullish') return returnRate > 0 && alpha > 0;
+    if (direction === 'short' || direction === 'bearish') return returnRate < 0 && alpha > 0;
     return false;
 }
 
@@ -115,8 +123,10 @@ function getEvaluatedPrice(claim, evaluations) {
         if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
         return null;
     }
-    var closest = findClosestEvaluation(evaluations, new Date());
-    if (closest && closest.price != null) return closest.price;
+    var evalDate = claim.targetDate ? new Date(claim.targetDate) : new Date();
+    var closest = findClosestEvaluation(evaluations, evalDate);
+    var closestPrice = getEvaluationPrice(closest);
+    if (closestPrice != null) return closestPrice;
     if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
     return null;
 }
@@ -146,7 +156,7 @@ function annualizeReturn(totalReturn, holdingDays) {
 
 function normalizeReturnsByDirection(returnRate, direction) {
     if (returnRate == null || !direction) return null;
-    if (direction === 'short') return -returnRate;
+    if (direction === 'short' || direction === 'bearish') return -returnRate;
     return returnRate;
 }
 
@@ -160,6 +170,7 @@ window.FMStock.metrics.returns = {
     isHit: isHit,
     isPartialHit: isPartialHit,
     getEvaluatedPrice: getEvaluatedPrice,
+    getEvaluationPrice: getEvaluationPrice,
     getReturnForPeriod: getReturnForPeriod,
     getCumulativeReturn: getCumulativeReturn,
     annualizeReturn: annualizeReturn,
