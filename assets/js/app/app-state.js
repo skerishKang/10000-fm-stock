@@ -33,15 +33,29 @@ window.FMStock.app = window.FMStock.app || {};
     _subscribers = {};
   };
 
+  function cloneReadableValue(value) {
+    if (Array.isArray(value)) return value.slice();
+    if (value && typeof value === 'object') {
+      var clone = {};
+      for (var key in value) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          clone[key] = value[key];
+        }
+      }
+      return clone;
+    }
+    return value;
+  }
+
   App.state.get = function (path) {
-    if (!path) return _state;
+    if (!path) return cloneReadableValue(_state);
     var keys = path.split('.');
     var val = _state;
     for (var i = 0; i < keys.length; i++) {
       if (val == null || typeof val !== 'object') return undefined;
       val = val[keys[i]];
     }
-    return val;
+    return cloneReadableValue(val);
   };
 
   App.state.set = function (path, value) {
@@ -74,10 +88,6 @@ window.FMStock.app = window.FMStock.app || {};
   App.state.pagesUrl = function (page) {
     return page;
   };
-  
-  /* Also expose globally for convenience */
-  window.pagesUrl = App.state.pagesUrl;
-  
 
   App.state.notify = function (key) {
     var subs = _subscribers[key];
