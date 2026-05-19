@@ -10,91 +10,254 @@ window.FMStock.ui.sources = window.FMStock.ui.sources || {};
 function renderSourceDetail(sourceId, data) {
   var c = document.getElementById("source-detail-container");
   if (!c) return;
+
   var source = (data.sources || []).find(function(s) { return s.id === sourceId; });
-  if (!source) { c.innerHTML = "<div class=\"error\">Source not found</div>"; return; }
+  c.replaceChildren();
+
+  if (!source) {
+    var error = document.createElement("div");
+    error.className = "error";
+    error.textContent = "Source not found";
+    c.appendChild(error);
+    return;
+  }
+
   var segments = (data.segments || []).filter(function(s) { return s.sourceId === sourceId; });
-  var claims = (data.claims || []).filter(function(c) { return c.sourceId === sourceId; });
-  var notes = (data.knowledgeNotes || []).filter(function(n) { return segments.some(function(s) { return s.id === n.segmentId; }); });
-  var h = "<div class=\"source-detail\">";
-  h += renderSourceHeader(source);
-  h += renderSegmentsList(segments);
-  h += renderConnectedClaims(claims);
-  h += renderConnectedKnowledge(notes);
-  h += "</div>";
-  c.innerHTML = h;
+  var claims = (data.claims || []).filter(function(claim) { return claim.sourceId === sourceId; });
+  var notes = (data.knowledgeNotes || []).filter(function(note) {
+    return segments.some(function(segment) { return segment.id === note.segmentId; });
+  });
+
+  var detail = document.createElement("div");
+  detail.className = "source-detail";
+  detail.appendChild(renderSourceHeader(source));
+  detail.appendChild(renderSegmentsList(segments));
+
+  var connectedClaims = renderConnectedClaims(claims);
+  if (connectedClaims) detail.appendChild(connectedClaims);
+
+  var connectedKnowledge = renderConnectedKnowledge(notes);
+  if (connectedKnowledge) detail.appendChild(connectedKnowledge);
+
+  c.appendChild(detail);
+}
+
+function safeClassSuffix(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function safeExternalUrl(value) {
+  try {
+    var url = new URL(String(value || ""), window.location.href);
+    if (url.protocol === "http:" || url.protocol === "https:") return url.href;
+  } catch (err) {
+    // Fall through to null.
+  }
+  return null;
+}
+
+function appendHeading(section, level, text) {
+  var heading = document.createElement(level);
+  heading.textContent = text;
+  section.appendChild(heading);
+  return heading;
 }
 
 function renderSourceHeader(source) {
-  var h = "<div class=\"detail-section source-header\">";
-  h += "<h2>" + (source.title || source.name || "Untitled Source") + "</h2>";
-  h += "<div class=\"meta\"><span class=\"source-type\">" + (source.type || "-") + "</span>";
-  h += "<span class=\"source-date\">" + (source.date || "") + "</span>";
-  h += "<span class=\"status-badge status-" + (source.processingStatus || "pending").toLowerCase() + "\">" + (source.processingStatus || "pending") + "</span></div>";
-  if (source.url) h += "<p><a href=\"" + source.url + "\" target=\"_blank\">" + source.url + "</a></p>";
-  h += "</div>";
-  return h;
+  var section = document.createElement("div");
+  section.className = "detail-section source-header";
+
+  appendHeading(section, "h2", source.title || source.name || "Untitled Source");
+
+  var meta = document.createElement("div");
+  meta.className = "meta";
+
+  var type = document.createElement("span");
+  type.className = "source-type";
+  type.textContent = source.type || "-";
+  meta.appendChild(type);
+
+  var date = document.createElement("span");
+  date.className = "source-date";
+  date.textContent = source.date || "";
+  meta.appendChild(date);
+
+  var status = source.processingStatus || "pending";
+  var statusBadge = document.createElement("span");
+  statusBadge.className = "status-badge status-" + safeClassSuffix(status);
+  statusBadge.textContent = status;
+  meta.appendChild(statusBadge);
+
+  section.appendChild(meta);
+
+  if (source.url) {
+    var p = document.createElement("p");
+    var safeUrl = safeExternalUrl(source.url);
+    if (safeUrl) {
+      var a = document.createElement("a");
+      a.href = safeUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = source.url;
+      p.appendChild(a);
+    } else {
+      var disabled = document.createElement("span");
+      disabled.className = "text-muted";
+      disabled.textContent = "비허용 URL";
+      disabled.title = "안전하지 않은 URL입니다";
+      p.appendChild(disabled);
+    }
+    section.appendChild(p);
+  }
+
+  return section;
 }
 
 function renderSegmentsList(segments) {
-  if (!segments || !segments.length) return "<div class=\"detail-section\"><h3>Segments</h3><p>No segments found.</p></div>";
-  var rows = "";
-  for (var i = 0; i < segments.length; i++) {
-    var s = segments[i];
-    rows += "<tr><td>" + (s.label || s.id || "-") + "</td>";
-    rows += "<td>" + (s.startTime || s.start || "-") + "</td>";
-    rows += "<td>" + (s.endTime || s.end || "-") + "</td>";
-    rows += "<td>" + (s.page || "-") + "</td>";
-    rows += "<td><a href=\"/claims/?segmentId=" + s.id + "\">View Claims</a></td></tr>";
+  var section = document.createElement("div");
+  section.className = "detail-section";
+  appendHeading(section, "h3", segments && segments.length ? "Segments (" + segments.length + ")" : "Segments");
+
+  if (!segments || !segments.length) {
+    var empty = document.createElement("p");
+    empty.textContent = "No segments found.";
+    section.appendChild(empty);
+    return section;
   }
-  var h = "<div class=\"detail-section\"><h3>Segments (" + segments.length + ")</h3>";
-  h += "<table class=\"segments-table\"><thead><tr><th>Label</th><th>Start</th><th>End</th><th>Page</th><th>Claims</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
-  return h;
+
+  var table = document.createElement("table");
+  table.className = "segments-table";
+  var thead = document.createElement("thead");
+  thead.innerHTML = "<tr><th>Label</th><th>Start</th><th>End</th><th>Page</th><th>Claims</th></tr>";
+  table.appendChild(thead);
+
+  var tbody = document.createElement("tbody");
+  segments.forEach(function(segment) {
+    var tr = document.createElement("tr");
+
+    var label = document.createElement("td");
+    label.textContent = segment.label || segment.id || "-";
+    tr.appendChild(label);
+
+    var start = document.createElement("td");
+    start.textContent = segment.startTime || segment.start || "-";
+    tr.appendChild(start);
+
+    var end = document.createElement("td");
+    end.textContent = segment.endTime || segment.end || "-";
+    tr.appendChild(end);
+
+    var page = document.createElement("td");
+    page.textContent = segment.page || "-";
+    tr.appendChild(page);
+
+    var claims = document.createElement("td");
+    var link = document.createElement("a");
+    link.href = "/claims/?segmentId=" + encodeURIComponent(segment.id || "");
+    link.textContent = "View Claims";
+    claims.appendChild(link);
+    tr.appendChild(claims);
+
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  section.appendChild(table);
+  return section;
 }
 
 function renderConnectedClaims(claims) {
-  if (!claims || !claims.length) return "";
-  var h = "<div class=\"detail-section\"><h3>Connected Claims (" + claims.length + ")</h3><ul>";
-  for (var i = 0; i < claims.length; i++) {
-    h += "<li><a href=\"/claims/detail.html?id=" + claims[i].id + "\">" + (claims[i].title || claims[i].text || claims[i].id) + "</a></li>";
-  }
-  h += "</ul></div>";
-  return h;
+  if (!claims || !claims.length) return null;
+
+  var section = document.createElement("div");
+  section.className = "detail-section";
+  appendHeading(section, "h3", "Connected Claims (" + claims.length + ")");
+
+  var ul = document.createElement("ul");
+  claims.forEach(function(claim) {
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    a.href = "/claims/detail.html?id=" + encodeURIComponent(claim.id || "");
+    a.textContent = claim.title || claim.text || claim.id || "Untitled claim";
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+  section.appendChild(ul);
+  return section;
 }
 
 function renderConnectedKnowledge(notes) {
-  if (!notes || !notes.length) return "";
-  var h = "<div class=\"detail-section\"><h3>Connected Knowledge (" + notes.length + ")</h3><ul>";
-  for (var i = 0; i < notes.length; i++) {
-    h += "<li><a href=\"/knowledge/detail.html?id=" + notes[i].id + "\">" + (notes[i].title || notes[i].id) + "</a></li>";
-  }
-  h += "</ul></div>";
-  return h;
+  if (!notes || !notes.length) return null;
+
+  var section = document.createElement("div");
+  section.className = "detail-section";
+  appendHeading(section, "h3", "Connected Knowledge (" + notes.length + ")");
+
+  var ul = document.createElement("ul");
+  notes.forEach(function(note) {
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    a.href = "/knowledge/detail.html?id=" + encodeURIComponent(note.id || "");
+    a.textContent = note.title || note.id || "Untitled note";
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+  section.appendChild(ul);
+  return section;
 }
 
 function renderYoutubeSegments(segments, source) {
-  if (!segments || !segments.length || !source || source.type !== "youtube") return "";
-  var videoId = source.sourceId || (source.url ? new URL(source.url).searchParams.get("v") : null);
-  if (!videoId) return "";
-  var h = "<div class=\"youtube-segments\"><h3>YouTube Segments</h3><ul>";
-  for (var i = 0; i < segments.length; i++) {
-    var s = segments[i];
-    var start = s.startTime || s.start || 0;
-    var link = "https://www.youtube.com/watch?v=" + videoId + String.fromCharCode(38) + "t=" + start + "s";
-    h += "<li><a href=\"" + link + "\" target=\"_blank\">Segment " + start + "s - " + (s.endTime || s.end || "") + "s</a></li>";
+  if (!segments || !segments.length || !source || source.type !== "youtube") return null;
+
+  var videoId = source.sourceId;
+  if (!videoId && source.url) {
+    try {
+      videoId = new URL(source.url, window.location.href).searchParams.get("v");
+    } catch (err) {
+      videoId = null;
+    }
   }
-  h += "</ul></div>";
-  return h;
+  if (!videoId) return null;
+
+  var section = document.createElement("div");
+  section.className = "youtube-segments";
+  appendHeading(section, "h3", "YouTube Segments");
+
+  var ul = document.createElement("ul");
+  segments.forEach(function(segment) {
+    var li = document.createElement("li");
+    var start = segment.startTime || segment.start || 0;
+    var end = segment.endTime || segment.end || "";
+    var a = document.createElement("a");
+    a.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(videoId) + "&t=" + encodeURIComponent(start) + "s";
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = "Segment " + start + "s - " + end + "s";
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+  section.appendChild(ul);
+  return section;
 }
 
 function renderReportSegments(segments) {
-  var rs = (segments || []).filter(function(s) { return s.page; });
-  if (!rs.length) return "";
-  var h = "<div class=\"report-segments\"><h3>Report Pages</h3><ul>";
-  for (var i = 0; i < rs.length; i++) {
-    h += "<li>Page " + rs[i].page + (rs[i].label ? ": " + rs[i].label : "") + "</li>";
-  }
-  h += "</ul></div>";
-  return h;
+  var reportSegments = (segments || []).filter(function(segment) { return segment.page; });
+  if (!reportSegments.length) return null;
+
+  var section = document.createElement("div");
+  section.className = "report-segments";
+  appendHeading(section, "h3", "Report Pages");
+
+  var ul = document.createElement("ul");
+  reportSegments.forEach(function(segment) {
+    var li = document.createElement("li");
+    li.textContent = "Page " + segment.page + (segment.label ? ": " + segment.label : "");
+    ul.appendChild(li);
+  });
+  section.appendChild(ul);
+  return section;
 }
 
 window.FMStock.ui.sources.detail = {
