@@ -82,19 +82,25 @@ function createRankingRow(item, rank) {
   var value = item.return != null ? item.return : item.alpha != null ? item.alpha : item.excessReturn != null ? item.excessReturn : item.hitRate != null ? item.hitRate : item.contributions != null ? item.contributions : item.score != null ? item.score : 0;
   var formatted = typeof value === 'number' ? value.toFixed(2) + '%' : value;
   var detail = item.sampleSize ? '(표본: ' + item.sampleSize + ')' : item.count ? '(표본: ' + item.count + ')' : '';
-  return '<tr class="ranking-row"><td class="rank">' + rank + '</td><td class="name">' + name + '</td><td class="value">' + formatted + '</td><td class="detail">' + detail + '</td></tr>';
+  return '<tr class="ranking-row"><td class="rank">' + rank + '</td><td class="name">' + escapeHtml(name) + '</td><td class="value">' + escapeHtml(formatted) + '</td><td class="detail">' + escapeHtml(detail) + '</td></tr>';
 }
 
 function buildRankingTable(title, items, type) {
   if (!items.length) return '<div class="empty-state">데이터가 없습니다.</div>';
   var rows = items.map(function(item, i) { return createRankingRow(item, i + 1); }).join('');
-  return '<div class="ranking-table-wrapper"><h3 class="ranking-title">' + title + '</h3>' +
-    '<table class="ranking-table"><thead><tr><th>순위</th><th>이름</th><th>' + getValueLabel(type) + '</th><th>비고</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  return '<div class="ranking-table-wrapper"><h3 class="ranking-title">' + escapeHtml(title) + '</h3>' +
+    '<table class="ranking-table"><thead><tr><th>순위</th><th>이름</th><th>' + escapeHtml(getValueLabel(type)) + '</th><th>비고</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 function getValueLabel(type) {
   var labels = { 'return': '수익률', 'alpha': '초과수익률', 'expert-alpha': '알파', 'hit-rate': '적중률', 'industry': '수익률', 'knowledge': '기여도' };
   return labels[type] || '값';
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
+  });
 }
 
 window.FMStock.ui.ranking.render = {
