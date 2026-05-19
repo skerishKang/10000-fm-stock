@@ -26,13 +26,18 @@ The following sites insert data-derived strings directly into HTML without escap
 - `claims-list.js` — speaker, ticker, industry names in filter options
 - `experts-list.js` — expert names in list cards
 - `experts-render.js` — expert names, claim titles, sector names
-- `review-claims.js` — claim titles
-- `review-knowledge.js` — knowledge note titles
 - `source-hub-list.js` — source link names
 - `sources-list.js` — source names
 - `knowledge-list.js` — knowledge note titles
 
 **Note:** These are curated JSON data files, not user input. Risk is lower than user-generated content but still present if data files are compromised.
+
+### Fixed Sites (PR #168)
+
+- `review-claims.js` — converted to DOM creation
+- `review-knowledge.js` — converted to DOM creation
+
+Remaining non-review rendering sites are tracked separately in #169.
 
 ### Allowed Sites (fixed template or escaped)
 
@@ -46,3 +51,4 @@ The following sites insert data-derived strings directly into HTML without escap
 1. For new code, always use `textContent` for data-derived strings.
 2. For existing code, prioritize escaping in `claims-list.js` and `experts-render.js`.
 3. Consider adding a centralized `renderSafeHTML(template, data)` helper for future use.
+4. Remaining non-review rendering sites are tracked separately in #169.
