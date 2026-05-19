@@ -14,7 +14,7 @@ window.FMStock.ui.ingest = window.FMStock.ui.ingest || {};
   function initIngestPage() {
     bindTabButtons();
     bindSaveButton();
-    bindReviewNavigation();
+    handleReviewNavigation();
   }
 
   function bindTabButtons() {
