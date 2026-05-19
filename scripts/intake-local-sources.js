@@ -119,37 +119,51 @@ function readFiles() {
     });
 }
 
-function loadExistingDedupSets() {
+function loadExistingCandidates() {
+  if (!fs.existsSync(OUTPUT_FILE)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf8'));
+  } catch (err) {
+    return [];
+  }
+}
+
+function extractDedupSets(candidates) {
   const fileSha1s = new Set();
   const urlHashes = new Set();
   const normalizedUrls = new Set();
 
-  if (!fs.existsSync(OUTPUT_FILE)) return { fileSha1s, urlHashes, normalizedUrls };
-
-  try {
-    const existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf8'));
-    existing.forEach((candidate) => {
-      if (candidate.intake) {
-        if (candidate.intake.fileSha1) fileSha1s.add(candidate.intake.fileSha1);
-        if (candidate.intake.urlHash) urlHashes.add(candidate.intake.urlHash);
-        if (candidate.intake.normalizedUrl) normalizedUrls.add(candidate.intake.normalizedUrl);
-      }
-    });
-  } catch (err) {
-    // Corrupted file — start fresh
-  }
+  candidates.forEach((candidate) => {
+    if (candidate.intake) {
+      if (candidate.intake.fileSha1) fileSha1s.add(candidate.intake.fileSha1);
+      if (candidate.intake.urlHash) urlHashes.add(candidate.intake.urlHash);
+      if (candidate.intake.normalizedUrl) normalizedUrls.add(candidate.intake.normalizedUrl);
+    }
+  });
 
   return { fileSha1s, urlHashes, normalizedUrls };
 }
 
-function buildCandidates() {
+function extractMaxSeq(candidates) {
+  let maxSeq = 0;
+  candidates.forEach((candidate) => {
+    const match = String(candidate.id || '').match(/^source_\d{8}_(\d+)$/);
+    if (match) {
+      const n = parseInt(match[1], 10);
+      if (n > maxSeq) maxSeq = n;
+    }
+  });
+  return maxSeq;
+}
+
+function buildNewCandidates(existingCandidates) {
   const ymd = todayYmd();
   const addedAt = new Date().toISOString();
-  const candidates = [];
+  const newCandidates = [];
   const skipped = [];
-  let seq = 1;
 
-  const dedup = loadExistingDedupSets();
+  const dedup = extractDedupSets(existingCandidates);
+  let seq = extractMaxSeq(existingCandidates) + 1;
 
   readFiles().forEach((file) => {
     if (dedup.fileSha1s.has(file.sha1)) {
@@ -159,7 +173,7 @@ function buildCandidates() {
     dedup.fileSha1s.add(file.sha1);
 
     const type = classifyFile(file.name);
-    candidates.push({
+    newCandidates.push({
       id: makeId(ymd, seq++),
       type,
       title: slugify(file.name).replace(/_/g, ' '),
@@ -192,7 +206,7 @@ function buildCandidates() {
     dedup.urlHashes.add(hash);
 
     const type = classifyUrl(link.url);
-    candidates.push({
+    newCandidates.push({
       id: makeId(ymd, seq++),
       type,
       title: `${type === 'youtube' ? 'YouTube' : 'Web'} source ${ymd} ${hash}`,
@@ -214,7 +228,7 @@ function buildCandidates() {
     });
   });
 
-  return { candidates, skipped };
+  return { newCandidates, skipped };
 }
 
 function appendLog(entry) {
@@ -223,8 +237,10 @@ function appendLog(entry) {
 
 function main() {
   ensureLayout();
-  const { candidates, skipped } = buildCandidates();
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(candidates, null, 2) + '\n', 'utf8');
+  const existingCandidates = loadExistingCandidates();
+  const { newCandidates, skipped } = buildNewCandidates(existingCandidates);
+  const allCandidates = existingCandidates.concat(newCandidates);
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(allCandidates, null, 2) + '\n', 'utf8');
 
   skipped.forEach((item) => {
     appendLog({
@@ -239,12 +255,14 @@ function main() {
     event: 'intake_completed',
     localRoot: LOCAL_ROOT,
     outputFile: OUTPUT_FILE,
-    candidateCount: candidates.length,
+    totalCount: allCandidates.length,
+    newCount: newCandidates.length,
     skippedCount: skipped.length
   });
 
   console.log('[intake] Local root:', LOCAL_ROOT);
-  console.log('[intake] Candidate count:', candidates.length);
+  console.log('[intake] Total candidates:', allCandidates.length);
+  console.log('[intake] New candidates:', newCandidates.length);
   console.log('[intake] Skipped duplicates:', skipped.length);
   console.log('[intake] Output:', OUTPUT_FILE);
   console.log('[intake] Log:', LOG_FILE);
