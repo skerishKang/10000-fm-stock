@@ -14,6 +14,13 @@ function calculateReturn(basePrice, evaluatedPrice) {
     return ((evaluatedPrice - basePrice) / basePrice) * 100;
 }
 
+function getEvaluationPrice(evaluation) {
+    if (!evaluation) return null;
+    if (evaluation.evaluatedPrice != null) return evaluation.evaluatedPrice;
+    if (evaluation.price != null) return evaluation.price;
+    return null;
+}
+
 function calculateAlpha(returnRate, benchmarkReturn) {
     if (returnRate == null || benchmarkReturn == null) return null;
     return returnRate - benchmarkReturn;
@@ -36,8 +43,9 @@ function calculateReturnsForPeriods(claim, evaluations) {
         var period = periods[pi];
         var targetDate = new Date(claimDate.getTime() + period.days * 86400000);
         var evalAtTarget = findClosestEvaluation(evaluations, targetDate);
-        if (evalAtTarget && evalAtTarget.price != null) {
-            result[period.key] = calculateReturn(basePrice, evalAtTarget.price);
+        var evalPrice = getEvaluationPrice(evalAtTarget);
+        if (evalPrice != null) {
+            result[period.key] = calculateReturn(basePrice, evalPrice);
         }
     }
     return result;
@@ -117,7 +125,8 @@ function getEvaluatedPrice(claim, evaluations) {
     }
     var evalDate = claim.targetDate ? new Date(claim.targetDate) : new Date();
     var closest = findClosestEvaluation(evaluations, evalDate);
-    if (closest && closest.price != null) return closest.price;
+    var closestPrice = getEvaluationPrice(closest);
+    if (closestPrice != null) return closestPrice;
     if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
     return null;
 }
@@ -161,6 +170,7 @@ window.FMStock.metrics.returns = {
     isHit: isHit,
     isPartialHit: isPartialHit,
     getEvaluatedPrice: getEvaluatedPrice,
+    getEvaluationPrice: getEvaluationPrice,
     getReturnForPeriod: getReturnForPeriod,
     getCumulativeReturn: getCumulativeReturn,
     annualizeReturn: annualizeReturn,
