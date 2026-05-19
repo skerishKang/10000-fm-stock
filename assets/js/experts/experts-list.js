@@ -17,6 +17,13 @@ function renderExpertsList(experts, claims, evaluations) {
     });
 }
 
+function safeClassSuffix(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
 function createExpertCard(expert, stats) {
     var card = document.createElement("div");
     card.className = "expert-card";
@@ -35,7 +42,8 @@ function createExpertCard(expert, stats) {
     h3.textContent = expert.name || "";
     header.appendChild(h3);
     var badge = document.createElement("span");
-    badge.className = "expert-type badge badge-" + (expert.type || "").toLowerCase();
+    var typeSuffix = safeClassSuffix(expert.type);
+    badge.className = "expert-type badge" + (typeSuffix ? " badge-" + typeSuffix : "");
     badge.textContent = expert.type || "";
     header.appendChild(badge);
     card.appendChild(header);
