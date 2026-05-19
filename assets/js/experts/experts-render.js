@@ -17,25 +17,69 @@ function renderExpertDetail(expertId, data) {
     renderKnowledgeNotes(data.knowledge);
 }
 
+function safeClassSuffix(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
 function renderExpertHeader(expert) {
     var container = document.getElementById("expert-header");
     if (!container || !expert) return;
-    container.innerHTML = "<div class=\"expert-header-inner\">" +
-        "<img class=\"expert-avatar-lg\" src=\"" + escapeHtml(expert.avatar || "/assets/img/default-avatar.png") + "\" alt=\"" + escapeHtml(expert.name) + "\" />" +
-        "<div class=\"expert-header-info\">" +
-        "<h1>" + escapeHtml(expert.name) + "</h1>" +
-        "<span class=\"expert-title\">" + escapeHtml(expert.title || expert.affiliation || "") + "</span>" +
-        "<p class=\"expert-bio\">" + escapeHtml(expert.bio || "") + "</p>" +
-        "<div class=\"expert-tags\">" +
-        "<span class=\"badge badge-" + (expert.type || "").toLowerCase() + "\">" + escapeHtml(expert.type) + "</span>" +
-        (expert.industries || expert.sectors || []).map(function(s) { return "<span class=\"sector-tag\">" + escapeHtml(s) + "</span>"; }).join("") +
-        "</div></div></div>";
+    container.replaceChildren();
+
+    var inner = document.createElement("div");
+    inner.className = "expert-header-inner";
+
+    var img = document.createElement("img");
+    img.className = "expert-avatar-lg";
+    img.src = expert.avatar || "/assets/img/default-avatar.png";
+    img.alt = expert.name || "";
+    inner.appendChild(img);
+
+    var info = document.createElement("div");
+    info.className = "expert-header-info";
+
+    var h1 = document.createElement("h1");
+    h1.textContent = expert.name || "";
+    info.appendChild(h1);
+
+    var title = document.createElement("span");
+    title.className = "expert-title";
+    title.textContent = expert.title || expert.affiliation || "";
+    info.appendChild(title);
+
+    var bio = document.createElement("p");
+    bio.className = "expert-bio";
+    bio.textContent = expert.bio || "";
+    info.appendChild(bio);
+
+    var tags = document.createElement("div");
+    tags.className = "expert-tags";
+
+    var badge = document.createElement("span");
+    var typeSuffix = safeClassSuffix(expert.type);
+    badge.className = "badge" + (typeSuffix ? " badge-" + typeSuffix : "");
+    badge.textContent = expert.type || "";
+    tags.appendChild(badge);
+
+    (expert.industries || expert.sectors || []).forEach(function(s) {
+        var span = document.createElement("span");
+        span.className = "sector-tag";
+        span.textContent = s;
+        tags.appendChild(span);
+    });
+    info.appendChild(tags);
+
+    inner.appendChild(info);
+    container.appendChild(inner);
 }
 
 function renderPerformanceSummary(stats) {
     var container = document.getElementById("performance-summary");
     if (!container) return;
-    if (!stats) { container.innerHTML = "<p class=\"empty\">No stats available.</p>"; return; }
+    if (!stats) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No stats available."; container.appendChild(p); return; }
     var metrics = [
         { label: "Total Claims", value: stats.claimCount || 0 },
         { label: "Verified", value: stats.verifiedCount || 0 },
@@ -46,19 +90,44 @@ function renderPerformanceSummary(stats) {
         { label: "Worst Return", value: stats.worstReturn != null ? stats.worstReturn.toFixed(2) + "%" : "N/A" },
         { label: "Avg Alpha", value: stats.avgAlpha != null ? stats.avgAlpha.toFixed(2) + "%" : "N/A" }
     ];
-    container.innerHTML = metrics.map(function(m) {
-        return "<div class=\"metric-card\"><span class=\"metric-value\">" + m.value + "</span><span class=\"metric-label\">" + m.label + "</span></div>";
-    }).join("");
+    container.replaceChildren();
+    metrics.forEach(function(m) {
+        var card = document.createElement("div");
+        card.className = "metric-card";
+        var value = document.createElement("span");
+        value.className = "metric-value";
+        value.textContent = m.value;
+        card.appendChild(value);
+        var label = document.createElement("span");
+        label.className = "metric-label";
+        label.textContent = m.label;
+        card.appendChild(label);
+        container.appendChild(card);
+    });
 }
 
 function renderIndustryBreakdown(breakdown) {
     var container = document.getElementById("industry-breakdown");
     if (!container) return;
-    if (!breakdown || !breakdown.length) { container.innerHTML = "<p class=\"empty\">No industry data.</p>"; return; }
-    container.innerHTML = "<table class=\"data-table\"><thead><tr><th>Sector</th><th>Claims</th><th>Hits</th><th>Misses</th><th>Hit Rate</th></tr></thead><tbody>" +
-        breakdown.map(function(s) {
-            return "<tr><td>" + escapeHtml(s.sector) + "</td><td>" + s.total + "</td><td class=\"positive\">" + s.hits + "</td><td class=\"negative\">" + s.misses + "</td><td>" + (s.hitRate * 100).toFixed(1) + "%</td></tr>";
-        }).join("") + "</tbody></table>";
+    if (!breakdown || !breakdown.length) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No industry data."; container.appendChild(p); return; }
+    container.replaceChildren();
+    var table = document.createElement("table");
+    table.className = "data-table";
+    var thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Sector</th><th>Claims</th><th>Hits</th><th>Misses</th><th>Hit Rate</th></tr>";
+    table.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    breakdown.forEach(function(s) {
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td"); td1.textContent = s.sector || ""; tr.appendChild(td1);
+        var td2 = document.createElement("td"); td2.textContent = s.total; tr.appendChild(td2);
+        var td3 = document.createElement("td"); td3.className = "positive"; td3.textContent = s.hits; tr.appendChild(td3);
+        var td4 = document.createElement("td"); td4.className = "negative"; td4.textContent = s.misses; tr.appendChild(td4);
+        var td5 = document.createElement("td"); td5.textContent = (s.hitRate * 100).toFixed(1) + "%"; tr.appendChild(td5);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
 }
 
 function renderClaimHistory(claims, evaluations) {
@@ -66,50 +135,74 @@ function renderClaimHistory(claims, evaluations) {
     if (!container) return;
     var evalMap = {};
     for (var ei = 0; ei < (evaluations || []).length; ei++) { evalMap[evaluations[ei].claimId] = evaluations[ei]; }
-    if (!claims || !claims.length) { container.innerHTML = "<p class=\"empty\">No claims yet.</p>"; return; }
-    container.innerHTML = "<table class=\"data-table\"><thead><tr><th>Date</th><th>Stock</th><th>Direction</th><th>Return</th><th>Alpha</th><th>Verdict</th></tr></thead><tbody>" +
-        claims.map(function(c) {
-            var ev = evalMap[c.id];
-            return "<tr><td>" + (c.date ? new Date(c.date).toLocaleDateString() : "\u2014") + "</td>" +
-                "<td>" + escapeHtml(c.stock || c.ticker || "\u2014") + "</td>" +
-                "<td>" + escapeHtml(c.direction || "\u2014") + "</td>" +
-                "<td class=\"" + ((c.return || 0) >= 0 ? "positive" : "negative") + "\">" + (c.return != null ? c.return.toFixed(2) + "%" : "\u2014") + "</td>" +
-                "<td class=\"" + ((ev && ev.alpha || 0) >= 0 ? "positive" : "negative") + "\">" + (ev && ev.alpha != null ? ev.alpha.toFixed(2) + "%" : "\u2014") + "</td>" +
-                "<td>" + (ev && ev.verdict ? "<span class=\"verdict verdict-" + ev.verdict.toLowerCase() + "\">" + escapeHtml(ev.verdict) + "</span>" : "\u2014") + "</td></tr>";
-        }).join("") + "</tbody></table>";
+    if (!claims || !claims.length) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No claims yet."; container.appendChild(p); return; }
+    container.replaceChildren();
+    var table = document.createElement("table");
+    table.className = "data-table";
+    var thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Date</th><th>Stock</th><th>Direction</th><th>Return</th><th>Alpha</th><th>Verdict</th></tr>";
+    table.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    claims.forEach(function(c) {
+        var ev = evalMap[c.id];
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td"); td1.textContent = c.date ? new Date(c.date).toLocaleDateString() : "\u2014"; tr.appendChild(td1);
+        var td2 = document.createElement("td"); td2.textContent = c.stock || c.ticker || "\u2014"; tr.appendChild(td2);
+        var td3 = document.createElement("td"); td3.textContent = c.direction || "\u2014"; tr.appendChild(td3);
+        var td4 = document.createElement("td"); td4.className = (c.return || 0) >= 0 ? "positive" : "negative"; td4.textContent = c.return != null ? c.return.toFixed(2) + "%" : "\u2014"; tr.appendChild(td4);
+        var td5 = document.createElement("td"); td5.className = (ev && ev.alpha || 0) >= 0 ? "positive" : "negative"; td5.textContent = ev && ev.alpha != null ? ev.alpha.toFixed(2) + "%" : "\u2014"; tr.appendChild(td5);
+        var td6 = document.createElement("td");
+        if (ev && ev.verdict) { var span = document.createElement("span"); span.className = "verdict verdict-" + ev.verdict.toLowerCase(); span.textContent = ev.verdict; td6.appendChild(span); } else { td6.textContent = "\u2014"; }
+        tr.appendChild(td6);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
 }
 
 function renderTopClaims(claims) {
     var container = document.getElementById("top-claims");
     if (!container) return;
-    if (!claims || !claims.length) { container.innerHTML = "<p class=\"empty\">No top claims.</p>"; return; }
-    container.innerHTML = claims.map(function(c, i) {
-        return "<div class=\"claim-card claim-top\"><span class=\"claim-rank\">#" + (i + 1) + "</span>" +
-            "<span class=\"claim-stock\">" + escapeHtml(c.stock || c.ticker) + "</span>" +
-            "<span class=\"claim-return positive\">+" + (c.return != null ? c.return.toFixed(2) : "0") + "%</span></div>";
-    }).join("");
+    if (!claims || !claims.length) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No top claims."; container.appendChild(p); return; }
+    container.replaceChildren();
+    claims.forEach(function(c, i) {
+        var div = document.createElement("div");
+        div.className = "claim-card claim-top";
+        var rank = document.createElement("span"); rank.className = "claim-rank"; rank.textContent = "#" + (i + 1); div.appendChild(rank);
+        var stock = document.createElement("span"); stock.className = "claim-stock"; stock.textContent = c.stock || c.ticker || ""; div.appendChild(stock);
+        var ret = document.createElement("span"); ret.className = "claim-return positive"; ret.textContent = "+" + (c.return != null ? c.return.toFixed(2) : "0") + "%"; div.appendChild(ret);
+        container.appendChild(div);
+    });
 }
 
 function renderBottomClaims(claims) {
     var container = document.getElementById("bottom-claims");
     if (!container) return;
-    if (!claims || !claims.length) { container.innerHTML = "<p class=\"empty\">No bottom claims.</p>"; return; }
-    container.innerHTML = claims.map(function(c, i) {
-        return "<div class=\"claim-card claim-bottom\"><span class=\"claim-rank\">#" + (i + 1) + "</span>" +
-            "<span class=\"claim-stock\">" + escapeHtml(c.stock || c.ticker) + "</span>" +
-            "<span class=\"claim-return negative\">" + (c.return != null ? c.return.toFixed(2) : "0") + "%</span></div>";
-    }).join("");
+    if (!claims || !claims.length) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No bottom claims."; container.appendChild(p); return; }
+    container.replaceChildren();
+    claims.forEach(function(c, i) {
+        var div = document.createElement("div");
+        div.className = "claim-card claim-bottom";
+        var rank = document.createElement("span"); rank.className = "claim-rank"; rank.textContent = "#" + (i + 1); div.appendChild(rank);
+        var stock = document.createElement("span"); stock.className = "claim-stock"; stock.textContent = c.stock || c.ticker || ""; div.appendChild(stock);
+        var ret = document.createElement("span"); ret.className = "claim-return negative"; ret.textContent = (c.return != null ? c.return.toFixed(2) : "0") + "%"; div.appendChild(ret);
+        container.appendChild(div);
+    });
 }
 
 function renderKnowledgeNotes(notes) {
     var container = document.getElementById("knowledge-notes");
     if (!container) return;
-    if (!notes || !notes.length) { container.innerHTML = "<p class=\"empty\">No knowledge notes.</p>"; return; }
-    container.innerHTML = notes.map(function(n) {
-        return "<div class=\"knowledge-item\"><h4>" + escapeHtml(n.title) + "</h4>" +
-            "<p>" + escapeHtml(n.summary || (n.content ? n.content.slice(0, 200) : "") || "") + "</p>" +
-            "<span class=\"knowledge-meta\">" + (n.date ? new Date(n.date).toLocaleDateString() : "") + " \u00b7 " + escapeHtml(n.source || "") + "</span></div>";
-    }).join("");
+    if (!notes || !notes.length) { container.replaceChildren(); var p = document.createElement("p"); p.className = "empty"; p.textContent = "No knowledge notes."; container.appendChild(p); return; }
+    container.replaceChildren();
+    notes.forEach(function(n) {
+        var div = document.createElement("div");
+        div.className = "knowledge-item";
+        var h4 = document.createElement("h4"); h4.textContent = n.title || ""; div.appendChild(h4);
+        var p = document.createElement("p"); p.textContent = n.summary || (n.content ? n.content.slice(0, 200) : "") || ""; div.appendChild(p);
+        var meta = document.createElement("span"); meta.className = "knowledge-meta"; meta.textContent = (n.date ? new Date(n.date).toLocaleDateString() : "") + " \u00b7 " + (n.source || ""); div.appendChild(meta);
+        container.appendChild(div);
+    });
 }
 
 function escapeHtml(text) {

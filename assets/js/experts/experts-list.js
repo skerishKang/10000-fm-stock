@@ -10,28 +10,84 @@ window.FMStock.ui.experts = window.FMStock.ui.experts || {};
 function renderExpertsList(experts, claims, evaluations) {
     var container = document.getElementById("experts-grid");
     if (!container) return;
-    container.innerHTML = experts.map(function(ex) {
+    container.replaceChildren();
+    experts.forEach(function(ex) {
         var stats = window.FMStock.ui.experts.metrics.getExpertCardStats(ex.id, claims, evaluations);
-        return createExpertCard(ex, stats);
-    }).join("");
+        container.appendChild(createExpertCard(ex, stats));
+    });
+}
+
+function safeClassSuffix(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 }
 
 function createExpertCard(expert, stats) {
-    var sectors = (expert.sectors || expert.industries || []).slice(0, 3).map(function(s) {
-        return "<span class=\"sector-tag\">" + escapeHtml(s) + "</span>";
-    }).join("");
-    return "<div class=\"expert-card\" data-expert-id=\"" + escapeHtml(expert.id) + "\">" +
-        "<div class=\"card-header\">" +
-        "<img class=\"expert-avatar\" src=\"" + escapeHtml(expert.avatar || "/assets/img/default-avatar.png") + "\" alt=\"" + escapeHtml(expert.name) + "\" loading=\"lazy\" />" +
-        "<h3 class=\"expert-name\">" + escapeHtml(expert.name) + "</h3>" +
-        "<span class=\"expert-type badge badge-" + (expert.type || "").toLowerCase() + "\">" + escapeHtml(expert.type) + "</span></div>" +
-        "<div class=\"card-stats\">" +
-        "<div class=\"stat\"><span class=\"stat-label\">Verified</span><span class=\"stat-value\">" + (stats.verifiedCount || 0) + "</span></div>" +
-        "<div class=\"stat\"><span class=\"stat-label\">Hit Rate</span><span class=\"stat-value\">" + (stats.hitRate != null ? (stats.hitRate * 100).toFixed(1) + "%" : "N/A") + "</span></div>" +
-        "<div class=\"stat\"><span class=\"stat-label\">Avg Alpha</span><span class=\"stat-value\">" + (stats.avgAlpha != null ? stats.avgAlpha.toFixed(2) + "%" : "N/A") + "</span></div>" +
-        "<div class=\"stat\"><span class=\"stat-label\">Claims</span><span class=\"stat-value\">" + (stats.claimCount || 0) + "</span></div></div>" +
-        "<div class=\"card-sectors\">" + sectors + "</div>" +
-        "<a href=\"experts-detail.html?id=" + encodeURIComponent(expert.id) + "\" class=\"card-link\">View Profile \u2192</a></div>";
+    var card = document.createElement("div");
+    card.className = "expert-card";
+    card.dataset.expertId = expert.id;
+
+    var header = document.createElement("div");
+    header.className = "card-header";
+    var img = document.createElement("img");
+    img.className = "expert-avatar";
+    img.src = expert.avatar || "/assets/img/default-avatar.png";
+    img.alt = expert.name || "";
+    img.loading = "lazy";
+    header.appendChild(img);
+    var h3 = document.createElement("h3");
+    h3.className = "expert-name";
+    h3.textContent = expert.name || "";
+    header.appendChild(h3);
+    var badge = document.createElement("span");
+    var typeSuffix = safeClassSuffix(expert.type);
+    badge.className = "expert-type badge" + (typeSuffix ? " badge-" + typeSuffix : "");
+    badge.textContent = expert.type || "";
+    header.appendChild(badge);
+    card.appendChild(header);
+
+    var statsDiv = document.createElement("div");
+    statsDiv.className = "card-stats";
+    var statItems = [
+        { label: "Verified", value: stats.verifiedCount || 0 },
+        { label: "Hit Rate", value: stats.hitRate != null ? (stats.hitRate * 100).toFixed(1) + "%" : "N/A" },
+        { label: "Avg Alpha", value: stats.avgAlpha != null ? stats.avgAlpha.toFixed(2) + "%" : "N/A" },
+        { label: "Claims", value: stats.claimCount || 0 }
+    ];
+    statItems.forEach(function(item) {
+        var stat = document.createElement("div");
+        stat.className = "stat";
+        var label = document.createElement("span");
+        label.className = "stat-label";
+        label.textContent = item.label;
+        stat.appendChild(label);
+        var value = document.createElement("span");
+        value.className = "stat-value";
+        value.textContent = item.value;
+        stat.appendChild(value);
+        statsDiv.appendChild(stat);
+    });
+    card.appendChild(statsDiv);
+
+    var sectorsDiv = document.createElement("div");
+    sectorsDiv.className = "card-sectors";
+    (expert.sectors || expert.industries || []).slice(0, 3).forEach(function(s) {
+        var span = document.createElement("span");
+        span.className = "sector-tag";
+        span.textContent = s;
+        sectorsDiv.appendChild(span);
+    });
+    card.appendChild(sectorsDiv);
+
+    var link = document.createElement("a");
+    link.href = "experts-detail.html?id=" + encodeURIComponent(expert.id);
+    link.className = "card-link";
+    link.textContent = "View Profile \u2192";
+    card.appendChild(link);
+
+    return card;
 }
 
 function filterExperts(experts, filters) {
