@@ -119,13 +119,45 @@ function readFiles() {
     });
 }
 
+function loadExistingDedupSets() {
+  const fileSha1s = new Set();
+  const urlHashes = new Set();
+  const normalizedUrls = new Set();
+
+  if (!fs.existsSync(OUTPUT_FILE)) return { fileSha1s, urlHashes, normalizedUrls };
+
+  try {
+    const existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf8'));
+    existing.forEach((candidate) => {
+      if (candidate.intake) {
+        if (candidate.intake.fileSha1) fileSha1s.add(candidate.intake.fileSha1);
+        if (candidate.intake.urlHash) urlHashes.add(candidate.intake.urlHash);
+        if (candidate.intake.normalizedUrl) normalizedUrls.add(candidate.intake.normalizedUrl);
+      }
+    });
+  } catch (err) {
+    // Corrupted file — start fresh
+  }
+
+  return { fileSha1s, urlHashes, normalizedUrls };
+}
+
 function buildCandidates() {
   const ymd = todayYmd();
   const addedAt = new Date().toISOString();
   const candidates = [];
+  const skipped = [];
   let seq = 1;
 
+  const dedup = loadExistingDedupSets();
+
   readFiles().forEach((file) => {
+    if (dedup.fileSha1s.has(file.sha1)) {
+      skipped.push({ kind: 'file', key: file.sha1, reason: 'duplicate fileSha1' });
+      return;
+    }
+    dedup.fileSha1s.add(file.sha1);
+
     const type = classifyFile(file.name);
     candidates.push({
       id: makeId(ymd, seq++),
@@ -151,8 +183,15 @@ function buildCandidates() {
   });
 
   readLinks().forEach((link) => {
-    const type = classifyUrl(link.url);
     const hash = stableHash(link.url);
+    if (dedup.normalizedUrls.has(link.url) || dedup.urlHashes.has(hash)) {
+      skipped.push({ kind: 'link', key: link.url, reason: 'duplicate normalizedUrl or urlHash' });
+      return;
+    }
+    dedup.normalizedUrls.add(link.url);
+    dedup.urlHashes.add(hash);
+
+    const type = classifyUrl(link.url);
     candidates.push({
       id: makeId(ymd, seq++),
       type,
@@ -175,7 +214,7 @@ function buildCandidates() {
     });
   });
 
-  return candidates;
+  return { candidates, skipped };
 }
 
 function appendLog(entry) {
@@ -184,17 +223,29 @@ function appendLog(entry) {
 
 function main() {
   ensureLayout();
-  const candidates = buildCandidates();
+  const { candidates, skipped } = buildCandidates();
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(candidates, null, 2) + '\n', 'utf8');
+
+  skipped.forEach((item) => {
+    appendLog({
+      event: 'duplicate_skipped',
+      kind: item.kind,
+      key: item.key,
+      reason: item.reason
+    });
+  });
+
   appendLog({
     event: 'intake_completed',
     localRoot: LOCAL_ROOT,
     outputFile: OUTPUT_FILE,
-    candidateCount: candidates.length
+    candidateCount: candidates.length,
+    skippedCount: skipped.length
   });
 
   console.log('[intake] Local root:', LOCAL_ROOT);
   console.log('[intake] Candidate count:', candidates.length);
+  console.log('[intake] Skipped duplicates:', skipped.length);
   console.log('[intake] Output:', OUTPUT_FILE);
   console.log('[intake] Log:', LOG_FILE);
 }
