@@ -24,7 +24,7 @@ function calculateReturnsForPeriods(claim, evaluations) {
     if (!claim || !evaluations || evaluations.length === 0) return result;
     var basePrice = claim.basePrice || claim.price || null;
     if (basePrice == null) return result;
-    var claimDate = new Date(claim.date || claim.createdAt);
+    var claimDate = new Date(claim.baseDate || claim.date || claim.createdAt);
     if (isNaN(claimDate.getTime())) return result;
     var periods = [
         { key: '1M', days: 30 },
@@ -92,11 +92,11 @@ function determineResult(claim, evaluations) {
 }
 
 function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, claim) {
-    if (direction === 'long') {
+    if (direction === 'long' || direction === 'bullish') {
         if (evaluatedPrice != null && targetPrice != null) return evaluatedPrice >= targetPrice;
         if (returnRate != null && claim != null && claim.targetReturn != null) return returnRate >= claim.targetReturn;
         return returnRate != null && returnRate > 0;
-    } else if (direction === 'short') {
+    } else if (direction === 'short' || direction === 'bearish') {
         if (evaluatedPrice != null && targetPrice != null) return evaluatedPrice <= targetPrice;
         if (returnRate != null && claim != null && claim.targetReturn != null) return returnRate <= claim.targetReturn;
         return returnRate != null && returnRate < 0;
@@ -105,8 +105,8 @@ function isHit(direction, returnRate, targetPrice, evaluatedPrice, basePrice, cl
 }
 
 function isPartialHit(direction, returnRate, alpha) {
-    if (direction === 'long') return returnRate > 0 && alpha > 0;
-    if (direction === 'short') return returnRate < 0 && alpha > 0;
+    if (direction === 'long' || direction === 'bullish') return returnRate > 0 && alpha > 0;
+    if (direction === 'short' || direction === 'bearish') return returnRate < 0 && alpha > 0;
     return false;
 }
 
@@ -115,7 +115,8 @@ function getEvaluatedPrice(claim, evaluations) {
         if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
         return null;
     }
-    var closest = findClosestEvaluation(evaluations, new Date());
+    var evalDate = claim.targetDate ? new Date(claim.targetDate) : new Date();
+    var closest = findClosestEvaluation(evaluations, evalDate);
     if (closest && closest.price != null) return closest.price;
     if (claim && claim.evaluatedPrice != null) return claim.evaluatedPrice;
     return null;
@@ -146,7 +147,7 @@ function annualizeReturn(totalReturn, holdingDays) {
 
 function normalizeReturnsByDirection(returnRate, direction) {
     if (returnRate == null || !direction) return null;
-    if (direction === 'short') return -returnRate;
+    if (direction === 'short' || direction === 'bearish') return -returnRate;
     return returnRate;
 }
 

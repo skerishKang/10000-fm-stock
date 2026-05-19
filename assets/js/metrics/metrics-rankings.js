@@ -155,7 +155,7 @@ function getExpertTrendRanking(experts, claims, evaluations, days, minSample) {
     var cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - (days || 30));
     var recentClaims = claims.filter(function(c) {
-        var d = new Date(c.date || c.createdAt);
+        var d = new Date(c.baseDate || c.date || c.createdAt);
         return !isNaN(d.getTime()) && d >= cutoff;
     });
     return getExpertAlphaRanking(experts, recentClaims, evaluations, minSample);
