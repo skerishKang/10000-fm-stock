@@ -22,6 +22,13 @@ function getExpertClaims(expertId, claims) {
     });
 }
 
+function findEvaluationsForClaim(claim, evaluations) {
+    if (!claim || !evaluations || evaluations.length === 0) return [];
+    return evaluations.filter(function(e) {
+        return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
+    });
+}
+
 function getExpertStats(expertId, claims, evaluations) {
     var R = window.FMStock.metrics.returns;
     var expertClaims = getExpertClaims(expertId, claims);
@@ -33,9 +40,7 @@ function getExpertStats(expertId, claims, evaluations) {
     var returns = [], alphas = [];
     for (var ci = 0; ci < expertClaims.length; ci++) {
         var claim = expertClaims[ci];
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var result = R.determineResult(claim, evals);
         var returnRate = R.getDefaultReturn(claim, evals);
         var normalizedReturn = R.normalizeReturnsByDirection(returnRate, claim.direction);
@@ -71,9 +76,7 @@ function getIndustryBreakdown(expertId, claims, evaluations) {
         }
         var ind = industries[industry];
         ind.total++;
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var returnRate = R.getDefaultReturn(claim, evals);
         var result = R.determineResult(claim, evals);
         var normalizedReturn = R.normalizeReturnsByDirection(returnRate, claim.direction);
@@ -106,9 +109,7 @@ function getTopClaims(expertId, claims, evaluations, N) {
     var scored = [];
     for (var ci = 0; ci < expertClaims.length; ci++) {
         var claim = expertClaims[ci];
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var returnRate = R.getDefaultReturn(claim, evals);
         var normalizedReturn = R.normalizeReturnsByDirection(returnRate, claim.direction);
         var result = R.determineResult(claim, evals);
@@ -131,9 +132,7 @@ function getBottomClaims(expertId, claims, evaluations, N) {
     var scored = [];
     for (var ci = 0; ci < expertClaims.length; ci++) {
         var claim = expertClaims[ci];
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var returnRate = R.getDefaultReturn(claim, evals);
         var normalizedReturn = R.normalizeReturnsByDirection(returnRate, claim.direction);
         var result = R.determineResult(claim, evals);
@@ -186,6 +185,7 @@ function getExpertsWithMinSample(experts, claims, evaluations, minSample) {
 window.FMStock.metrics.experts = {
     median: median,
     getExpertClaims: getExpertClaims,
+    findEvaluationsForClaim: findEvaluationsForClaim,
     getExpertStats: getExpertStats,
     getIndustryBreakdown: getIndustryBreakdown,
     getTopClaims: getTopClaims,
