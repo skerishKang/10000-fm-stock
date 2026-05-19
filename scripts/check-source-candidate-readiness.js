@@ -4,6 +4,7 @@
  *
  * Read-only readiness check for local source candidates before promotion
  * to official data/sources.json.
+ * Includes review metadata from source-candidate-reviews.json.
  */
 
 const fs = require('fs');
@@ -12,6 +13,7 @@ const path = require('path');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const LOCAL_ROOT = process.env.FM_STOCK_LOCAL_SOURCES || path.resolve(REPO_ROOT, '..', '10000-fm-stock-local-sources');
 const CANDIDATES_FILE = path.join(LOCAL_ROOT, 'candidates', 'sources.candidate.json');
+const REVIEWS_FILE = path.join(LOCAL_ROOT, 'reviews', 'source-candidate-reviews.json');
 
 const OFFICIAL_TYPE_MAP = {
   youtube: 'youtube',
@@ -26,14 +28,31 @@ const OFFICIAL_TYPE_MAP = {
 
 function isIsoDate(value) {
   if (!value) return false;
+  // Support YYYY-MM-DD or ISO UTC
   return /^\d{4}-\d{2}-\d{2}(T|$)/.test(String(value));
 }
 
-function checkCandidate(candidate) {
+function checkCandidate(candidate, review) {
   const blockingIssues = [];
   const reviewIssues = [];
 
-  if (!candidate.id) blockingIssues.push('missing id');
+  const sourceIndicator = review ? (candidate ? 'raw+review' : 'review') : 'raw';
+
+  // Use overrides from review if available
+  const finalId = candidate.id;
+  // If review is approved, we require review.officialType and skip fallback to candidate.type
+  let finalType;
+  if (review && review.reviewStatus === 'approved') {
+    finalType = review.officialType || '';
+  } else {
+    finalType = (review && review.officialType) || candidate.type || '';
+  }
+  const finalTitle = (review && review.titleOverride) || candidate.title || '';
+  const finalPublisher = (review && review.publisher) || candidate.publisher || '';
+  const finalPublishedAt = (review && review.publishedAt) || candidate.publishedAt || '';
+  const finalStatus = (review && review.reviewStatus) || 'pending';
+
+  if (!finalId) blockingIssues.push('missing id');
   if (candidate.status !== 'candidate') blockingIssues.push('status is not candidate');
   if (candidate.official !== false) blockingIssues.push('official is not false');
 
@@ -41,37 +60,82 @@ function checkCandidate(candidate) {
   const hasPath = !!(candidate.privatePath && candidate.privatePath.trim());
   if (!hasUrl && !hasPath) blockingIssues.push('missing url and privatePath');
 
-  if (!candidate.title) reviewIssues.push('missing title');
+  if (!finalTitle) reviewIssues.push('missing title');
+  if (!finalPublisher) reviewIssues.push('missing publisher');
+  if (!isIsoDate(finalPublishedAt)) reviewIssues.push('missing or invalid publishedAt');
 
-  const hasPublisher = !!(candidate.publisher && candidate.publisher.trim());
-  const hasDate = isIsoDate(candidate.publishedAt);
-  if (!hasPublisher) reviewIssues.push('missing publisher');
-  if (!hasDate) reviewIssues.push('missing publishedAt');
-
-  if (blockingIssues.length > 0) {
-    return { status: 'blocked', reason: blockingIssues.join('; '), allIssues: blockingIssues.concat(reviewIssues) };
+  // Review status overrides
+  if (review && finalStatus === 'blocked') {
+    return {
+      status: 'blocked',
+      reason: review.promotionBlockedReason || 'blocked by reviewer',
+      source: sourceIndicator,
+      title: finalTitle,
+      type: finalType
+    };
   }
 
-  const type = candidate.type || '';
-  const mappedType = OFFICIAL_TYPE_MAP[type];
+  const mappedType = OFFICIAL_TYPE_MAP[finalType];
 
   if (mappedType === undefined) {
-    return { status: 'blocked', reason: `unknown type: ${type}`, allIssues: reviewIssues };
+    blockingIssues.push(`unknown type: ${finalType}`);
+  } else if (mappedType === null) {
+    if (finalType === 'document') {
+      reviewIssues.push('document requires reviewer mapping to report/youtube/ir');
+    } else {
+      reviewIssues.push('manual source type selection required');
+    }
   }
 
-  if (type === 'document') {
-    return { status: 'needsManualReview', reason: 'document requires reviewer confirmation before mapping to report', allIssues: reviewIssues };
+  if (blockingIssues.length > 0) {
+    return {
+      status: 'blocked',
+      reason: blockingIssues.join('; '),
+      source: sourceIndicator,
+      title: finalTitle,
+      type: finalType
+    };
   }
 
-  if (mappedType === null) {
-    return { status: 'blocked', reason: 'manual source type selection required', allIssues: reviewIssues };
+  // If review exists, it must be approved to be ready
+  if (review && finalStatus !== 'approved') {
+    return {
+      status: 'needsManualReview',
+      reason: `review status is ${finalStatus}`,
+      source: sourceIndicator,
+      title: finalTitle,
+      type: finalType
+    };
+  }
+
+  // If no review, use existing logic: documents are never ready
+  if (!review && finalType === 'document') {
+    return {
+      status: 'needsManualReview',
+      reason: 'document requires reviewer confirmation before mapping to report',
+      source: sourceIndicator,
+      title: finalTitle,
+      type: finalType
+    };
   }
 
   if (reviewIssues.length > 0) {
-    return { status: 'needsManualReview', reason: reviewIssues.join('; '), allIssues: reviewIssues };
+    return {
+      status: 'needsManualReview',
+      reason: reviewIssues.join('; '),
+      source: sourceIndicator,
+      title: finalTitle,
+      type: finalType
+    };
   }
 
-  return { status: 'ready', reason: '', allIssues: [] };
+  return {
+    status: 'ready',
+    reason: '',
+    source: sourceIndicator,
+    title: finalTitle,
+    type: finalType
+  };
 }
 
 function main() {
@@ -100,19 +164,45 @@ function main() {
     process.exit(1);
   }
 
-  console.log('Total:', candidates.length);
+  // Load reviews if available
+  let reviews = [];
+  if (fs.existsSync(REVIEWS_FILE)) {
+    console.log('Review file:', REVIEWS_FILE);
+    try {
+      reviews = JSON.parse(fs.readFileSync(REVIEWS_FILE, 'utf8'));
+    } catch (err) {
+      console.error('Error: Failed to parse review file:', err.message);
+      process.exit(1);
+    }
+    if (!Array.isArray(reviews)) {
+      console.error('Error: Review file root is not an array.');
+      process.exit(1);
+    }
+  } else {
+    console.log('No review file found. Proceeding with raw candidates.');
+  }
+
+  console.log('Total candidates:', candidates.length);
+  console.log('Review records loaded:', reviews.length);
+
+  const reviewsMap = new Map();
+  reviews.forEach((r) => {
+    if (r.candidateId) reviewsMap.set(r.candidateId, r);
+  });
 
   const ready = [];
   const blocked = [];
   const needsManualReview = [];
 
   candidates.forEach((candidate) => {
-    const result = checkCandidate(candidate);
+    const review = reviewsMap.get(candidate.id);
+    const result = checkCandidate(candidate, review);
     const entry = {
       id: candidate.id || '(no id)',
-      type: candidate.type || '(no type)',
-      title: candidate.title || '(no title)',
-      reason: result.reason
+      type: result.type || '(no type)',
+      title: result.title || '(no title)',
+      reason: result.reason,
+      source: result.source
     };
 
     if (result.status === 'ready') ready.push(entry);
@@ -127,19 +217,19 @@ function main() {
   if (ready.length > 0) {
     console.log('');
     console.log('Ready:');
-    ready.forEach((e) => console.log(`- ${e.id} | ${e.type} | ${e.title}`));
+    ready.forEach((e) => console.log(`- ${e.id} | ${e.type} | [source: ${e.source}] | ${e.title}`));
   }
 
   if (needsManualReview.length > 0) {
     console.log('');
     console.log('Needs manual review:');
-    needsManualReview.forEach((e) => console.log(`- ${e.id} | ${e.type} | ${e.reason}`));
+    needsManualReview.forEach((e) => console.log(`- ${e.id} | ${e.type} | [source: ${e.source}] | ${e.reason}`));
   }
 
   if (blocked.length > 0) {
     console.log('');
     console.log('Blocked:');
-    blocked.forEach((e) => console.log(`- ${e.id} | ${e.type} | ${e.reason}`));
+    blocked.forEach((e) => console.log(`- ${e.id} | ${e.type} | [source: ${e.source}] | ${e.reason}`));
   }
 
   process.exit(0);
