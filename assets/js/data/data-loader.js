@@ -7,13 +7,15 @@
 
   var DATA_BASE = getBasePath() + 'data/';
 
-  /** Required datasets — app cannot function without these */
-  var REQUIRED_DATASETS = ['experts', 'claims', 'evaluations'];
+  /** Required datasets — app cannot reliably render claim evidence without these.
+   * Keep aligned with scripts/validate-data.js claim reference checks.
+   */
+  var REQUIRED_DATASETS = ['experts', 'sources', 'segments', 'claims', 'evaluations'];
 
   var DATA_FILES = [
     { name: 'experts',          url: DATA_BASE + 'experts.json',                   required: true },
-    { name: 'sources',          url: DATA_BASE + 'sources.json',                   required: false },
-    { name: 'segments',         url: DATA_BASE + 'segments.json',                  required: false },
+    { name: 'sources',          url: DATA_BASE + 'sources.json',                   required: true },
+    { name: 'segments',         url: DATA_BASE + 'segments.json',                  required: true },
     { name: 'claims',           url: DATA_BASE + 'claims.json',                    required: true },
     { name: 'evaluations',      url: DATA_BASE + 'evaluations.json',               required: true },
     { name: 'knowledgeNotes',   url: DATA_BASE + 'knowledge_notes.json',           required: false },
