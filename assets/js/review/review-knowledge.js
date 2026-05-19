@@ -25,9 +25,16 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
     var card = document.createElement("div");
     card.className = "candidate-card knowledge-card";
     card.dataset.index = index;
-    card.innerHTML = "<h4>" + (note.title || "Untitled Knowledge") + "</h4>" +
-      "<p>" + (note.detail || "") + "</p>" +
-      "<span class=\"badge badge-knowledge\">Knowledge</span>";
+    var h4 = document.createElement("h4");
+    h4.textContent = note.title || "Untitled Knowledge";
+    var p = document.createElement("p");
+    p.textContent = note.detail || "";
+    var badge = document.createElement("span");
+    badge.className = "badge badge-knowledge";
+    badge.textContent = "Knowledge";
+    card.appendChild(h4);
+    card.appendChild(p);
+    card.appendChild(badge);
     card.addEventListener("click", function() { renderKnowledgeDetail(note); });
     return card;
   }
@@ -35,9 +42,22 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
   function renderKnowledgeDetail(note) {
     var panel = document.getElementById("detail-panel");
     if (!panel) return;
-    panel.innerHTML = "<h3>" + (note.title || "Untitled Knowledge") + "</h3>" +
-      "<p><strong>Detail:</strong> " + (note.detail || "") + "</p>" +
-      "<p><strong>Status:</strong> Pending Review</p>";
+    panel.replaceChildren();
+    var h3 = document.createElement("h3");
+    h3.textContent = note.title || "Untitled Knowledge";
+    var p1 = document.createElement("p");
+    var strong1 = document.createElement("strong");
+    strong1.textContent = "Detail: ";
+    p1.appendChild(strong1);
+    p1.appendChild(document.createTextNode(note.detail || ""));
+    var p2 = document.createElement("p");
+    var strong2 = document.createElement("strong");
+    strong2.textContent = "Status: ";
+    p2.appendChild(strong2);
+    p2.appendChild(document.createTextNode("Pending Review"));
+    panel.appendChild(h3);
+    panel.appendChild(p1);
+    panel.appendChild(p2);
   }
 
   function approveKnowledge(index) {
