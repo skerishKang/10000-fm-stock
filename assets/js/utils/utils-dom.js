@@ -125,6 +125,23 @@
     return text.replace(/[&<>"']/g, function (m) { return map[m]; });
   }
 
+  function safeClassToken(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function safeExternalUrl(value) {
+    try {
+      var url = new URL(String(value || ''), window.location.href);
+      if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
+    } catch (err) {
+      // Fall through to null.
+    }
+    return null;
+  }
+
   /**
    * Creates a debounced version of a function.
    * @param {Function} fn - Function to debounce
@@ -153,5 +170,14 @@
     getParam: getParam,
     sanitize: sanitize,
     debounce: debounce
+  };
+
+  window.FMStock = window.FMStock || {};
+  window.FMStock.security = window.FMStock.security || {
+    escapeHtml: sanitize,
+    escapeAttr: sanitize,
+    sanitize: sanitize,
+    safeClassToken: safeClassToken,
+    safeExternalUrl: safeExternalUrl
   };
 })();
