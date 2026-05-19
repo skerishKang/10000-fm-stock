@@ -10,45 +10,95 @@ window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 function renderKnowledgeList(notes, data) {
   var container = document.getElementById("knowledge-list");
   if (!container) return;
-  container.innerHTML = notes.map(function(note) { return createKnowledgeCard(note); }).join("");
+  container.replaceChildren();
+  notes.forEach(function(note) { container.appendChild(createKnowledgeCard(note)); });
 }
 
 function createKnowledgeCard(note) {
-  var industry = note.industry ? "<span class=\"badge badge-industry\">" + note.industry + "</span>" : "";
-  var stock = note.stock ? "<span class=\"badge badge-stock\">" + note.stock + "</span>" : "";
-  var topic = note.topic ? "<span class=\"badge badge-topic\">" + note.topic + "</span>" : "";
-  var difficulty = note.difficulty ? "<span class=\"badge badge-difficulty difficulty-" + note.difficulty.toLowerCase() + "\">" + note.difficulty + "</span>" : "";
-  var tags = (note.tags || []).map(function(t) { return "<span class=\"tag\">" + t + "</span>"; }).join("");
-  var source = note.source ? "<div class=\"source\">\ud83d\udcda " + note.source + "</div>" : "";
-  return "<div class=\"knowledge-card\" data-id=\"" + note.id + "\">" +
-    "<div class=\"card-badges\">" + industry + stock + topic + difficulty + "</div>" +
-    "<h3 class=\"card-title\">" + note.title + "</h3>" +
-    "<p class=\"card-summary\">" + (note.summary || "") + "</p>" +
-    "<div class=\"card-keypoints\"><strong>\ud575\uc2ec\ud3ec\uc778\ud2b8:</strong><ul>" +
-    (note.keyPoints || []).map(function(kp) { return "<li>" + kp + "</li>"; }).join("") + "</ul></div>" +
-    "<div class=\"card-tags\">" + tags + "</div>" + source + "</div>";
+  var card = document.createElement("div");
+  card.className = "knowledge-card";
+  card.dataset.id = note.id;
+
+  var badges = document.createElement("div");
+  badges.className = "card-badges";
+  if (note.industry) { var b = document.createElement("span"); b.className = "badge badge-industry"; b.textContent = note.industry; badges.appendChild(b); }
+  if (note.stock) { var b2 = document.createElement("span"); b2.className = "badge badge-stock"; b2.textContent = note.stock; badges.appendChild(b2); }
+  if (note.topic) { var b3 = document.createElement("span"); b3.className = "badge badge-topic"; b3.textContent = note.topic; badges.appendChild(b3); }
+  if (note.difficulty) { var b4 = document.createElement("span"); b4.className = "badge badge-difficulty difficulty-" + note.difficulty.toLowerCase(); b4.textContent = note.difficulty; badges.appendChild(b4); }
+  card.appendChild(badges);
+
+  var h3 = document.createElement("h3");
+  h3.className = "card-title";
+  h3.textContent = note.title || "";
+  card.appendChild(h3);
+
+  var p = document.createElement("p");
+  p.className = "card-summary";
+  p.textContent = note.summary || "";
+  card.appendChild(p);
+
+  var keypoints = document.createElement("div");
+  keypoints.className = "card-keypoints";
+  var strong = document.createElement("strong");
+  strong.textContent = "\ud575\uc2ec\ud3ec\uc778\ud2b8:";
+  keypoints.appendChild(strong);
+  var ul = document.createElement("ul");
+  (note.keyPoints || []).forEach(function(kp) { var li = document.createElement("li"); li.textContent = kp; ul.appendChild(li); });
+  keypoints.appendChild(ul);
+  card.appendChild(keypoints);
+
+  var tagsDiv = document.createElement("div");
+  tagsDiv.className = "card-tags";
+  (note.tags || []).forEach(function(t) { var span = document.createElement("span"); span.className = "tag"; span.textContent = t; tagsDiv.appendChild(span); });
+  card.appendChild(tagsDiv);
+
+  if (note.source) {
+    var sourceDiv = document.createElement("div");
+    sourceDiv.className = "source";
+    sourceDiv.textContent = "\ud83d\udcda " + note.source;
+    card.appendChild(sourceDiv);
+  }
+
+  return card;
 }
 
 function renderKnowledgeFilters(data) {
   var container = document.getElementById("knowledge-filters");
   if (!container) return;
+  container.replaceChildren();
+
   var allTags = [...new Set((data.notes || []).flatMap(function(n) { return n.tags || []; }))];
-  container.innerHTML =
-    "<div class=\"filter-group\"><label>\uc0b0\uc5c5</label>" +
-    "<select class=\"filter-select\" data-filter=\"industry\"><option value=\"\">\uc804\uccb4</option>" +
-    getUniqueValues(data.notes || [], "industry").map(function(v) { return "<option value=\"" + v + "\">" + v + "</option>"; }).join("") + "</select></div>" +
-    "<div class=\"filter-group\"><label>\uc885\ubaa9</label>" +
-    "<select class=\"filter-select\" data-filter=\"stock\"><option value=\"\">\uc804\uccb4</option>" +
-    getUniqueValues(data.notes || [], "stock").map(function(v) { return "<option value=\"" + v + "\">" + v + "</option>"; }).join("") + "</select></div>" +
-    "<div class=\"filter-group\"><label>\uc8fc\uc81c</label>" +
-    "<select class=\"filter-select\" data-filter=\"topic\"><option value=\"\">\uc804\uccb4</option>" +
-    getUniqueValues(data.notes || [], "topic").map(function(v) { return "<option value=\"" + v + "\">" + v + "</option>"; }).join("") + "</select></div>" +
-    "<div class=\"filter-group\"><label>\ub09c\uc774\ub3c4</label>" +
-    "<select class=\"filter-select\" data-filter=\"difficulty\"><option value=\"\">\uc804\uccb4</option>" +
-    ["\ucd08\uae09", "\uc911\uae09", "\uace0\uae09"].map(function(v) { return "<option value=\"" + v + "\">" + v + "</option>"; }).join("") + "</select></div>" +
-    "<div class=\"filter-group\"><label>\ud0dc\uadf8</label>" +
-    "<select class=\"filter-select\" data-filter=\"tag\"><option value=\"\">\uc804\uccb4</option>" +
-    allTags.map(function(v) { return "<option value=\"" + v + "\">" + v + "</option>"; }).join("") + "</select></div>";
+
+  var filters = [
+    { label: "\uc0b0\uc5c5", field: "industry", values: getUniqueValues(data.notes || [], "industry") },
+    { label: "\uc885\ubaa9", field: "stock", values: getUniqueValues(data.notes || [], "stock") },
+    { label: "\uc8fc\uc81c", field: "topic", values: getUniqueValues(data.notes || [], "topic") },
+    { label: "\ub09c\uc774\ub3c4", field: "difficulty", values: ["\ucd08\uae09", "\uc911\uae09", "\uace0\uae09"] },
+    { label: "\ud0dc\uadf8", field: "tag", values: allTags }
+  ];
+
+  filters.forEach(function(f) {
+    var group = document.createElement("div");
+    group.className = "filter-group";
+    var label = document.createElement("label");
+    label.textContent = f.label;
+    group.appendChild(label);
+    var select = document.createElement("select");
+    select.className = "filter-select";
+    select.dataset.filter = f.field;
+    var optAll = document.createElement("option");
+    optAll.value = "";
+    optAll.textContent = "\uc804\uccb4";
+    select.appendChild(optAll);
+    f.values.forEach(function(v) {
+      var opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+    group.appendChild(select);
+    container.appendChild(group);
+  });
 }
 
 function filterKnowledge(notes, filters) {
