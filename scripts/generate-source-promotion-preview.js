@@ -159,17 +159,11 @@ function main() {
     skipped.forEach((s) => console.log(`- ${s.id}: ${s.reason}`));
   }
 
-  if (previewRecords.length > 0) {
-    if (!fs.existsSync(PROMOTIONS_DIR)) {
-      fs.mkdirSync(PROMOTIONS_DIR, { recursive: true });
-    }
-    fs.writeFileSync(PREVIEW_FILE, JSON.stringify(previewRecords, null, 2) + '\n', 'utf8');
-    console.log('');
-    console.log('Preview file generated:', PREVIEW_FILE);
-  } else {
-    console.log('');
-    console.log('No records eligible for promotion. Preview file not created.');
-  }
+  // Always write preview file to ensure freshness
+  fs.mkdirSync(PROMOTIONS_DIR, { recursive: true });
+  fs.writeFileSync(PREVIEW_FILE, JSON.stringify(previewRecords, null, 2) + '\n', 'utf8');
+  console.log('');
+  console.log('Preview file generated:', PREVIEW_FILE);
 
   process.exit(0);
 }
