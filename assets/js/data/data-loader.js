@@ -40,6 +40,17 @@
       escapeHtml(message) + '</div>';
   }
 
+  function createLoadError(df, message, details) {
+    var err = new Error(message);
+    err.dataset = df.name;
+    err.url = df.url;
+    if (details) {
+      if (details.status !== undefined) err.status = details.status;
+      if (details.detail !== undefined) err.detail = details.detail;
+    }
+    return err;
+  }
+
   /* ── Single dataset fetch ──────────────────────────────── */
 
   async function fetchOne(df) {
@@ -48,8 +59,7 @@
       if (!resp.ok) {
         var msg = '[data-loader] ' + df.name + ' returned ' + resp.status;
         if (df.required) {
-          loadErrors.push({ dataset: df.name, url: df.url, status: resp.status });
-          throw new Error(msg);
+          throw createLoadError(df, msg, { status: resp.status });
         } else {
           console.warn(msg);
           return [];
@@ -61,9 +71,8 @@
         var rootType = Array.isArray(data) ? 'array' : typeof data;
         var errMsg = '[data-loader] ' + df.name + ' root is ' + rootType + ', expected array';
         if (df.required) {
-          loadErrors.push({ dataset: df.name, url: df.url, error: 'root is ' + rootType + ', expected array' });
           console.error(errMsg);
-          throw new Error(errMsg);
+          throw createLoadError(df, errMsg, { detail: 'root is ' + rootType + ', expected array' });
         } else {
           console.warn(errMsg);
           return [];
@@ -72,9 +81,6 @@
       return resolved;
     } catch (err) {
       if (df.required) {
-        if (!hasLoadError(df.name, df.url, err.message)) {
-          loadErrors.push({ dataset: df.name, url: df.url, error: err.message });
-        }
         throw err;
       } else {
         console.warn('[data-loader] Failed to load ' + df.name + ': ' + err.message);
@@ -101,9 +107,9 @@
       if (results[i].status === 'fulfilled') {
         cache[df.name] = results[i].value;
       } else {
-        // fetchOne already pushed to loadErrors for required
         if (df.required) {
           failedRequired.push(df.name);
+          recordLoadError(df, results[i].reason);
         }
         cache[df.name] = []; // empty array as fallback
       }
@@ -117,6 +123,17 @@
     }
 
     return cache;
+  }
+
+  function recordLoadError(df, reason) {
+    var err = reason || {};
+    var entry = {
+      dataset: df.name,
+      url: df.url,
+      error: err.detail || err.message || String(reason)
+    };
+    if (err.status !== undefined) entry.status = err.status;
+    loadErrors.push(entry);
   }
 
   /* ── Data access helpers ───────────────────────────────── */
@@ -165,12 +182,6 @@
       };
     });
     return diag;
-  }
-
-  function hasLoadError(dataset, url, message) {
-    return loadErrors.some(function (item) {
-      return item.dataset === dataset && item.url === url && item.error === message;
-    });
   }
 
   /* ── HTML escaping ─────────────────────────────────────── */
