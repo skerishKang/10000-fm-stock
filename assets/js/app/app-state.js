@@ -34,12 +34,14 @@ window.FMStock.app = window.FMStock.app || {};
   };
 
   function cloneReadableValue(value) {
-    if (Array.isArray(value)) return value.slice();
+    if (Array.isArray(value)) {
+      return value.map(function (item) { return cloneReadableValue(item); });
+    }
     if (value && typeof value === 'object') {
       var clone = {};
       for (var key in value) {
         if (Object.prototype.hasOwnProperty.call(value, key)) {
-          clone[key] = value[key];
+          clone[key] = cloneReadableValue(value[key]);
         }
       }
       return clone;
