@@ -115,7 +115,7 @@ function filterSources(sources, filters) {
 
 window.FMStock.ui.sources.list = {
   renderSourcesList: renderSourcesList,
-  createSourceRow: createSourceRow,
+  createSourceRow: createSourceRowElement,
   renderSourceFilters: renderSourceFilters,
   filterSources: filterSources
 };
