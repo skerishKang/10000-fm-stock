@@ -17,19 +17,63 @@ function renderExpertDetail(expertId, data) {
     renderKnowledgeNotes(data.knowledge);
 }
 
+function safeClassSuffix(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
 function renderExpertHeader(expert) {
     var container = document.getElementById("expert-header");
     if (!container || !expert) return;
-    container.innerHTML = "<div class=\"expert-header-inner\">" +
-        "<img class=\"expert-avatar-lg\" src=\"" + escapeHtml(expert.avatar || "/assets/img/default-avatar.png") + "\" alt=\"" + escapeHtml(expert.name) + "\" />" +
-        "<div class=\"expert-header-info\">" +
-        "<h1>" + escapeHtml(expert.name) + "</h1>" +
-        "<span class=\"expert-title\">" + escapeHtml(expert.title || expert.affiliation || "") + "</span>" +
-        "<p class=\"expert-bio\">" + escapeHtml(expert.bio || "") + "</p>" +
-        "<div class=\"expert-tags\">" +
-        "<span class=\"badge badge-" + (expert.type || "").toLowerCase() + "\">" + escapeHtml(expert.type) + "</span>" +
-        (expert.industries || expert.sectors || []).map(function(s) { return "<span class=\"sector-tag\">" + escapeHtml(s) + "</span>"; }).join("") +
-        "</div></div></div>";
+    container.replaceChildren();
+
+    var inner = document.createElement("div");
+    inner.className = "expert-header-inner";
+
+    var img = document.createElement("img");
+    img.className = "expert-avatar-lg";
+    img.src = expert.avatar || "/assets/img/default-avatar.png";
+    img.alt = expert.name || "";
+    inner.appendChild(img);
+
+    var info = document.createElement("div");
+    info.className = "expert-header-info";
+
+    var h1 = document.createElement("h1");
+    h1.textContent = expert.name || "";
+    info.appendChild(h1);
+
+    var title = document.createElement("span");
+    title.className = "expert-title";
+    title.textContent = expert.title || expert.affiliation || "";
+    info.appendChild(title);
+
+    var bio = document.createElement("p");
+    bio.className = "expert-bio";
+    bio.textContent = expert.bio || "";
+    info.appendChild(bio);
+
+    var tags = document.createElement("div");
+    tags.className = "expert-tags";
+
+    var badge = document.createElement("span");
+    var typeSuffix = safeClassSuffix(expert.type);
+    badge.className = "badge" + (typeSuffix ? " badge-" + typeSuffix : "");
+    badge.textContent = expert.type || "";
+    tags.appendChild(badge);
+
+    (expert.industries || expert.sectors || []).forEach(function(s) {
+        var span = document.createElement("span");
+        span.className = "sector-tag";
+        span.textContent = s;
+        tags.appendChild(span);
+    });
+    info.appendChild(tags);
+
+    inner.appendChild(info);
+    container.appendChild(inner);
 }
 
 function renderPerformanceSummary(stats) {
