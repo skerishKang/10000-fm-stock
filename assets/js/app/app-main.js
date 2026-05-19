@@ -41,26 +41,71 @@ window.FMStock.app = window.FMStock.app || {};
     var page = App.state.get('currentPage') || getCurrentPageName();
     var data = App.state.get('data') || {};
 
-    if (page === 'index.html') {
+    var initializer = PAGE_INITIALIZERS[page];
+    if (typeof initializer === 'function') {
+      initializer(data);
+    } else {
+      console.log('[App] No initializer registered for page:', page);
+    }
+  }
+
+  var PAGE_INITIALIZERS = {
+    'index.html': function (data) {
       renderDashboardFallback(data);
       if (window.FMStock.ui && window.FMStock.ui.dashboard && window.FMStock.ui.dashboard.render &&
           typeof window.FMStock.ui.dashboard.render.renderDashboard === 'function') {
         window.FMStock.ui.dashboard.render.renderDashboard(data);
       }
-      return;
+    },
+    'claims.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.claims && window.FMStock.ui.claims.main &&
+          typeof window.FMStock.ui.claims.main.initClaimsPage === 'function') {
+        window.FMStock.ui.claims.main.initClaimsPage(data);
+      }
+    },
+    'source-hub.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.sourceHub && window.FMStock.ui.sourceHub.main &&
+          typeof window.FMStock.ui.sourceHub.main.initSourceHubPage === 'function') {
+        window.FMStock.ui.sourceHub.main.initSourceHubPage(data);
+      }
+    },
+    'experts.html': function () {
+      if (window.FMStock.ui && window.FMStock.ui.experts && window.FMStock.ui.experts.main &&
+          typeof window.FMStock.ui.experts.main.initExpertsList === 'function') {
+        window.FMStock.ui.experts.main.initExpertsList();
+      }
+    },
+    'experts-detail.html': function () {
+      if (window.FMStock.ui && window.FMStock.ui.experts && window.FMStock.ui.experts.main &&
+          typeof window.FMStock.ui.experts.main.initExpertDetail === 'function') {
+        window.FMStock.ui.experts.main.initExpertDetail();
+      }
+    },
+    'review.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.review && window.FMStock.ui.review.main &&
+          typeof window.FMStock.ui.review.main.initReviewPage === 'function') {
+        window.FMStock.ui.review.main.initReviewPage(data);
+      }
+    },
+    'knowledge.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.knowledge && window.FMStock.ui.knowledge.main &&
+          typeof window.FMStock.ui.knowledge.main.initKnowledgePage === 'function') {
+        window.FMStock.ui.knowledge.main.initKnowledgePage(data);
+      }
+    },
+    'ranking.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.ranking && window.FMStock.ui.ranking.main &&
+          typeof window.FMStock.ui.ranking.main.initRankingPage === 'function') {
+        window.FMStock.ui.ranking.main.initRankingPage(data);
+      }
+    },
+    'sources.html': function (data) {
+      if (window.FMStock.ui && window.FMStock.ui.sources && window.FMStock.ui.sources.main &&
+          typeof window.FMStock.ui.sources.main.initSourcesList === 'function') {
+        window.FMStock.ui.sources.main.initSourcesList(data);
+      }
     }
-
-    if (page === 'claims.html' && window.FMStock.ui && window.FMStock.ui.claims && window.FMStock.ui.claims.main &&
-        typeof window.FMStock.ui.claims.main.initClaimsPage === 'function') {
-      window.FMStock.ui.claims.main.initClaimsPage(data);
-      return;
-    }
-
-    if (page === 'source-hub.html' && window.FMStock.ui && window.FMStock.ui.sourceHub && window.FMStock.ui.sourceHub.main &&
-        typeof window.FMStock.ui.sourceHub.main.initSourceHubPage === 'function') {
-      window.FMStock.ui.sourceHub.main.initSourceHubPage(data);
-    }
-  }
+  };
 
   function getCurrentPageName() {
     var page = window.location.pathname.split('/').pop() || 'index.html';
