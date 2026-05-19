@@ -5,12 +5,30 @@
     return window.location.pathname.indexOf('/pages/') !== -1 ? '../' : '';
   }
 
+  function getCurrentPageName() {
+    var page = window.location.pathname.split('/').pop() || 'index.html';
+    if (page.indexOf('.html') === -1) page += '.html';
+    return page;
+  }
+
   var DATA_BASE = getBasePath() + 'data/';
 
   /** Required datasets — app cannot reliably render claim evidence without these.
    * Keep aligned with scripts/validate-data.js claim reference checks.
    */
   var REQUIRED_DATASETS = ['experts', 'sources', 'segments', 'claims', 'evaluations'];
+
+  var PAGE_REQUIRED_DATASETS = {
+    'index.html': ['experts', 'claims', 'evaluations', 'knowledgeNotes'],
+    'claims.html': ['experts', 'sources', 'segments', 'claims', 'evaluations'],
+    'source-hub.html': ['sourceLinks', 'candidateSources'],
+    'experts.html': ['experts', 'claims', 'evaluations'],
+    'experts-detail.html': ['experts', 'claims', 'evaluations'],
+    'review.html': ['experts', 'claims', 'evaluations', 'knowledgeNotes'],
+    'knowledge.html': ['knowledgeNotes', 'sources', 'segments', 'experts'],
+    'ranking.html': ['experts', 'claims', 'evaluations'],
+    'sources.html': ['sources', 'segments', 'claims']
+  };
 
   var DATA_FILES = [
     { name: 'experts',          url: DATA_BASE + 'experts.json',                   required: true },
@@ -25,6 +43,7 @@
 
   var cache = null;
   var loadErrors = [];
+  var datasetStatus = {};
 
   /* ── DOM error display ─────────────────────────────────── */
 
@@ -38,6 +57,14 @@
     }
     container.innerHTML = '<div class="alert alert-error" role="alert" style="padding:1em;margin-bottom:1em;border:2px solid #c00;background:#fee;color:#c00;border-radius:6px;font-weight:bold">' +
       escapeHtml(message) + '</div>';
+  }
+
+  function showPageDataError(pageName, missing) {
+    if (!missing || !missing.length) return;
+    var msg = '현재 페이지에 필요한 데이터셋이 비어 있거나 로드되지 않았습니다: ' + missing.join(', ') +
+      '. 브라우저 콘솔에서 FMStock.data.getDiagnostics() 로 자세한 정보를 확인하세요.';
+    showBootError(msg);
+    console.error('[data-loader] Page required dataset policy failed for ' + pageName + ': ' + missing.join(', '));
   }
 
   function createLoadError(df, message, details) {
@@ -62,7 +89,7 @@
           throw createLoadError(df, msg, { status: resp.status });
         } else {
           console.warn(msg);
-          return [];
+          throw createLoadError(df, msg, { status: resp.status });
         }
       }
       var data = await resp.json();
@@ -75,7 +102,7 @@
           throw createLoadError(df, errMsg, { detail: 'root is ' + rootType + ', expected array' });
         } else {
           console.warn(errMsg);
-          return [];
+          throw createLoadError(df, errMsg, { detail: 'root is ' + rootType + ', expected array' });
         }
       }
       return resolved;
@@ -84,7 +111,7 @@
         throw err;
       } else {
         console.warn('[data-loader] Failed to load ' + df.name + ': ' + err.message);
-        return [];
+        throw err;
       }
     }
   }
@@ -94,6 +121,7 @@
   async function loadAllData() {
     if (cache) return cache;
     loadErrors = [];
+    datasetStatus = {};
     cache = {};
 
     // Use allSettled so we can inspect every result
@@ -106,10 +134,12 @@
     DATA_FILES.forEach(function (df, i) {
       if (results[i].status === 'fulfilled') {
         cache[df.name] = results[i].value;
+        datasetStatus[df.name] = { loaded: true, failed: false, required: df.required, url: df.url };
       } else {
+        datasetStatus[df.name] = { loaded: false, failed: true, required: df.required, url: df.url };
+        recordLoadError(df, results[i].reason);
         if (df.required) {
           failedRequired.push(df.name);
-          recordLoadError(df, results[i].reason);
         }
         cache[df.name] = []; // empty array as fallback
       }
@@ -120,6 +150,11 @@
         '. 브라우저 콘솔에서 FMStock.data.getDiagnostics() 로 자세한 정보를 확인하세요.';
       showBootError(msg);
       throw new Error(msg);
+    }
+
+    var pagePolicy = validatePageRequiredDatasets(getCurrentPageName(), cache);
+    if (!pagePolicy.ok) {
+      showPageDataError(pagePolicy.page, pagePolicy.missing);
     }
 
     return cache;
@@ -136,6 +171,24 @@
     loadErrors.push(entry);
   }
 
+  function validatePageRequiredDatasets(pageName, data) {
+    var page = pageName || getCurrentPageName();
+    var required = PAGE_REQUIRED_DATASETS[page] || [];
+    var source = data || cache || {};
+    var missing = required.filter(function (name) {
+      var status = datasetStatus[name];
+      var value = source[name];
+      if (status && status.failed) return true;
+      return !Array.isArray(value);
+    });
+    return {
+      ok: missing.length === 0,
+      page: page,
+      required: required.slice(),
+      missing: missing
+    };
+  }
+
   /* ── Data access helpers ───────────────────────────────── */
 
   function getData(name) {
@@ -150,16 +203,21 @@
   function clearCache() {
     cache = null;
     loadErrors = [];
+    datasetStatus = {};
   }
 
   /* ── Diagnostics ───────────────────────────────────────── */
 
   function getDiagnostics() {
+    var pageName = getCurrentPageName();
     var diag = {
       datasets: {},
       basePath: getBasePath(),
       dataBaseUrl: DATA_BASE,
       requiredDatasets: REQUIRED_DATASETS,
+      pageRequiredDatasets: PAGE_REQUIRED_DATASETS,
+      currentPageRequiredDatasets: PAGE_REQUIRED_DATASETS[pageName] || [],
+      currentPageValidation: validatePageRequiredDatasets(pageName, cache),
       location: {
         href: window.location.href,
         pathname: window.location.pathname,
@@ -174,8 +232,10 @@
     DATA_FILES.forEach(function (df) {
       var loaded = cache && cache[df.name] !== undefined;
       var value = loaded ? cache[df.name] : null;
+      var status = datasetStatus[df.name] || {};
       diag.datasets[df.name] = {
         loaded: loaded,
+        failed: !!status.failed,
         required: df.required,
         url: df.url,
         count: loaded && Array.isArray(value) ? value.length : 0
@@ -202,7 +262,9 @@
     getDataset: getData,
     getDiagnostics: getDiagnostics,
     getBasePath: getBasePath,
-    REQUIRED_DATASETS: REQUIRED_DATASETS
+    validatePageRequiredDatasets: validatePageRequiredDatasets,
+    REQUIRED_DATASETS: REQUIRED_DATASETS,
+    PAGE_REQUIRED_DATASETS: PAGE_REQUIRED_DATASETS
   };
 
   // DataLoader — legacy compatibility
@@ -212,6 +274,8 @@
     clearCache: clearCache,
     getBasePath: getBasePath,
     getDiagnostics: getDiagnostics,
-    REQUIRED_DATASETS: REQUIRED_DATASETS
+    validatePageRequiredDatasets: validatePageRequiredDatasets,
+    REQUIRED_DATASETS: REQUIRED_DATASETS,
+    PAGE_REQUIRED_DATASETS: PAGE_REQUIRED_DATASETS
   };
 })();
