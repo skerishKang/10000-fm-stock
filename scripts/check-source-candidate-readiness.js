@@ -17,7 +17,7 @@ const OFFICIAL_TYPE_MAP = {
   youtube: 'youtube',
   report: 'report',
   ir: 'ir',
-  document: 'report',
+  document: null,
   web: null,
   image: null,
   file: null,
@@ -30,43 +30,48 @@ function isIsoDate(value) {
 }
 
 function checkCandidate(candidate) {
-  const issues = [];
+  const blockingIssues = [];
+  const reviewIssues = [];
 
-  if (!candidate.id) issues.push('missing id');
-  if (candidate.status !== 'candidate') issues.push('status is not candidate');
-  if (candidate.official !== false) issues.push('official is not false');
-  if (!candidate.title) issues.push('missing title');
+  if (!candidate.id) blockingIssues.push('missing id');
+  if (candidate.status !== 'candidate') blockingIssues.push('status is not candidate');
+  if (candidate.official !== false) blockingIssues.push('official is not false');
 
   const hasUrl = !!(candidate.url && candidate.url.trim());
   const hasPath = !!(candidate.privatePath && candidate.privatePath.trim());
-  if (!hasUrl && !hasPath) issues.push('missing url and privatePath');
+  if (!hasUrl && !hasPath) blockingIssues.push('missing url and privatePath');
+
+  if (!candidate.title) reviewIssues.push('missing title');
+
+  const hasPublisher = !!(candidate.publisher && candidate.publisher.trim());
+  const hasDate = isIsoDate(candidate.publishedAt);
+  if (!hasPublisher) reviewIssues.push('missing publisher');
+  if (!hasDate) reviewIssues.push('missing publishedAt');
+
+  if (blockingIssues.length > 0) {
+    return { status: 'blocked', reason: blockingIssues.join('; '), allIssues: blockingIssues.concat(reviewIssues) };
+  }
 
   const type = candidate.type || '';
   const mappedType = OFFICIAL_TYPE_MAP[type];
 
   if (mappedType === undefined) {
-    return { status: 'blocked', reason: `unknown type: ${type}`, issues };
+    return { status: 'blocked', reason: `unknown type: ${type}`, allIssues: reviewIssues };
+  }
+
+  if (type === 'document') {
+    return { status: 'needsManualReview', reason: 'document requires reviewer confirmation before mapping to report', allIssues: reviewIssues };
   }
 
   if (mappedType === null) {
-    if (type === 'document') {
-      const hasPublisher = !!(candidate.publisher && candidate.publisher.trim());
-      const hasDate = isIsoDate(candidate.publishedAt);
-      if (!hasPublisher || !hasDate) {
-        return { status: 'needsManualReview', reason: 'map to report after reviewer confirms publisher/publishedAt', issues };
-      }
-      return { status: 'ready', reason: 'document mapped to report', issues };
-    }
-    return { status: 'blocked', reason: 'manual source type selection required', issues };
+    return { status: 'blocked', reason: 'manual source type selection required', allIssues: reviewIssues };
   }
 
-  const hasPublisher = !!(candidate.publisher && candidate.publisher.trim());
-  const hasDate = isIsoDate(candidate.publishedAt);
-  if (!hasPublisher || !hasDate) {
-    return { status: 'needsManualReview', reason: 'missing publisher or publishedAt', issues };
+  if (reviewIssues.length > 0) {
+    return { status: 'needsManualReview', reason: reviewIssues.join('; '), allIssues: reviewIssues };
   }
 
-  return { status: 'ready', reason: '', issues };
+  return { status: 'ready', reason: '', allIssues: [] };
 }
 
 function main() {
