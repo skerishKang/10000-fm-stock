@@ -8,7 +8,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.sources = window.FMStock.ui.sources || {};
 
 function renderSourcesList(sources, segments, claims) {
-  var c = document.getElementById("sources-list-container");
+  var c = document.getElementById("sources-list-container") || document.getElementById("sources-list");
   if (!c) return;
   var m = {};
   (sources || []).forEach(function(s) {

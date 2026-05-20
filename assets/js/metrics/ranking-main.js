@@ -9,7 +9,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.ranking = window.FMStock.ui.ranking || {};
 
 function initRankingPage(data) {
-  var container = document.getElementById('ranking-app');
+  var container = document.getElementById('ranking-app') || document.getElementById('ranking-content');
   if (!container) return;
 
   if (!data) {

@@ -9,7 +9,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.ranking = window.FMStock.ui.ranking || {};
 
 function renderRankingTab(tabName, data) {
-  var container = document.getElementById('ranking-content');
+  var container = document.getElementById('ranking-content') || document.getElementById('rank-' + tabName);
   if (!container) return;
   var N = 20;
   var html = '';
@@ -38,7 +38,9 @@ function initRankingTabs() {
 }
 
 function renderReturnRanking(data, N) {
-  var items = (data.returns || []).sort(function(a, b) { return (b.return || 0) - (a.return || 0); }).slice(0, N);
+  var items = (data.returns || data.evaluations || []).map(function(e) {
+    return { name: e.claimId || e.name || '-', return: e.returnRate || e.return || 0, sampleSize: e.sampleSize || e.count };
+  }).sort(function(a, b) { return (b.return || 0) - (a.return || 0); }).slice(0, N);
   return buildRankingTable('수익률 TOP', items, 'return');
 }
 

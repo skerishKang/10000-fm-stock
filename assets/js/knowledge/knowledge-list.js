@@ -8,7 +8,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 
 function renderKnowledgeList(notes, data) {
-  var container = document.getElementById("knowledge-list");
+  var container = document.getElementById("knowledge-list") || document.getElementById("knowledge-grid");
   if (!container) return;
   container.replaceChildren();
   notes.forEach(function(note) { container.appendChild(createKnowledgeCard(note)); });

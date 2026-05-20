@@ -8,7 +8,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 
 function initKnowledgePage(data) {
-  var container = document.getElementById("knowledge-app");
+  var container = document.getElementById("knowledge-app") || document.getElementById("knowledge-grid");
   if (!container) return;
 
   if (!data || !data.knowledgeNotes) {
