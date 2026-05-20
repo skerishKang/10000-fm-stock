@@ -299,3 +299,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- SourceHub polish (via existing .card / .section / .stat) ---- */
+
+.section .grid-4 .card .stat {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.section .form-hint {
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ---- Ingest polish (via existing .ingest-form / .tab-bar) ---- */
+
+.ingest-tabs .tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+}
+
+.ingest-tabs .tab-bar .tab:first-child {
+  border-radius: var(--radius) 0 0 0;
+}
+
+.ingest-tabs .tab-bar .tab:last-child {
+  border-radius: 0 var(--radius) 0 0;
+}
+
+.ingest-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
