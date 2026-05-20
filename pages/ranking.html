@@ -30,22 +30,22 @@
   <main class="app-main">
     <section class="ranking-header">
       <h2>랭킹</h2>
-      <div class="ranking-tabs tab-bar">
-        <button class="tab active" data-tab="return">수익률 TOP</button>
-        <button class="tab" data-tab="excess">초과수익률 TOP</button>
-        <button class="tab" data-tab="alpha">평균알파 TOP</button>
-        <button class="tab" data-tab="hitrate">적중률 TOP</button>
-        <button class="tab" data-tab="industry">산업별 TOP</button>
-        <button class="tab" data-tab="knowledge">지식기여 TOP</button>
+      <div class="ranking-tabs tab-bar" role="tablist">
+        <button class="tab active" data-tab="return" role="tab" aria-selected="true">수익률 TOP</button>
+        <button class="tab" data-tab="excess" role="tab" aria-selected="false">초과수익률 TOP</button>
+        <button class="tab" data-tab="alpha" role="tab" aria-selected="false">평균알파 TOP</button>
+        <button class="tab" data-tab="hitrate" role="tab" aria-selected="false">적중률 TOP</button>
+        <button class="tab" data-tab="industry" role="tab" aria-selected="false">산업별 TOP</button>
+        <button class="tab" data-tab="knowledge" role="tab" aria-selected="false">지식기여 TOP</button>
       </div>
     </section>
     <section class="ranking-content">
-      <div class="tab-content active" id="rank-return"><p class="sample-count">표본 수: <span id="sample-return">0</span></p><ol id="rank-return-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
-      <div class="tab-content" id="rank-excess"><p class="sample-count">표본 수: <span id="sample-excess">0</span></p><ol id="rank-excess-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
-      <div class="tab-content" id="rank-alpha"><p class="sample-count">표본 수: <span id="sample-alpha">0</span></p><ol id="rank-alpha-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
-      <div class="tab-content" id="rank-hitrate"><p class="sample-count">표본 수: <span id="sample-hitrate">0</span></p><ol id="rank-hitrate-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
-      <div class="tab-content" id="rank-industry"><p class="sample-count">표본 수: <span id="sample-industry">0</span></p><ol id="rank-industry-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
-      <div class="tab-content" id="rank-knowledge"><p class="sample-count">표본 수: <span id="sample-knowledge">0</span></p><ol id="rank-knowledge-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content active" id="rank-return" role="tabpanel"><p class="sample-count">표본 수: <span id="sample-return">0</span></p><ol id="rank-return-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content" id="rank-excess" role="tabpanel" hidden><p class="sample-count">표본 수: <span id="sample-excess">0</span></p><ol id="rank-excess-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content" id="rank-alpha" role="tabpanel" hidden><p class="sample-count">표본 수: <span id="sample-alpha">0</span></p><ol id="rank-alpha-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content" id="rank-hitrate" role="tabpanel" hidden><p class="sample-count">표본 수: <span id="sample-hitrate">0</span></p><ol id="rank-hitrate-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content" id="rank-industry" role="tabpanel" hidden><p class="sample-count">표본 수: <span id="sample-industry">0</span></p><ol id="rank-industry-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
+      <div class="tab-content" id="rank-knowledge" role="tabpanel" hidden><p class="sample-count">표본 수: <span id="sample-knowledge">0</span></p><ol id="rank-knowledge-list" class="rank-list"><li class="placeholder">데이터 없음</li></ol></div>
     </section>
   </main>
   <footer class="app-footer"><p>&copy; 2026 FM-Stock. All rights reserved.</p></footer>
