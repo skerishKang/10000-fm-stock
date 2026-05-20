@@ -12,13 +12,35 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
   var pendingClaims = [];
 
   function renderClaimCandidates(claims) {
-    pendingClaims = claims;
-    var container = document.getElementById("claim-list");
+    pendingClaims = Array.isArray(claims) ? claims : [];
+    var container = document.getElementById("claim-list") || document.getElementById("review-items");
     if (!container) return;
     container.innerHTML = "";
-    claims.forEach(function(claim, idx) {
+
+    if (!pendingClaims.length) {
+      container.appendChild(createEmptyState());
+      return;
+    }
+
+    pendingClaims.forEach(function(claim, idx) {
       container.appendChild(createClaimCandidateCard(claim, idx));
     });
+  }
+
+  function createEmptyState() {
+    var empty = document.createElement("div");
+    empty.className = "empty-state-card";
+    var h3 = document.createElement("h3");
+    h3.textContent = "검토할 Claim 후보가 없습니다";
+    var p = document.createElement("p");
+    p.textContent = "자료수집 또는 자료허브에서 후보 JSON을 만든 뒤 로컬 review workspace에 보관하면 이곳에서 검토할 수 있습니다.";
+    var small = document.createElement("p");
+    small.className = "text-small text-muted";
+    small.textContent = "공식 data/*.json 승격은 별도 검토와 validation 이후 진행합니다.";
+    empty.appendChild(h3);
+    empty.appendChild(p);
+    empty.appendChild(small);
+    return empty;
   }
 
   function createClaimCandidateCard(claim, index) {
@@ -26,12 +48,12 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
     card.className = "candidate-card claim-card";
     card.dataset.index = index;
     var h4 = document.createElement("h4");
-    h4.textContent = claim.title || "Untitled Claim";
+    h4.textContent = claim.title || "제목 없는 Claim 후보";
     var p = document.createElement("p");
-    p.textContent = claim.detail || "";
+    p.textContent = claim.detail || claim.claimText || "세부 내용이 없습니다.";
     var badge = document.createElement("span");
     badge.className = "badge badge-claim";
-    badge.textContent = "Claim";
+    badge.textContent = "Claim 후보";
     card.appendChild(h4);
     card.appendChild(p);
     card.appendChild(badge);
@@ -40,24 +62,28 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
   }
 
   function renderClaimDetail(claim) {
-    var panel = document.getElementById("detail-panel");
+    var panel = document.getElementById("detail-panel") || document.getElementById("review-detail-content");
     if (!panel) return;
     panel.replaceChildren();
     var h3 = document.createElement("h3");
-    h3.textContent = claim.title || "Untitled Claim";
+    h3.textContent = claim.title || "제목 없는 Claim 후보";
     var p1 = document.createElement("p");
     var strong1 = document.createElement("strong");
-    strong1.textContent = "Detail: ";
+    strong1.textContent = "검토 내용: ";
     p1.appendChild(strong1);
-    p1.appendChild(document.createTextNode(claim.detail || ""));
+    p1.appendChild(document.createTextNode(claim.detail || claim.claimText || ""));
     var p2 = document.createElement("p");
     var strong2 = document.createElement("strong");
-    strong2.textContent = "Status: ";
+    strong2.textContent = "상태: ";
     p2.appendChild(strong2);
-    p2.appendChild(document.createTextNode("Pending Review"));
+    p2.appendChild(document.createTextNode("검토 대기"));
+    var p3 = document.createElement("p");
+    p3.className = "text-small text-muted";
+    p3.textContent = "모호한 발언은 공식 claim으로 승격하지 말고 candidate로 유지하거나 교육용으로 전환하세요.";
     panel.appendChild(h3);
     panel.appendChild(p1);
     panel.appendChild(p2);
+    panel.appendChild(p3);
   }
 
   function approveClaim(index) {
