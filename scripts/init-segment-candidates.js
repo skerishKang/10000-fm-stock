@@ -26,7 +26,16 @@ function safeSlug(value) {
 function main() {
   const args = process.argv.slice(2);
   const sourceIdIdx = args.indexOf('--source-id');
-  const targetSourceId = sourceIdIdx >= 0 ? args[sourceIdIdx + 1] : null;
+  let targetSourceId = null;
+
+  if (sourceIdIdx >= 0) {
+    const val = args[sourceIdIdx + 1];
+    if (!val || val.startsWith('--')) {
+      console.error('Error: --source-id requires a non-empty value.');
+      process.exit(1);
+    }
+    targetSourceId = val;
+  }
 
   console.log('FM-Stock segment candidate initializer');
   console.log('======================================');
@@ -82,6 +91,15 @@ function main() {
     if (!Array.isArray(localCandidates)) {
       console.error('Error: Local segment candidates file root is not an array.');
       process.exit(1);
+    }
+
+    // Validate every item is a non-null object
+    for (let i = 0; i < localCandidates.length; i++) {
+      const item = localCandidates[i];
+      if (!item || typeof item !== 'object' || Array.isArray(item)) {
+        console.error(`Error: Local segment candidate at index ${i} is not an object.`);
+        process.exit(1);
+      }
     }
   }
 
@@ -145,12 +163,16 @@ function main() {
   console.log('Skipped existing official segment count:', skippedOfficial);
   console.log('Skipped existing local candidate count:', skippedLocal);
 
-  // Write candidates file
-  fs.mkdirSync(LOCAL_SEGMENTS_DIR, { recursive: true });
-  fs.writeFileSync(LOCAL_CANDIDATES_FILE, JSON.stringify(localCandidates, null, 2) + '\n', 'utf8');
-
-  console.log('');
-  console.log('Output file:', LOCAL_CANDIDATES_FILE);
+  // Write candidates file only if new candidates were added
+  if (added.length > 0) {
+    fs.mkdirSync(LOCAL_SEGMENTS_DIR, { recursive: true });
+    fs.writeFileSync(LOCAL_CANDIDATES_FILE, JSON.stringify(localCandidates, null, 2) + '\n', 'utf8');
+    console.log('');
+    console.log('Output file:', LOCAL_CANDIDATES_FILE);
+  } else {
+    console.log('');
+    console.log('No new candidates to add. Output file unchanged.');
+  }
 
   if (added.length > 0) {
     console.log('');
