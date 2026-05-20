@@ -78,7 +78,12 @@ function main() {
   const skipped = [];
 
   previewRecords.forEach((record) => {
-    const skip = (reason) => skipped.push({ id: record.id || '(no id)', reason });
+    const skip = (reason) => skipped.push({ id: (record && record.id) || '(no id)', reason });
+
+    if (!record || typeof record !== 'object' || Array.isArray(record)) {
+      skip('preview record is not an object');
+      return;
+    }
 
     if (!record.id) {
       skip('missing id');
