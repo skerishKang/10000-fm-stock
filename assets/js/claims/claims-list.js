@@ -43,14 +43,14 @@ function createClaimRow(claim, evaluation, data) {
   var expertName = getExpertName(claim.expertId, data);
   var stockLabel = claim.companyName || claim.ticker || '-';
 
-  var r = '<tr class="claim-row" data-claim-id="' + escapeHtml(claim.id) + '">';
-  r += '<td class="claim-text">' + escapeHtml(claim.claimText || '') + '</td>';
-  r += '<td>' + escapeHtml(expertName) + '</td>';
-  r += '<td>' + escapeHtml(stockLabel) + '</td>';
-  r += '<td>' + escapeHtml(claim.industry || '-') + '</td>';
-  r += '<td><span class="direction-badge ' + escapeHtml((claim.direction || '').toLowerCase()) + '">' + escapeHtml(claim.direction || '-') + '</span></td>';
-  r += '<td><span class="verdict-badge verdict-' + escapeHtml(String(verdict).toLowerCase()) + '">' + escapeHtml(verdict) + '</span></td>';
-  r += '<td>' + escapeHtml(claim.baseDate || '') + '</td>';
+  var r = '<tr class="claim-row" data-claim-id="' + FMStock.security.escapeHtml(claim.id) + '">';
+  r += '<td class="claim-text">' + FMStock.security.escapeHtml(claim.claimText || '') + '</td>';
+  r += '<td>' + FMStock.security.escapeHtml(expertName) + '</td>';
+  r += '<td>' + FMStock.security.escapeHtml(stockLabel) + '</td>';
+  r += '<td>' + FMStock.security.escapeHtml(claim.industry || '-') + '</td>';
+  r += '<td><span class="direction-badge ' + FMStock.security.escapeHtml((claim.direction || '').toLowerCase()) + '">' + FMStock.security.escapeHtml(claim.direction || '-') + '</span></td>';
+  r += '<td><span class="verdict-badge verdict-' + FMStock.security.escapeHtml(String(verdict).toLowerCase()) + '">' + FMStock.security.escapeHtml(verdict) + '</span></td>';
+  r += '<td>' + FMStock.security.escapeHtml(claim.baseDate || '') + '</td>';
   r += '</tr>';
   return r;
 }
@@ -71,21 +71,21 @@ function renderClaimFilters(data) {
   var speaker = document.getElementById('cf-speaker');
   if (speaker) {
     speaker.innerHTML = '<option value="">발언자 전체</option>' + speakers.map(function (item) {
-      return '<option value="' + escapeHtml(item.id) + '">' + escapeHtml(item.name) + '</option>';
+      return '<option value="' + FMStock.security.escapeHtml(item.id) + '">' + FMStock.security.escapeHtml(item.name) + '</option>';
     }).join('');
   }
 
   var ticker = document.getElementById('cf-ticker');
   if (ticker) {
     ticker.innerHTML = '<option value="">종목 전체</option>' + tickers.map(function (item) {
-      return '<option value="' + escapeHtml(item) + '">' + escapeHtml(item) + '</option>';
+      return '<option value="' + FMStock.security.escapeHtml(item) + '">' + FMStock.security.escapeHtml(item) + '</option>';
     }).join('');
   }
 
   var industry = document.getElementById('cf-industry');
   if (industry) {
     industry.innerHTML = '<option value="">산업 전체</option>' + industries.map(function (item) {
-      return '<option value="' + escapeHtml(item) + '">' + escapeHtml(item) + '</option>';
+      return '<option value="' + FMStock.security.escapeHtml(item) + '">' + FMStock.security.escapeHtml(item) + '</option>';
     }).join('');
   }
 
@@ -147,11 +147,6 @@ function unique(items) {
   return out;
 }
 
-function escapeHtml(text) {
-  return String(text == null ? '' : text).replace(/[&<>"']/g, function (ch) {
-    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
-  });
-}
 
 function attachRowClickHandlers(container, data) {
   var rows = container.querySelectorAll('.claim-row');

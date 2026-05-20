@@ -152,13 +152,7 @@ window.FMStock.app = window.FMStock.app || {};
       target.insertBefore(container, target.firstChild);
     }
     container.innerHTML = '<div class="alert alert-error" role="alert" style="padding:1em;margin-bottom:1em;border:2px solid #c00;background:#fee;color:#c00;border-radius:6px;font-weight:bold">' +
-      escapeHtml('앱 초기화 중 오류가 발생했습니다: ' + message + diagnosticsHint) + '</div>';
-  }
-
-  function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, function (ch) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
-    });
+      FMStock.security.escapeHtml('앱 초기화 중 오류가 발생했습니다: ' + message + diagnosticsHint) + '</div>';
   }
 
   if (document.readyState === 'loading') {

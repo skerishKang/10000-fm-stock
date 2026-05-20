@@ -34,16 +34,16 @@ function renderClaimSummary(claim, data) {
   var expertName = getExpertName(claim.expertId, data);
   var directionClass = safeClassToken(claim.direction);
   var h = "<div class=\"detail-section claim-summary\">";
-  h += "<h2>" + escapeHtml(claim.companyName || claim.ticker || "Claim Detail") + "</h2>";
+  h += "<h2>" + FMStock.security.escapeHtml(claim.companyName || claim.ticker || "Claim Detail") + "</h2>";
   h += "<div class=\"meta\">";
-  h += "<span class=\"speaker\">" + escapeHtml(expertName) + "</span>";
-  h += "<span class=\"ticker\">" + escapeHtml(claim.ticker || "-") + "</span>";
-  h += "<span class=\"industry\">" + escapeHtml(claim.industry || "-") + "</span>";
-  h += "<span class=\"direction " + directionClass + "\">" + escapeHtml(claim.direction || "-") + "</span>";
-  h += "<span class=\"date\">" + escapeHtml(claim.baseDate || "") + "</span></div>";
-  h += "<blockquote class=\"claim-text\">" + escapeHtml(claim.claimText || "") + "</blockquote>";
+  h += "<span class=\"speaker\">" + FMStock.security.escapeHtml(expertName) + "</span>";
+  h += "<span class=\"ticker\">" + FMStock.security.escapeHtml(claim.ticker || "-") + "</span>";
+  h += "<span class=\"industry\">" + FMStock.security.escapeHtml(claim.industry || "-") + "</span>";
+  h += "<span class=\"direction " + directionClass + "\">" + FMStock.security.escapeHtml(claim.direction || "-") + "</span>";
+  h += "<span class=\"date\">" + FMStock.security.escapeHtml(claim.baseDate || "") + "</span></div>";
+  h += "<blockquote class=\"claim-text\">" + FMStock.security.escapeHtml(claim.claimText || "") + "</blockquote>";
   if (claim.targetPrice) {
-    h += "<p class=\"target-info\">Target: " + escapeHtml(claim.targetPrice) + " by " + escapeHtml(claim.targetDate || "N/A") + " (Base: " + escapeHtml(claim.basePrice || "N/A") + ")</p>";
+    h += "<p class=\"target-info\">Target: " + FMStock.security.escapeHtml(claim.targetPrice) + " by " + FMStock.security.escapeHtml(claim.targetDate || "N/A") + " (Base: " + FMStock.security.escapeHtml(claim.basePrice || "N/A") + ")</p>";
   }
   h += "</div>";
   return h;
@@ -55,8 +55,8 @@ function renderSourceInfo(claim, sources, segments) {
   var segs = segments.filter(function(s) { return s.id === claim.segmentId; });
   var sourceDate = src.publishedAt || src.date || '';
   var h = "<div class=\"detail-section source-info\">";
-  h += "<h3>Source: " + escapeHtml(src.title || src.name || "Untitled") + "</h3>";
-  h += "<p class=\"source-type\">" + escapeHtml(src.type || "-") + " -- " + escapeHtml(sourceDate) + "</p>";
+  h += "<h3>Source: " + FMStock.security.escapeHtml(src.title || src.name || "Untitled") + "</h3>";
+  h += "<p class=\"source-type\">" + FMStock.security.escapeHtml(src.type || "-") + " -- " + FMStock.security.escapeHtml(sourceDate) + "</p>";
   if (segs.length) {
     h += "<ul>";
     for (var i = 0; i < segs.length; i++) { h += "<li>" + renderSourceSegmentLink(src, segs[i]) + "</li>"; }
@@ -72,7 +72,7 @@ function renderEvidence(claim) {
     return "<div class=\"detail-section evidence\"><h3>Evidence</h3><p>No evidence recorded.</p></div>";
   }
   var content = Array.isArray(evidence) ? evidence.join("; ") : evidence;
-  return "<div class=\"detail-section evidence\"><h3>Evidence " + String.fromCharCode(38) + " Logic</h3><p>" + escapeHtml(content) + "</p></div>";
+  return "<div class=\"detail-section evidence\"><h3>Evidence " + String.fromCharCode(38) + " Logic</h3><p>" + FMStock.security.escapeHtml(content) + "</p></div>";
 }
 
 function renderEvaluationResult(claim, evaluations) {
@@ -84,12 +84,12 @@ function renderEvaluationResult(claim, evaluations) {
     var e = evals[i];
     var resultClass = safeClassToken(e.result);
     rows += "<tr>";
-    rows += "<td>" + escapeHtml(e.evaluatedAt || "-") + "</td>";
-    rows += "<td class=\"verdict-" + resultClass + "\">" + escapeHtml(e.result || "-") + "</td>";
-    rows += "<td>" + escapeHtml(e.evaluatedPrice != null ? e.evaluatedPrice.toLocaleString() : "-") + "</td>";
-    rows += "<td>" + escapeHtml(e.returnRate != null ? e.returnRate.toFixed(2) + "%" : "-") + "</td>";
-    rows += "<td>" + escapeHtml(e.alpha != null ? e.alpha.toFixed(2) + "%" : "-") + "</td>";
-    rows += "<td>" + escapeHtml(e.benchmark || "-") + " " + escapeHtml(e.benchmarkReturn != null ? "(" + e.benchmarkReturn.toFixed(2) + "%)" : "") + "</td>";
+    rows += "<td>" + FMStock.security.escapeHtml(e.evaluatedAt || "-") + "</td>";
+    rows += "<td class=\"verdict-" + resultClass + "\">" + FMStock.security.escapeHtml(e.result || "-") + "</td>";
+    rows += "<td>" + FMStock.security.escapeHtml(e.evaluatedPrice != null ? e.evaluatedPrice.toLocaleString() : "-") + "</td>";
+    rows += "<td>" + FMStock.security.escapeHtml(e.returnRate != null ? e.returnRate.toFixed(2) + "%" : "-") + "</td>";
+    rows += "<td>" + FMStock.security.escapeHtml(e.alpha != null ? e.alpha.toFixed(2) + "%" : "-") + "</td>";
+    rows += "<td>" + FMStock.security.escapeHtml(e.benchmark || "-") + " " + FMStock.security.escapeHtml(e.benchmarkReturn != null ? "(" + e.benchmarkReturn.toFixed(2) + "%)" : "") + "</td>";
     rows += "</tr>";
   }
 
@@ -99,7 +99,7 @@ function renderEvaluationResult(claim, evaluations) {
   h += "</tr></thead>";
   h += "<tbody>" + rows + "</tbody></table>";
   if (evals[0].memo) {
-    h += "<p class=\"eval-memo\">" + escapeHtml(evals[0].memo) + "</p>";
+    h += "<p class=\"eval-memo\">" + FMStock.security.escapeHtml(evals[0].memo) + "</p>";
   }
   h += "</div>";
   return h;
@@ -108,9 +108,9 @@ function renderEvaluationResult(claim, evaluations) {
 function renderConnectedKnowledge(claim, knowledgeNotes) {
   var notes = (knowledgeNotes || []).filter(function(n) { return n.claimId === claim.id; });
   if (!notes.length) return "";
-  var h = "<div class=\"detail-section knowledge\"><h3>Connected Knowledge Notes (" + escapeHtml(notes.length) + ")</h3><ul>";
+  var h = "<div class=\"detail-section knowledge\"><h3>Connected Knowledge Notes (" + FMStock.security.escapeHtml(notes.length) + ")</h3><ul>";
   for (var i = 0; i < notes.length; i++) {
-    h += '<li><a href="knowledge.html?id=' + escapeAttr(notes[i].id || '') + '">' + escapeHtml(notes[i].title || 'Untitled') + '</a></li>';
+    h += '<li><a href="knowledge.html?id=' + FMStock.security.escapeAttr(notes[i].id || '') + '">' + FMStock.security.escapeHtml(notes[i].title || 'Untitled') + '</a></li>';
   }
   h += "</ul></div>";
   return h;
@@ -118,13 +118,13 @@ function renderConnectedKnowledge(claim, knowledgeNotes) {
 
 function renderSourceSegmentLink(source, segment) {
   if (!source || source.type !== "youtube") {
-    return "<span>" + escapeHtml(segment.start || segment.startTime || "") + " - " + escapeHtml(segment.end || segment.endTime || "") + "</span>";
+    return "<span>" + FMStock.security.escapeHtml(segment.start || segment.startTime || "") + " - " + FMStock.security.escapeHtml(segment.end || segment.endTime || "") + "</span>";
   }
 
   var start = segment.startTime || segment.start || 0;
   var end = segment.endTime || segment.end || "";
   var url = buildYoutubeUrl(source, start);
-  return "<a href=\"" + escapeAttr(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Watch segment " + escapeHtml(start) + "s - " + escapeHtml(end) + "s</a>";
+  return "<a href=\"" + FMStock.security.escapeAttr(url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Watch segment " + FMStock.security.escapeHtml(start) + "s - " + FMStock.security.escapeHtml(end) + "s</a>";
 }
 
 function buildYoutubeUrl(source, start) {
@@ -145,15 +145,6 @@ function safeClassToken(value) {
   return String(value == null ? '' : value).toLowerCase().replace(/[^a-z0-9_-]/g, '');
 }
 
-function escapeAttr(value) {
-  return escapeHtml(value).replace(/`/g, '&#096;');
-}
-
-function escapeHtml(text) {
-  return String(text == null ? '' : text).replace(/[&<>\"']/g, function (ch) {
-    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
-  });
-}
 
 window.FMStock.ui.claims.detail = {
   renderClaimDetail: renderClaimDetail,
