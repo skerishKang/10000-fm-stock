@@ -12,9 +12,7 @@ function getReturnTopRanking(claims, evaluations, N) {
     var scored = [];
     for (var ci = 0; ci < claims.length; ci++) {
         var claim = claims[ci];
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var returnRate = R.getDefaultReturn(claim, evals);
         var normalizedReturn = R.normalizeReturnsByDirection(returnRate, claim.direction);
         if (normalizedReturn == null) continue;
@@ -31,9 +29,7 @@ function getAlphaTopRanking(claims, evaluations, N) {
     var scored = [];
     for (var ci = 0; ci < claims.length; ci++) {
         var claim = claims[ci];
-        var evals = evaluations ? evaluations.filter(function(e) {
-            return String(e.claimId) === String(claim.id) || String(e.claim_id) === String(claim.id);
-        }) : [];
+        var evals = findEvaluationsForClaim(claim, evaluations);
         var returnRate = R.getDefaultReturn(claim, evals);
         if (returnRate == null) continue;
         var alpha = R.calculateAlpha(returnRate, claim.benchmarkReturn || 0);
