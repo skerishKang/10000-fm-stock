@@ -41,12 +41,25 @@ window.FMStock.app = window.FMStock.app || {};
     var page = App.state.get('currentPage') || getCurrentPageName();
     var data = App.state.get('data') || {};
 
+    ensurePageStyles(page);
+
     var initializer = PAGE_INITIALIZERS[page];
     if (typeof initializer === 'function') {
       initializer(data);
     } else {
       console.log('[App] No initializer registered for page:', page);
     }
+  }
+
+  function ensurePageStyles(page) {
+    var operatorPages = ['source-hub.html', 'ingest.html', 'review.html'];
+    if (operatorPages.indexOf(page) === -1) return;
+    if (document.querySelector('link[data-fmstock-operator-workflow]')) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../assets/css/css-operator-workflow.css?v=20260521-0229-1';
+    link.setAttribute('data-fmstock-operator-workflow', 'true');
+    document.head.appendChild(link);
   }
 
   var PAGE_INITIALIZERS = {

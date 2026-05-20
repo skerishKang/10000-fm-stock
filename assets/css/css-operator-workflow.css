@@ -1,0 +1,342 @@
+/* Operator workflow polish for SourceHub, Ingest, and Review pages. */
+
+.workflow-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding: 22px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(22, 163, 74, 0.06));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.workflow-hero h2,
+.workflow-hero p {
+  margin-bottom: 8px;
+}
+
+.workflow-kicker {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.workflow-actions,
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.workflow-step {
+  position: relative;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.workflow-step strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.workflow-step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.workflow-alert {
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-radius: var(--radius-lg);
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.workflow-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.operator-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.operator-card > .card-header,
+.operator-card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg);
+}
+
+.operator-card > .card-body,
+.operator-card-body {
+  padding: 20px;
+}
+
+.operator-card-header h2,
+.operator-card-header h3,
+.operator-card-header p {
+  margin-bottom: 6px;
+}
+
+.operator-form {
+  display: grid;
+  gap: 16px;
+}
+
+.operator-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.operator-form input,
+.operator-form textarea,
+.operator-form select,
+.workflow-filter input,
+.workflow-filter select {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+.operator-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.operator-form input:focus,
+.operator-form textarea:focus,
+.operator-form select:focus,
+.workflow-filter input:focus,
+.workflow-filter select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.form-hint-card {
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.preview-panel pre,
+.workflow-preview {
+  max-height: 360px;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.source-hub-preview pre {
+  max-height: 300px;
+}
+
+.workflow-review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.workflow-filter {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.review-section-panel,
+.detail-panel {
+  min-height: 260px;
+  padding: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.review-section-panel[style*="display: none"] {
+  display: none !important;
+}
+
+.candidate-card {
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.candidate-card:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.candidate-card h4 {
+  margin-bottom: 6px;
+}
+
+.empty-state-card {
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+}
+
+.empty-state-card h3 {
+  margin-bottom: 8px;
+}
+
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-accept {
+  background: var(--success);
+  color: #fff;
+}
+
+.btn-edit,
+.btn-educate {
+  background: var(--bg-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-delete {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
+@media (max-width: 1024px) {
+  .workflow-hero,
+  .workflow-review-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-card-grid,
+  .workflow-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-hero {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-row,
+  .workflow-filter {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- SourceHub polish (via existing .card / .section / .stat) ---- */
+
+.section .grid-4 .card .stat {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.section .form-hint {
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ---- Ingest polish (via existing .ingest-form / .tab-bar) ---- */
+
+.ingest-tabs .tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+}
+
+.ingest-tabs .tab-bar .tab:first-child {
+  border-radius: var(--radius) 0 0 0;
+}
+
+.ingest-tabs .tab-bar .tab:last-child {
+  border-radius: 0 var(--radius) 0 0;
+}
+
+.ingest-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
