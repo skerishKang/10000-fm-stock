@@ -74,7 +74,7 @@ function renderSummaryCards(data) {
         { label: "Claims", value: data.claims ? data.claims.length : 0, icon: "💬" },
         { label: "Verified", value: data.verifiedCount || 0, icon: "✅" },
         { label: "Pending", value: data.pendingCount || 0, icon: "⏳" },
-        { label: "Knowledge", value: data.knowledge ? data.knowledge.length : 0, icon: "📖" },
+        { label: "Knowledge", value: data.knowledgeNotes ? data.knowledgeNotes.length : 0, icon: "📖" },
         { label: "Avg Return", value: data.avgReturn != null ? data.avgReturn.toFixed(2) + "%" : "N/A", icon: "📈" },
         { label: "Avg Alpha", value: data.avgAlpha != null ? data.avgAlpha.toFixed(2) + "%" : "N/A", icon: "⚡" },
         { label: "Hit Rate", value: data.hitRate != null ? (data.hitRate * 100).toFixed(1) + "%" : "N/A", icon: "🎯" }
@@ -110,7 +110,7 @@ function renderSummaryCards(data) {
 function renderRecentEvaluations(data) {
     var container = document.getElementById("recent-evaluations");
     if (!container) return;
-    var items = data.recentEvaluations || [];
+    var items = data.recentEvaluations || data.evaluations || [];
     if (!items.length) { renderEmpty(container, "No recent evaluations."); return; }
 
     clear(container);
