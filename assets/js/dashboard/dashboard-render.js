@@ -1,7 +1,8 @@
 /**
  * dashboard-render.js --- Dashboard DOM rendering
- * Renders summary cards, recent evaluations, top returns,
- * expert ranking, trending topics, and knowledge feed.
+ * Renders summary cards and the three dashboard panels:
+ *   #recent-verified, #top-return, #recent-knowledge
+ * Aligned with index.html DOM structure.
  * Namespace: FMStock.ui.dashboard.render
  */
 
@@ -66,131 +67,179 @@ function createTable(headers) {
 }
 
 function renderSummaryCards(data) {
+    // index.html uses individual stat-* elements, not a single summary-cards container.
+    // This function updates those elements; the stat-* fallback in app-main.js
+    // already handles them, so we only need to handle any additional stat elements here.
+    // No-op if the legacy summary-cards container does not exist.
     var container = document.getElementById("summary-cards");
     if (!container) return;
+    // Legacy container path (not present in current index.html — kept for safety)
     var stats = [
-        { label: "Sources", value: data.sources ? data.sources.length : 0, icon: "📡" },
-        { label: "Segments", value: data.segments ? data.segments.length : 0, icon: "📂" },
-        { label: "Claims", value: data.claims ? data.claims.length : 0, icon: "💬" },
-        { label: "Verified", value: data.verifiedCount || 0, icon: "✅" },
-        { label: "Pending", value: data.pendingCount || 0, icon: "⏳" },
-        { label: "Knowledge", value: data.knowledgeNotes ? data.knowledgeNotes.length : 0, icon: "📖" },
-        { label: "Avg Return", value: data.avgReturn != null ? data.avgReturn.toFixed(2) + "%" : "N/A", icon: "📈" },
-        { label: "Avg Alpha", value: data.avgAlpha != null ? data.avgAlpha.toFixed(2) + "%" : "N/A", icon: "⚡" },
-        { label: "Hit Rate", value: data.hitRate != null ? (data.hitRate * 100).toFixed(1) + "%" : "N/A", icon: "🎯" }
+        { label: "Sources", value: data.sources ? data.sources.length : 0 },
+        { label: "Claims", value: data.claims ? data.claims.length : 0 },
+        { label: "Verified", value: (data.evaluations || []).filter(function(e) { return e.result && e.result !== 'invalid'; }).length },
+        { label: "Knowledge", value: data.knowledgeNotes ? data.knowledgeNotes.length : 0 }
     ];
     clear(container);
     stats.forEach(function(s) {
         var card = document.createElement("div");
         card.className = "summary-card";
-
-        var icon = document.createElement("span");
-        icon.className = "summary-icon";
-        icon.textContent = s.icon;
-        card.appendChild(icon);
-
-        var body = document.createElement("div");
-        body.className = "summary-body";
-
         var value = document.createElement("span");
         value.className = "summary-value";
         value.textContent = s.value;
-        body.appendChild(value);
-
         var label = document.createElement("span");
         label.className = "summary-label";
         label.textContent = s.label;
-        body.appendChild(label);
-
-        card.appendChild(body);
+        card.appendChild(value);
+        card.appendChild(label);
         container.appendChild(card);
     });
 }
 
 function renderRecentEvaluations(data) {
-    var container = document.getElementById("recent-evaluations");
+    // Target: #recent-verified (index.html)
+    var container = document.getElementById("recent-verified");
     if (!container) return;
-    var items = data.recentEvaluations || data.evaluations || [];
-    if (!items.length) { renderEmpty(container, "No recent evaluations."); return; }
+
+    // Build a lookup from claimId → claim for joining
+    var claimsById = {};
+    (data.claims || []).forEach(function(c) { claimsById[c.id] = c; });
+
+    // Build a lookup from expertId → expert name
+    var expertsById = {};
+    (data.experts || []).forEach(function(ex) { expertsById[ex.id] = ex; });
+
+    // Use evaluations sorted by evaluatedAt desc, exclude invalid
+    var evals = (data.evaluations || []).filter(function(e) {
+        return e.result && e.result !== 'invalid';
+    }).slice().sort(function(a, b) {
+        return new Date(b.evaluatedAt || 0) - new Date(a.evaluatedAt || 0);
+    }).slice(0, 10);
+
+    if (!evals.length) {
+        renderEmpty(container, "검증 완료된 발언이 없습니다.");
+        return;
+    }
 
     clear(container);
-    var tableParts = createTable(["Speaker", "Stock", "Sector", "Return", "Alpha", "Verdict"]);
-    items.forEach(function(e) {
-        var tr = document.createElement("tr");
-        tr.appendChild(createCell(e.speaker));
-        tr.appendChild(createCell(e.stock));
-        tr.appendChild(createCell(e.sector));
-        tr.appendChild(createCell(e.return != null ? e.return.toFixed(2) + "%" : "", signedClass(e.return)));
-        tr.appendChild(createCell(e.alpha != null ? e.alpha.toFixed(2) + "%" : "", signedClass(e.alpha)));
+    evals.forEach(function(e) {
+        var claim = claimsById[e.claimId] || {};
+        var expert = expertsById[claim.expertId] || {};
+        var expertName = expert.displayName || expert.name || claim.expertId || '-';
+        var stock = claim.companyName || claim.stock || '-';
+        var returnRate = e.returnRate != null ? e.returnRate : null;
+        var result = e.result || '-';
 
-        var verdictTd = document.createElement("td");
-        var verdict = document.createElement("span");
-        verdict.className = "verdict" + (e.verdict ? " verdict-" + safeClassSuffix(e.verdict) : "");
-        verdict.textContent = e.verdict || "";
-        verdictTd.appendChild(verdict);
-        tr.appendChild(verdictTd);
+        var li = document.createElement("li");
+        li.className = "item-row";
 
-        tableParts.tbody.appendChild(tr);
+        var nameSpan = document.createElement("span");
+        nameSpan.className = "item-name";
+        nameSpan.textContent = expertName;
+        li.appendChild(nameSpan);
+
+        var stockSpan = document.createElement("span");
+        stockSpan.className = "item-stock";
+        stockSpan.textContent = stock;
+        li.appendChild(stockSpan);
+
+        var retSpan = document.createElement("span");
+        retSpan.className = "item-return " + signedClass(returnRate);
+        retSpan.textContent = returnRate != null ? returnRate.toFixed(2) + '%' : '-';
+        li.appendChild(retSpan);
+
+        var resultSpan = document.createElement("span");
+        resultSpan.className = "item-result result-" + safeClassSuffix(result);
+        resultSpan.textContent = result;
+        li.appendChild(resultSpan);
+
+        container.appendChild(li);
     });
-    container.appendChild(tableParts.table);
 }
 
 function renderTopReturns(data) {
-    var container = document.getElementById("top-returns");
+    // Target: #top-return (index.html — note: singular, not 'top-returns')
+    var container = document.getElementById("top-return");
     if (!container) return;
-    var items = data.topReturns || [];
-    if (!items.length) { renderEmpty(container, "No top return data."); return; }
+
+    // Build expert name lookup
+    var expertsById = {};
+    (data.experts || []).forEach(function(ex) { expertsById[ex.id] = ex; });
+    var claimsById = {};
+    (data.claims || []).forEach(function(c) { claimsById[c.id] = c; });
+
+    // Sort evaluations by returnRate desc, take top 10
+    var topEvals = (data.evaluations || []).filter(function(e) {
+        return e.returnRate != null;
+    }).slice().sort(function(a, b) {
+        return (b.returnRate || 0) - (a.returnRate || 0);
+    }).slice(0, 10);
+
+    if (!topEvals.length) {
+        renderEmpty(container, "수익률 데이터가 없습니다.");
+        return;
+    }
 
     clear(container);
-    var tableParts = createTable(["#", "Speaker", "Stock", "Return", "Excess Return"]);
-    items.forEach(function(c, i) {
-        var tr = document.createElement("tr");
-        tr.appendChild(createCell(i + 1));
-        tr.appendChild(createCell(c.speaker));
-        tr.appendChild(createCell(c.stock));
-        tr.appendChild(createCell(c.return != null ? c.return.toFixed(2) + "%" : "", "positive"));
-        tr.appendChild(createCell(c.excessReturn != null ? c.excessReturn.toFixed(2) + "%" : "", signedClass(c.excessReturn)));
-        tableParts.tbody.appendChild(tr);
+    topEvals.forEach(function(e, i) {
+        var claim = claimsById[e.claimId] || {};
+        var expert = expertsById[claim.expertId] || {};
+        var expertName = expert.displayName || expert.name || '-';
+        var stock = claim.companyName || claim.stock || '-';
+        var alpha = e.alpha != null ? e.alpha : null;
+
+        var li = document.createElement("li");
+        li.className = "item-row";
+
+        var rankSpan = document.createElement("span");
+        rankSpan.className = "item-rank";
+        rankSpan.textContent = (i + 1) + '.';
+        li.appendChild(rankSpan);
+
+        var nameSpan = document.createElement("span");
+        nameSpan.className = "item-name";
+        nameSpan.textContent = expertName;
+        li.appendChild(nameSpan);
+
+        var stockSpan = document.createElement("span");
+        stockSpan.className = "item-stock";
+        stockSpan.textContent = stock;
+        li.appendChild(stockSpan);
+
+        var retSpan = document.createElement("span");
+        retSpan.className = "item-return positive";
+        retSpan.textContent = e.returnRate.toFixed(2) + '%';
+        li.appendChild(retSpan);
+
+        if (alpha != null) {
+            var alphaSpan = document.createElement("span");
+            alphaSpan.className = "item-alpha " + signedClass(alpha);
+            alphaSpan.textContent = 'α ' + alpha.toFixed(2) + '%';
+            li.appendChild(alphaSpan);
+        }
+
+        container.appendChild(li);
     });
-    container.appendChild(tableParts.table);
 }
 
 function renderTopExperts(data) {
+    // #top-experts does not exist in index.html — graceful no-op.
     var container = document.getElementById("top-experts");
     if (!container) return;
     var items = data.topExperts || [];
     if (!items.length) { renderEmpty(container, "No expert data."); return; }
-
     clear(container);
     items.forEach(function(ex, i) {
         var row = document.createElement("div");
         row.className = "expert-row";
-
         var rank = document.createElement("span");
         rank.className = "rank";
         rank.textContent = "#" + (i + 1);
         row.appendChild(rank);
-
         var name = document.createElement("span");
         name.className = "name";
         name.textContent = ex.name || "";
         row.appendChild(name);
-
-        var hit = document.createElement("span");
-        hit.className = "stat";
-        hit.textContent = "Hit: " + ((ex.hitRate || 0) * 100).toFixed(1) + "%";
-        row.appendChild(hit);
-
-        var alpha = document.createElement("span");
-        alpha.className = "stat";
-        alpha.textContent = "α: " + (ex.avgAlpha != null ? ex.avgAlpha.toFixed(2) + "%" : "N/A");
-        row.appendChild(alpha);
-
-        var claims = document.createElement("span");
-        claims.className = "stat";
-        claims.textContent = "Claims: " + (ex.claimCount || 0);
-        row.appendChild(claims);
-
         container.appendChild(row);
     });
 }
@@ -224,40 +273,50 @@ function renderTopicBadges(container, items, emptyText) {
 }
 
 function renderKnowledgeFeed(data) {
-    var container = document.getElementById("knowledge-feed");
+    // Target: #recent-knowledge (index.html)
+    var container = document.getElementById("recent-knowledge");
     if (!container) return;
-    var notes = data.recentKnowledge || [];
-    if (!notes.length) { renderEmpty(container, "No recent knowledge notes."); return; }
+
+    // knowledgeNotes is the canonical field from data-loader.js
+    var notes = (data.knowledgeNotes || []).slice(0, 8);
+    if (!notes.length) {
+        renderEmpty(container, "지식노트가 없습니다.");
+        return;
+    }
+
+    // Build expert lookup for display names
+    var expertsById = {};
+    (data.experts || []).forEach(function(ex) { expertsById[ex.id] = ex; });
 
     clear(container);
     notes.forEach(function(n) {
-        var item = document.createElement("div");
-        item.className = "knowledge-item";
+        var expert = expertsById[n.expertId] || {};
+        var expertName = expert.displayName || expert.name || '';
 
-        var header = document.createElement("div");
-        header.className = "knowledge-header";
+        var li = document.createElement("li");
+        li.className = "item-row";
 
-        var title = document.createElement("strong");
-        title.textContent = n.title || "";
-        header.appendChild(title);
+        var titleSpan = document.createElement("span");
+        titleSpan.className = "item-title";
+        // knowledgeNotes uses topic + companyName as the display title
+        titleSpan.textContent = (n.topic || n.title || n.summary || '').slice(0, 40);
+        li.appendChild(titleSpan);
 
-        var date = document.createElement("span");
-        date.className = "knowledge-date";
-        date.textContent = n.date ? new Date(n.date).toLocaleDateString() : "";
-        header.appendChild(date);
-        item.appendChild(header);
+        if (n.industry || n.companyName) {
+            var tagSpan = document.createElement("span");
+            tagSpan.className = "item-tag";
+            tagSpan.textContent = n.companyName || n.industry || '';
+            li.appendChild(tagSpan);
+        }
 
-        var preview = document.createElement("p");
-        preview.className = "knowledge-preview";
-        preview.textContent = n.summary || (n.content ? n.content.slice(0, 120) : "") || "";
-        item.appendChild(preview);
+        if (expertName) {
+            var authorSpan = document.createElement("span");
+            authorSpan.className = "item-author";
+            authorSpan.textContent = expertName;
+            li.appendChild(authorSpan);
+        }
 
-        var source = document.createElement("span");
-        source.className = "knowledge-source";
-        source.textContent = "Source: " + (n.source || "");
-        item.appendChild(source);
-
-        container.appendChild(item);
+        container.appendChild(li);
     });
 }
 
