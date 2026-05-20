@@ -261,11 +261,6 @@ function renderKnowledgeFeed(data) {
     });
 }
 
-function escapeHtml(text) {
-    if (typeof text !== "string") return text != null ? text : "";
-    var map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" };
-    return text.replace(/[&<>"']/g, function(ch) { return map[ch]; });
-}
 
 window.FMStock.ui.dashboard.render = {
     renderDashboard: renderDashboard,

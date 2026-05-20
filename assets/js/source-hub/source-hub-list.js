@@ -147,15 +147,6 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
     return null;
   }
 
-  function escapeHtml(value) {
-    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
-    });
-  }
-
-  function escapeAttr(value) {
-    return escapeHtml(value).replace(/`/g, '&#096;');
-  }
 
   SourceHub.list = {
     init: init,

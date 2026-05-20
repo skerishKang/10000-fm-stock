@@ -205,11 +205,6 @@ function renderKnowledgeNotes(notes) {
     });
 }
 
-function escapeHtml(text) {
-    if (typeof text !== "string") return text != null ? text : "";
-    var map = { "\u0026": "\u0026amp;", "<": "\u0026lt;", ">": "\u0026gt;", "\"": "\u0026quot;", "'": "\u0026#039;" };
-    return text.replace(/[\u0026<>"']/g, function(ch) { return map[ch]; });
-}
 
 window.FMStock.ui.experts.render = {
     renderExpertDetail: renderExpertDetail,
@@ -220,5 +215,4 @@ window.FMStock.ui.experts.render = {
     renderTopClaims: renderTopClaims,
     renderBottomClaims: renderBottomClaims,
     renderKnowledgeNotes: renderKnowledgeNotes,
-    escapeHtml: escapeHtml
 };
