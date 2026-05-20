@@ -222,7 +222,14 @@ function createRankingRow(item, rank) {
 }
 
 function buildRankingTable(title, items, type) {
-  if (!items || !items.length) return '<li class="empty-state">\ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.</li>';
+  if (!items || !items.length) {
+    var emptyMsg = '\ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.';
+    if (type === 'return' || type === 'alpha') emptyMsg = '\uac80\uc99d \uc644\ub8cc\ub41c \ud3c9\uac00 \ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.';
+    else if (type === 'expert-alpha' || type === 'hit-rate') emptyMsg = '\ud45c\ubcf8 \uc218\uac00 \ubd80\uc871\ud569\ub2c8\ub2e4.';
+    else if (type === 'knowledge') emptyMsg = '\uc9c0\uc2dd\ub178\ud2b8 \uae30\uc5ec \ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.';
+    else if (type === 'industry') emptyMsg = '\ubd84\uc11d \uac00\ub2a5\ud55c \uc0b0\uc5c5 \ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.';
+    return '<li class="empty-state">' + emptyMsg + '</li>';
+  }
   return items.map(function(item, i) { return createRankingRow(item, i + 1); }).join('');
 }
 

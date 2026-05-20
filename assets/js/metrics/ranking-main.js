@@ -44,8 +44,12 @@ function initRankingPage(data) {
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
       // Update active tab styling
-      tabs.forEach(function(t) { t.classList.remove('active'); });
+      tabs.forEach(function(t) { 
+        t.classList.remove('active'); 
+        t.setAttribute('aria-selected', 'false');
+      });
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
 
       var htmlTabName = tab.dataset.tab;
       var renderTabName = TAB_NAME_MAP[htmlTabName] || htmlTabName;
@@ -53,9 +57,13 @@ function initRankingPage(data) {
       // Show active panel, hide others
       document.querySelectorAll('.tab-content[id^="rank-"]').forEach(function(panel) {
         panel.classList.remove('active');
+        panel.setAttribute('hidden', '');
       });
       var activePanel = document.getElementById('rank-' + htmlTabName);
-      if (activePanel) activePanel.classList.add('active');
+      if (activePanel) {
+        activePanel.classList.add('active');
+        activePanel.removeAttribute('hidden');
+      }
 
       // Render into the list element inside the panel
       renderRankingTabIntoList(htmlTabName, renderTabName, data);
@@ -89,13 +97,42 @@ function renderRankingTabIntoList(htmlTabName, renderTabName, data) {
 }
 
 function getRankingCount(tabName, data) {
+  var E = window.FMStock && window.FMStock.metrics && window.FMStock.metrics.experts;
   switch (tabName) {
     case 'return':      return (data.evaluations || []).filter(function(e) { return e.returnRate != null; }).length;
     case 'alpha':       return (data.evaluations || []).filter(function(e) { return e.alpha != null; }).length;
-    case 'expert-alpha': return (data.experts || []).length;
-    case 'hit-rate':    return (data.experts || []).length;
-    case 'industry':    return (data.claims || []).length;
-    case 'knowledge':   return (data.knowledgeNotes || []).length;
+    case 'expert-alpha': 
+      if (E && typeof E.getExpertStats === 'function') {
+        return (data.experts || []).filter(function(ex) {
+          var stats = E.getExpertStats(ex.id, data.claims, data.evaluations);
+          return stats.verified >= 3 && stats.avgAlpha != null;
+        }).length;
+      }
+      return (data.experts || []).length;
+    case 'hit-rate':    
+      if (E && typeof E.getExpertStats === 'function') {
+        return (data.experts || []).filter(function(ex) {
+          var stats = E.getExpertStats(ex.id, data.claims, data.evaluations);
+          return stats.verified >= 3 && stats.hitRate != null;
+        }).length;
+      }
+      return (data.experts || []).length;
+    case 'industry':    
+      if (E && typeof E.getIndustryBreakdown === 'function') {
+        var indMap = {};
+        (data.experts || []).forEach(function(ex) {
+          var b = E.getIndustryBreakdown(ex.id, data.claims, data.evaluations);
+          Object.keys(b).forEach(function(ind) {
+            indMap[ind] = true;
+          });
+        });
+        return Object.keys(indMap).length;
+      }
+      return 0;
+    case 'knowledge':   
+      var hasNotes = {};
+      (data.knowledgeNotes || []).forEach(function(n) { if (n.expertId) hasNotes[n.expertId] = true; });
+      return Object.keys(hasNotes).length;
     default:            return 0;
   }
 }
