@@ -7,20 +7,33 @@ window.FMStock = window.FMStock || {};
 window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 
-async function initKnowledgePage() {
-  var container = document.getElementById("knowledge-app");
+function initKnowledgePage(data) {
+  // knowledge.html uses #knowledge-grid; fallback to #knowledge-app for other contexts
+  var container = document.getElementById("knowledge-grid") || document.getElementById("knowledge-app");
   if (!container) return;
-  try {
-    var res = await fetch("/api/knowledge");
-    var data = await res.json();
-    var notes = data.notes || [];
-    var KL = window.FMStock.ui.knowledge.list;
-    var KD = window.FMStock.ui.knowledge.detail;
-    var KF = window.FMStock.ui.knowledge.filter;
 
+  if (!data || !data.knowledgeNotes || !data.knowledgeNotes.length) {
+    container.innerHTML = '<div class="empty">지식노트 데이터를 불러올 수 없습니다.</div>';
+    return;
+  }
+
+  var notes = data.knowledgeNotes;
+  var KL = window.FMStock.ui.knowledge.list;
+  var KD = window.FMStock.ui.knowledge.detail;
+  var KF = window.FMStock.ui.knowledge.filter;
+
+  if (!KL || typeof KL.renderKnowledgeList !== 'function') {
+    console.warn('[knowledge-main] knowledge-list not loaded');
+    return;
+  }
+
+  // Render filters only if the filter module is available
+  if (typeof KL.renderKnowledgeFilters === 'function') {
     KL.renderKnowledgeFilters(data);
-    KL.renderKnowledgeList(notes, data);
+  }
+  KL.renderKnowledgeList(notes, data);
 
+  if (KF && typeof KF.initKnowledgeFilters === 'function') {
     KF.initKnowledgeFilters(data, function(filters) {
       var filtered = KL.filterKnowledge(notes, filters);
       var sortSelect = document.getElementById("sort-select");
@@ -28,16 +41,19 @@ async function initKnowledgePage() {
       var sorted = KL.sortKnowledge(filtered, sortBy);
       KL.renderKnowledgeList(sorted, data);
     });
+  }
 
-    var sortSelect = document.getElementById("sort-select");
-    if (sortSelect) {
-      sortSelect.addEventListener("change", function(e) {
-        var filtered = KL.filterKnowledge(notes, KF.getActiveFilters());
-        var sorted = KL.sortKnowledge(filtered, e.target.value);
-        KL.renderKnowledgeList(sorted, data);
-      });
-    }
+  var sortSelect = document.getElementById("sort-select");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", function(e) {
+      var activeFilters = (KF && typeof KF.getActiveFilters === 'function') ? KF.getActiveFilters() : {};
+      var filtered = KL.filterKnowledge(notes, activeFilters);
+      var sorted = KL.sortKnowledge(filtered, e.target.value);
+      KL.renderKnowledgeList(sorted, data);
+    });
+  }
 
+  if (KD && typeof KD.renderKnowledgeDetail === 'function') {
     document.addEventListener("click", function(e) {
       var card = e.target.closest(".knowledge-card");
       if (card) {
@@ -45,12 +61,9 @@ async function initKnowledgePage() {
         KD.renderKnowledgeDetail(noteId, data);
       }
     });
-
-    console.log("[knowledge-main] Initialized with " + notes.length + " notes");
-  } catch (err) {
-    console.error("[knowledge-main] Failed to initialize:", err);
-    container.innerHTML = "<div class=\"error-state\">\ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\ub294 \uc911 \uc624\ub958\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.</div>";
   }
+
+  console.log("[knowledge-main] Initialized with " + notes.length + " notes");
 }
 
 window.FMStock.ui.knowledge.main = {

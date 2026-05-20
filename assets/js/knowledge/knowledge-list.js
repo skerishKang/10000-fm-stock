@@ -8,7 +8,7 @@ window.FMStock.ui = window.FMStock.ui || {};
 window.FMStock.ui.knowledge = window.FMStock.ui.knowledge || {};
 
 function renderKnowledgeList(notes, data) {
-  var container = document.getElementById("knowledge-list");
+  var container = document.getElementById("knowledge-list") || document.getElementById("knowledge-grid");
   if (!container) return;
   container.replaceChildren();
   notes.forEach(function(note) { container.appendChild(createKnowledgeCard(note)); });
@@ -67,14 +67,20 @@ function renderKnowledgeFilters(data) {
   if (!container) return;
   container.replaceChildren();
 
-  var allTags = [...new Set((data.notes || []).flatMap(function(n) { return n.tags || []; }))];
+  // knowledgeNotes is the canonical field name from data-loader.js
+  var notes = data.knowledgeNotes || [];
+  var allTags = [];
+  var tagSet = {};
+  notes.forEach(function(n) {
+    (n.tags || []).forEach(function(t) { if (!tagSet[t]) { tagSet[t] = true; allTags.push(t); } });
+  });
 
   var filters = [
-    { label: "\uc0b0\uc5c5", field: "industry", values: getUniqueValues(data.notes || [], "industry") },
-    { label: "\uc885\ubaa9", field: "stock", values: getUniqueValues(data.notes || [], "stock") },
-    { label: "\uc8fc\uc81c", field: "topic", values: getUniqueValues(data.notes || [], "topic") },
-    { label: "\ub09c\uc774\ub3c4", field: "difficulty", values: ["\ucd08\uae09", "\uc911\uae09", "\uace0\uae09"] },
-    { label: "\ud0dc\uadf8", field: "tag", values: allTags }
+    { label: "산업", field: "industry", values: getUniqueValues(notes, "industry") },
+    { label: "종목", field: "stock", values: getUniqueValues(notes, "stock") },
+    { label: "주제", field: "topic", values: getUniqueValues(notes, "topic") },
+    { label: "난이도", field: "difficulty", values: ["초급", "중급", "고급"] },
+    { label: "태그", field: "tag", values: allTags }
   ];
 
   filters.forEach(function(f) {
@@ -88,7 +94,7 @@ function renderKnowledgeFilters(data) {
     select.dataset.filter = f.field;
     var optAll = document.createElement("option");
     optAll.value = "";
-    optAll.textContent = "\uc804\uccb4";
+    optAll.textContent = "전체";
     select.appendChild(optAll);
     f.values.forEach(function(v) {
       var opt = document.createElement("option");
