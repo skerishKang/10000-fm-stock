@@ -9,6 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OFFICIAL_SOURCES_FILE = path.join(REPO_ROOT, 'data', 'sources.json');
@@ -77,7 +78,12 @@ function main() {
   const skipped = [];
 
   previewRecords.forEach((record) => {
-    const skip = (reason) => skipped.push({ id: record.id || '(no id)', reason });
+    const skip = (reason) => skipped.push({ id: (record && record.id) || '(no id)', reason });
+
+    if (!record || typeof record !== 'object' || Array.isArray(record)) {
+      skip('preview record is not an object');
+      return;
+    }
 
     if (!record.id) {
       skip('missing id');
@@ -138,11 +144,37 @@ function main() {
 
   if (eligibleRecords.length > 0) {
     if (isApply) {
+      // Preserve original file content for byte-for-byte rollback
+      const originalContent = fs.readFileSync(OFFICIAL_SOURCES_FILE, 'utf8');
+
       const updatedSources = officialSources.concat(eligibleRecords);
       fs.writeFileSync(OFFICIAL_SOURCES_FILE, JSON.stringify(updatedSources, null, 2) + '\n', 'utf8');
       console.log('');
-      console.log('Successfully applied changes to:', OFFICIAL_SOURCES_FILE);
+      console.log('Applied changes to:', OFFICIAL_SOURCES_FILE);
       console.log('Official sources count after:', updatedSources.length);
+
+      // Run validation
+      console.log('');
+      console.log('Running validation...');
+      const result = spawnSync('node', ['scripts/validate-data.js'], {
+        cwd: REPO_ROOT,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        encoding: 'utf8'
+      });
+
+      if (result.stdout) console.log(result.stdout);
+      if (result.stderr) console.error(result.stderr);
+
+      if (result.status === 0) {
+        console.log('Validation PASSED. Changes retained.');
+        process.exit(0);
+      } else {
+        // Rollback
+        console.error('Validation FAILED. Rolling back...');
+        fs.writeFileSync(OFFICIAL_SOURCES_FILE, originalContent, 'utf8');
+        console.error('Rollback complete. data/sources.json restored to original state.');
+        process.exit(1);
+      }
     } else {
       console.log('');
       console.log('Dry-run complete. No changes made to official sources.');
