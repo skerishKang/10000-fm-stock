@@ -57,7 +57,7 @@ window.FMStock.app = window.FMStock.app || {};
     if (document.querySelector('link[data-fmstock-operator-workflow]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '../assets/css/css-operator-workflow.css?v=20260521-0229-1';
+    link.href = '../assets/css/css-operator-workflow.css?v=20260521-0229-2';
     link.setAttribute('data-fmstock-operator-workflow', 'true');
     document.head.appendChild(link);
   }
