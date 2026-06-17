@@ -216,8 +216,11 @@
   box-shadow: var(--shadow);
 }
 
-.review-section-panel[style*="display: none"] {
-  display: none !important;
+.review-section-panel.is-hidden,
+.detail-panel.is-hidden,
+.tab-content.is-hidden,
+.ingest-tabs .tab-content.is-hidden {
+  display: none;
 }
 
 .candidate-card {
@@ -297,6 +300,18 @@
   .form-row,
   .workflow-filter {
     grid-template-columns: 1fr;
+  }
+
+  .workflow-actions,
+  .form-actions,
+  .review-actions {
+    align-items: stretch;
+  }
+
+  .workflow-actions .btn,
+  .form-actions .btn,
+  .review-actions .btn {
+    width: 100%;
   }
 }
 

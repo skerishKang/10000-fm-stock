@@ -6,6 +6,7 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
   'use strict';
 
   var SourceHub = window.FMStock.ui.sourceHub;
+  var seenIds = {};
 
   function init() {
     var form = document.getElementById('source-candidate-form');
@@ -131,12 +132,23 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
       .replace(/[^a-z0-9가-힣]+/g, '-')
       .replace(/^-+|-+$/g, '')
       .slice(0, 72);
-    return 'candidate-source-' + (slug || 'local');
+    var baseId = 'candidate-source-' + (slug || 'local');
+    return appendUniqueSuffix(baseId);
+  }
+
+  function appendUniqueSuffix(baseId) {
+    if (seenIds[baseId] === undefined) {
+      seenIds[baseId] = 1;
+      return baseId;
+    }
+    var n = seenIds[baseId] + 1;
+    seenIds[baseId] = n;
+    return baseId + '-' + n;
   }
 
   function splitList(value) {
     if (!value) return [];
-    return value.split(/[;,\n]/).map(clean).filter(Boolean);
+    return value.split(/[;,\n|/]+/).map(clean).filter(Boolean);
   }
 
   function splitLines(value) {

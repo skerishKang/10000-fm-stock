@@ -42,8 +42,8 @@ window.FMStock.ui.ingest = window.FMStock.ui.ingest || {};
     setTabButtonState("youtube");
     var youtubePanel = document.getElementById("tab-youtube") || document.getElementById("ingest-youtube-section");
     var reportPanel = document.getElementById("tab-report") || document.getElementById("ingest-report-section");
-    if (youtubePanel) youtubePanel.style.display = "block";
-    if (reportPanel) reportPanel.style.display = "none";
+    if (youtubePanel) youtubePanel.classList.remove("is-hidden");
+    if (reportPanel) reportPanel.classList.add("is-hidden");
   }
 
   function showReportMode() {
@@ -51,8 +51,8 @@ window.FMStock.ui.ingest = window.FMStock.ui.ingest || {};
     setTabButtonState("report");
     var youtubePanel = document.getElementById("tab-youtube") || document.getElementById("ingest-youtube-section");
     var reportPanel = document.getElementById("tab-report") || document.getElementById("ingest-report-section");
-    if (youtubePanel) youtubePanel.style.display = "none";
-    if (reportPanel) reportPanel.style.display = "block";
+    if (youtubePanel) youtubePanel.classList.add("is-hidden");
+    if (reportPanel) reportPanel.classList.remove("is-hidden");
   }
 
   function bindSaveButton() {

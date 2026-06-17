@@ -138,7 +138,7 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
   function safeExternalUrl(value) {
     try {
       var url = new URL(String(value || ''), window.location.href);
-      if (url.protocol === 'http:' || url.protocol === 'https:') {
+      if (url.protocol === 'https:') {
         return url.href;
       }
     } catch (err) {
@@ -146,7 +146,6 @@ window.FMStock.ui.sourceHub = window.FMStock.ui.sourceHub || {};
     }
     return null;
   }
-
 
   SourceHub.list = {
     init: init,

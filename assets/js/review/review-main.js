@@ -34,7 +34,7 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
         '<button class="tab" id="tab-knowledge" type="button" aria-selected="false">Knowledge 후보</button>' +
         '</div>' +
         '<section class="review-section-panel" id="review-claim-section"><div id="claim-list"></div></section>' +
-        '<section class="review-section-panel" id="review-knowledge-section" style="display:none;"><div id="knowledge-list"></div></section>';
+        '<section class="review-section-panel is-hidden" id="review-knowledge-section"><div id="knowledge-list"></div></section>';
     }
 
     if (detailPanel && !document.getElementById("detail-panel")) {
@@ -96,8 +96,8 @@ window.FMStock.ui.review = window.FMStock.ui.review || {};
     }
     var claimSection = document.getElementById("review-claim-section");
     var knowledgeSection = document.getElementById("review-knowledge-section");
-    if (claimSection) claimSection.style.display = tab === "claim" ? "block" : "none";
-    if (knowledgeSection) knowledgeSection.style.display = tab === "knowledge" ? "block" : "none";
+    if (claimSection) claimSection.classList.toggle("is-hidden", tab !== "claim");
+    if (knowledgeSection) knowledgeSection.classList.toggle("is-hidden", tab !== "knowledge");
     renderCurrentTab();
   }
 
