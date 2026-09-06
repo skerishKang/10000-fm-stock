@@ -236,6 +236,19 @@ function validateClaims(claims, expertIds, sourceIds, segmentIds) {
 }
 
 function validateEvaluations(evaluations, claimIds) {
+  const policyPath = path.join(ROOT, 'data', 'policy.json');
+  let policy = null;
+  try {
+    policy = JSON.parse(fs.readFileSync(policyPath, 'utf8'));
+  } catch (e) {
+    warn('evaluations', '(policy)', `policy.json load failed: ${e.message}`);
+  }
+
+  const validStatuses = new Set([
+    'not_due', 'pending_data', 'ready_for_evaluation', 'under_review',
+    'evaluated', 'invalid', 'unverifiable', 'insufficient_data', 'superseded'
+  ]);
+
   evaluations.forEach((evaluation) => {
     requireFields('evaluations', evaluation, ['id', 'claimId', 'evaluatedAt', 'returnRate', 'alpha', 'result']);
     refExists('evaluations', evaluation, 'claimId', claimIds, 'claims');
@@ -247,6 +260,21 @@ function validateEvaluations(evaluations, claimIds) {
     numberField('evaluations', evaluation, 'alpha');
     optionalNumberField('evaluations', evaluation, 'maxPriceDuringPeriod');
     optionalNumberField('evaluations', evaluation, 'minPriceDuringPeriod');
+
+    // v1 schema checks
+    if (policy && policy.active) {
+      if (evaluation.policyVersion && evaluation.policyVersion !== policy.active) {
+        fail('evaluations', evaluation.id || '(unknown)', `policyVersion mismatch: ${evaluation.policyVersion} !== ${policy.active}`);
+      }
+    }
+
+    if (evaluation.status && !validStatuses.has(evaluation.status)) {
+      fail('evaluations', evaluation.id || '(unknown)', `invalid status: ${evaluation.status}`);
+    }
+
+    if (evaluation.status === 'superseded' && !evaluation.supersessionMetadata) {
+      fail('evaluations', evaluation.id || '(unknown)', 'superseded status requires supersessionMetadata');
+    }
   });
 }
 
