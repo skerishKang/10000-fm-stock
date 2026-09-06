@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "mode": "demo",
+  "buildId": "2947523e15237eaa2390485bfe2e1e5ab2ba0e26-2026-09-06T09:38:07Z",
+  "datasetHash": "66581960c3bf9f1a380e8f55a94cdb9bd39a2bc1fc211c6ac733caff96072b04",
+  "productionApproval": null,
+  "notes": "Current dataset is demo only. Production mode requires productionApproval record."
+}
