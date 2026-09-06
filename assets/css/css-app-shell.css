@@ -199,3 +199,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dataset mode banner */
+.dataset-mode-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0.6em 1em;
+  text-align: center;
+  font-weight: 600;
+  border-bottom: 2px solid;
+  font-size: 0.95em;
+}
+.dataset-mode-banner[data-mode="demo"] {
+  background: #fff8e1;
+  color: #6b4e00;
+  border-color: #d4a017;
+}
+.dataset-mode-banner[data-mode="research"] {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border-color: #1976d2;
+}
+.dataset-mode-banner[data-mode="unknown"] {
+  background: #ffebee;
+  color: #b71c1c;
+  border-color: #c62828;
+}
+body[data-mode="production"] .dataset-mode-banner {
+  display: none; /* 운영은 숨김 */
+}
