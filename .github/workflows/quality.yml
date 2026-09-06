@@ -1,0 +1,71 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'assets/**'
+      - 'pages/**'
+      - 'index.html'
+      - '.github/workflows/quality.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'assets/**'
+      - 'pages/**'
+      - 'index.html'
+      - '.github/workflows/quality.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-return-metrics:
+    name: Smoke test return metrics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run smoke return metrics
+        run: node scripts/smoke-return-metrics.js
+
+  audit-static-assets:
+    name: Audit static asset references
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run static asset audit
+        run: node scripts/audit-static-assets.js
+
+  js-syntax:
+    name: JS syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: node --check all .js files
+        run: |
+          status=0
+          for f in $(find scripts -name '*.js' 2>/dev/null); do
+            if ! node --check "$f"; then status=1; fi
+          done
+          for f in $(find assets -name '*.js' 2>/dev/null); do
+            if ! node --check "$f"; then status=1; fi
+          done
+          exit $status
