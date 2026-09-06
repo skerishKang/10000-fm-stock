@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "active": "v1",
+  "versions": {
+    "v0": {
+      "label": "Legacy (2026-09-06 이전)",
+      "description": "초기 수동 평가. policyVersion 필드 없이 evaluations.json에 직접 기록됨.",
+      "methodologyRef": "docs/evaluation-methodology.md#v0"
+    },
+    "v1": {
+      "label": "Authoritative v1",
+      "description": "정식 평가 정책 도입. 상태 머신(FSM) 및 승인 절차 포함.",
+      "methodologyRef": "docs/evaluation-methodology.md#v1",
+      "requiresApproval": true
+    }
+  },
+  "createdAt": "2026-09-06T19:00:00Z"
+}

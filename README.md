@@ -124,3 +124,9 @@ A data-changing PR should not be considered ready if this command fails.
 - Prefer folder-name/file-name module splits.
 - Keep frontend changes, local tooling changes, and policy documentation in separate PRs when possible.
 - Do not promote candidate data to official data without human review.
+
+## Evaluation Policy
+
+이 프로젝트는 `data/policy.json`에서 정의하는 `active` 평가 정책을 따릅니다.
+- 평가 방법론은 `docs/evaluation-methodology.md`에서 확인하세요.
+- 정책 버전이 변경될 경우, 기존 평가는 `superseded` 상태로 전환되고 새로운 버전의 평가가 생성됩니다.
