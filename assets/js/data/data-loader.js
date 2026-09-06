@@ -12,6 +12,55 @@
   }
 
   var DATA_BASE = getBasePath() + 'data/';
+  var META_URL = DATA_BASE + '_meta.json';
+  var DATASET_MODE = 'unknown';
+
+  var FILES_BY_MODE = {
+    demo:        DATA_BASE + 'demo/',
+    research:    DATA_BASE + 'research/',
+    production:  DATA_BASE + 'production/'
+  };
+
+  function applyModeToFiles(mode) {
+    var base = FILES_BY_MODE[mode] || FILES_BY_MODE.demo;
+    return DATA_FILES.map(function (df) {
+      var name = df.url.split('/').pop();
+      return { name: df.name, url: base + name, required: df.required };
+    });
+  }
+
+  async function loadDatasetMode() {
+    try {
+      var resp = await fetch(META_URL);
+      if (!resp.ok) throw new Error('mode fetch failed: ' + resp.status);
+      var meta = await resp.json();
+      DATASET_MODE = (meta && meta.mode) || 'unknown';
+      document.body.setAttribute('data-mode', DATASET_MODE);
+      renderModeBanner(meta);
+      return meta;
+    } catch (e) {
+      console.error('[data-loader] _meta.json load failed', e);
+      DATASET_MODE = 'unknown';
+      document.body.setAttribute('data-mode', 'unknown');
+      renderModeBanner({ mode: 'unknown' });
+      return null;
+    }
+  }
+
+  function renderModeBanner(meta) {
+    if (!meta || meta.mode === 'production') return;
+    var banner = document.getElementById('dataset-mode-banner');
+    if (!banner) return;
+    var mode = meta.mode || 'unknown';
+    var msgs = {
+      demo:     '⚠ 데모 데이터 — 실제 검증 결과가 아닙니다. 가명 인물·예시 URL 사용.',
+      research: '🧪 리서치 데이터 — 공개 랭킹에 포함되지 않습니다.',
+      unknown:  '⚠ 데이터 모드 확인 불가 — _meta.json을 점검하세요.'
+    };
+    banner.textContent = msgs[mode] || msgs.unknown;
+    banner.setAttribute('data-mode', mode);
+    banner.hidden = false;
+  }
 
   /** Required datasets — app cannot reliably render claim evidence without these.
    * Keep aligned with scripts/validate-data.js claim reference checks.
@@ -124,14 +173,18 @@
     datasetStatus = {};
     cache = {};
 
+    var meta = await loadDatasetMode();
+    var mode = (meta && meta.mode) || 'demo';
+    var modeFiles = applyModeToFiles(mode);
+
     // Use allSettled so we can inspect every result
-    var results = await Promise.allSettled(DATA_FILES.map(function (df) {
+    var results = await Promise.allSettled(modeFiles.map(function (df) {
       return fetchOne(df);
     }));
 
     var failedRequired = [];
 
-    DATA_FILES.forEach(function (df, i) {
+    modeFiles.forEach(function (df, i) {
       if (results[i].status === 'fulfilled') {
         cache[df.name] = results[i].value;
         datasetStatus[df.name] = { loaded: true, failed: false, required: df.required, url: df.url };
