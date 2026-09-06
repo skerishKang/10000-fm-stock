@@ -15,6 +15,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
+const DEMO_DIR = path.join(DATA_DIR, 'demo');
 
 const DATASETS = {
   experts: 'experts.json',
@@ -100,7 +101,7 @@ function main() {
 
 function loadDatasets() {
   return Object.fromEntries(Object.entries(DATASETS).map(([name, filename]) => {
-    return [name, loadJsonArray(name, path.join(DATA_DIR, filename), `data/${filename}`)];
+    return [name, loadJsonArray(name, path.join(DEMO_DIR, filename), `data/demo/${filename}`)];
   }));
 }
 
@@ -235,6 +236,19 @@ function validateClaims(claims, expertIds, sourceIds, segmentIds) {
 }
 
 function validateEvaluations(evaluations, claimIds) {
+  const policyPath = path.join(ROOT, 'data', 'policy.json');
+  let policy = null;
+  try {
+    policy = JSON.parse(fs.readFileSync(policyPath, 'utf8'));
+  } catch (e) {
+    warn('evaluations', '(policy)', `policy.json load failed: ${e.message}`);
+  }
+
+  const validStatuses = new Set([
+    'not_due', 'pending_data', 'ready_for_evaluation', 'under_review',
+    'evaluated', 'invalid', 'unverifiable', 'insufficient_data', 'superseded'
+  ]);
+
   evaluations.forEach((evaluation) => {
     requireFields('evaluations', evaluation, ['id', 'claimId', 'evaluatedAt', 'returnRate', 'alpha', 'result']);
     refExists('evaluations', evaluation, 'claimId', claimIds, 'claims');
@@ -246,6 +260,21 @@ function validateEvaluations(evaluations, claimIds) {
     numberField('evaluations', evaluation, 'alpha');
     optionalNumberField('evaluations', evaluation, 'maxPriceDuringPeriod');
     optionalNumberField('evaluations', evaluation, 'minPriceDuringPeriod');
+
+    // v1 schema checks
+    if (policy && policy.active) {
+      if (evaluation.policyVersion && evaluation.policyVersion !== policy.active) {
+        fail('evaluations', evaluation.id || '(unknown)', `policyVersion mismatch: ${evaluation.policyVersion} !== ${policy.active}`);
+      }
+    }
+
+    if (evaluation.status && !validStatuses.has(evaluation.status)) {
+      fail('evaluations', evaluation.id || '(unknown)', `invalid status: ${evaluation.status}`);
+    }
+
+    if (evaluation.status === 'superseded' && !evaluation.supersessionMetadata) {
+      fail('evaluations', evaluation.id || '(unknown)', 'superseded status requires supersessionMetadata');
+    }
   });
 }
 
@@ -469,4 +498,55 @@ function printResult(data, workspaceTemplates) {
   console.log('\nValidation passed.');
 }
 
+// ── Dataset mode boundary checks ────────────────────────
+function validateDatasetMode() {
+  const metaPath = path.join(DATA_DIR, '_meta.json');
+
+  if (!fs.existsSync(metaPath)) {
+    fail('_meta', '(file)', 'data/_meta.json is missing');
+    return;
+  }
+
+  let meta;
+  try {
+    meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  } catch (err) {
+    fail('_meta', '(parse)', `invalid JSON: ${err.message}`);
+    return;
+  }
+
+  const allowed = ['demo', 'research', 'production'];
+  if (!allowed.includes(meta.mode)) {
+    fail('_meta', 'mode', `mode must be one of ${allowed.join('|')}, got: ${meta.mode}`);
+  }
+
+  if (meta.mode === 'production' && !meta.productionApproval) {
+    fail('_meta', 'productionApproval', 'mode=production requires productionApproval object in _meta.json');
+  }
+
+  if (meta.productionApproval) {
+    const req = ['approvedBy', 'approvedAt', 'commitSha', 'covers'];
+    for (const k of req) {
+      if (!meta.productionApproval[k]) {
+        fail('_meta', `productionApproval.${k}`, `${k} is required`);
+      }
+    }
+  }
+
+  for (const m of allowed) {
+    const dir = path.join(DATA_DIR, m);
+    if (!fs.existsSync(dir)) {
+      warn('_meta', m, `data/${m}/ directory missing`);
+    }
+  }
+
+  const demoDir = path.join(DATA_DIR, 'demo');
+  if (!fs.existsSync(demoDir)) {
+    fail('_meta', 'demo', 'data/demo/ directory missing (current dataset must live somewhere)');
+  }
+
+  console.log(`Dataset mode: ${meta.mode}${meta.productionApproval ? ' (approved)' : ''}`);
+}
+
 main();
+validateDatasetMode();

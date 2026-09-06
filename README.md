@@ -18,6 +18,24 @@ The MVP is intentionally static:
 
 The MVP does not use a database, login system, Firebase, Supabase, backend API, automatic crawler, live price API, or broker API.
 
+## Current dataset mode
+
+**Mode: `demo`** (as of last build)
+
+The dataset currently shipped in this repository is **demo data only**:
+- Names of experts are pseudonyms.
+- URLs use `example.com` and similar placeholder domains.
+- All evaluations are illustrative.
+
+Switching to `research` or `production` mode requires:
+1. A populated `data/<mode>/` directory with valid data files.
+2. An updated `data/_meta.json` with the corresponding `mode` value.
+3. For `production`: a `productionApproval` object in `_meta.json`
+   (see `docs/dataset-mode.md` §3).
+
+A persistent banner is rendered on every public page when mode is
+`demo` or `research`. Production mode hides the banner.
+
 ## Source storage policy
 
 Original source files are not stored or redistributed in this repository.
